@@ -1,6 +1,9 @@
 import os
 import requests
+import cv2
+import numpy as np
 from apps.web.models.aimodel import AiModelReq
+
 
 wave_url = os.getenv("WAVESPEED_URL")
 wave_key = os.getenv("WAVESPEED_KEY")
@@ -18,9 +21,7 @@ class WaveApi:
 			"Authorization": f'Bearer {wave_key}',
 			"Content-Type": "application/json"
 		}
-
 		last_message = param.messages[-1]
-		print("============last_message=========", last_message.get("content"))
 		data = {
 			"duration": param.duration,
 			"prompt": last_message.get("content"),
@@ -63,5 +64,5 @@ class WaveApi:
 				"success": False,
 				"error": f"Err: {str(e)}"
       }
-    
+
 WaveApiInstance = WaveApi()

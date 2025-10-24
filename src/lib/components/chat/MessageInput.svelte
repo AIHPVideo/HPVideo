@@ -347,14 +347,6 @@
                       filesInputElement.value = "";
                     };
                     reader.readAsDataURL(file);
-                  } else if (
-                    SUPPORTED_FILE_TYPE.includes(file["type"]) ||
-                    SUPPORTED_FILE_EXTENSIONS.includes(
-                      file.name.split(".").at(-1)
-                    )
-                  ) {
-                    uploadDoc(file);
-                    filesInputElement.value = "";
                   } else {
                     toast.error(
                       $i18n.t(
@@ -362,7 +354,6 @@
                         { file_type: file["type"] }
                       )
                     );
-                    uploadDoc(file);
                     filesInputElement.value = "";
                   }
                 });
