@@ -32,7 +32,7 @@ jobs: # 定义需要执行的工作
           # password: ${{ secrets.DOCKER_PASSWORD }}
 
           push: true # 推送镜像到Docker Hub
-          tags: aihpvideo/hpvideo:test # 设置镜像的标签
+          tags: duyu/hpvideo:test # 设置镜像的标签
 
       - name: Deploy to Server # 步骤名称
         timeout-minutes: 40 # 设置超时时间为40分钟

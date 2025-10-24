@@ -33,7 +33,7 @@ jobs: # 定义需要执行的工作
           # password: ${{ secrets.DOCKER_PASSWORD }}
 
           push: true # 推送镜像到Docker Hub
-          tags: aihpvideo/hpvideo:pro # 设置镜像的标签
+          tags: duyu/hpvideo:pro # 设置镜像的标签
 
 
       # - name: Deploy to Server # 步骤名称
