@@ -41,7 +41,6 @@
     archiveChatById,
   } from "$lib/apis/chats";
   import { toast } from "svelte-sonner";
-  import { WEBUI_BASE_URL } from "$lib/constants";
   import ChatMenu from "./Sidebar/ChatMenu.svelte";
   import ShareChatModal from "../chat/ShareChatModal.svelte";
   import ArchivedChatsModal from "./Sidebar/ArchivedChatsModal.svelte";
@@ -878,7 +877,7 @@
           </UserMenu>
         {/if}
       </div> -->
-      <div class="flex flex-row gap-2 px-3">
+      <!-- <div class="flex flex-row gap-2 px-3">
         {#if $initPageFlag}
           <button id="wallet-btn" class="flex flex-row items-center justify-center primaryButton px-3 py-2 text-gray-100 rounded-lg transition mt-2 mb-2"
           on:click = {showWalletFun}
@@ -905,7 +904,7 @@
           </svg>
           <span class="text-xs ml-1">{$i18n.t("Rewards")}</span>
         </button>
-      </div>    
+      </div>     -->
     </div>
   </div>
 

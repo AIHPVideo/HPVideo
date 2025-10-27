@@ -519,7 +519,7 @@
         {
           source: model.source,
           model: model.id + "/" + (fileFlag ? model.imagemodel : model.textmodel),
-          duration: 5,
+          duration: 12,
           messages: send_message,
           size: videosize
         }

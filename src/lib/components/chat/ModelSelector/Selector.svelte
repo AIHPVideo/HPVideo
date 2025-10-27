@@ -76,7 +76,7 @@
       <div class="w-full px-1 my-2 max-h-88 overflow-y-auto max-h-[calc(100vh-200px)]">
         <!-- 基础模型 -->
         <div class="px-2 w-full">
-          <button class="flex justify-between items-center cursor-pointer w-full pb-1"
+          <!-- <button class="flex justify-between items-center cursor-pointer w-full pb-1"
             on:click={() => {
               if (seltype == 1) {
                 seltype = 0;
@@ -93,7 +93,7 @@
               class="size-4 {seltype == 1 ? 'rotate-90' : 'none'}">
               <path d="M534.826667 935.466667a47.36 47.36 0 0 1-66.986667-66.773334L835.413333 501.333333 467.84 133.973333a47.36 47.36 0 1 1 66.986667-66.773333l400.64 400.64a47.36 47.36 0 0 1 0 66.986667z"/>
             </svg>
-          </button>
+          </button> -->
           <div class="transition ease-in-out delay-150 py-1 {seltype == 1 ? '' : 'hidden'}">
             {#each items as item (item.value)}
               {#if item?.info?.type == 1}

@@ -33,7 +33,7 @@
 
 <Modal bind:show>
 	<div class="text-gray-700 dark:text-gray-100">
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-1">
+		<div class="flex justify-between dark:text-gray-300 px-5 pt-4 pb-1">
 			<div class=" text-lg font-medium self-center">{$i18n.t("Settings")}</div>
 			<button
 				class="self-center"
@@ -54,12 +54,12 @@
 			</button>
 		</div>
 
-		<div class="flex flex-col md:flex-row w-full p-4 md:space-x-4">
+		<div class="flex flex-col md:flex-col w-full p-4 md:space-x-4">
 			<div
-				class="tabs flex flex-row overflow-x-auto space-x-1 md:space-x-0 md:space-y-1 md:flex-col flex-1 md:flex-none md:w-40 dark:text-gray-200 text-xs text-left mb-3 md:mb-0"
+				class="tabs flex flex-row space-x-1 md:flex-row w-full md:flex-none md:w-full dark:text-gray-200 text-xs text-left mb-3 md:mb-0"
 			>
 				<button
-					class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
+					class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
 					'general'
 						? 'bg-gray-200 dark:bg-gray-700'
 						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
@@ -86,7 +86,7 @@
 
 				{#if $user?.role === "superadmin"}
 					<button
-						class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
+						class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
 						'connections'
 							? 'bg-gray-200 dark:bg-gray-700'
 							: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
@@ -110,7 +110,7 @@
 					</button>
 
 					<button
-						class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
+						class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
 						'models'
 							? 'bg-gray-200 dark:bg-gray-700'
 							: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
@@ -136,77 +136,9 @@
 					</button>
 				{/if}
 
-				<!-- <button
-					class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
-					'interface'
-						? 'bg-gray-200 dark:bg-gray-700'
-						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-					on:click={() => {
-						selectedTab = 'interface';
-					}}
-				>
-					<div class=" self-center mr-2">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 16 16"
-							fill="currentColor"
-							class="w-4 h-4"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M2 4.25A2.25 2.25 0 0 1 4.25 2h7.5A2.25 2.25 0 0 1 14 4.25v5.5A2.25 2.25 0 0 1 11.75 12h-1.312c.1.128.21.248.328.36a.75.75 0 0 1 .234.545v.345a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-.345a.75.75 0 0 1 .234-.545c.118-.111.228-.232.328-.36H4.25A2.25 2.25 0 0 1 2 9.75v-5.5Zm2.25-.75a.75.75 0 0 0-.75.75v4.5c0 .414.336.75.75.75h7.5a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75h-7.5Z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</div>
-					<div class=" self-center">{$i18n.t('Interface')}</div>
-				</button> -->
-
-				<!-- <button
-					class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
-					'personalization'
-						? 'bg-gray-200 dark:bg-gray-700'
-						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-					on:click={() => {
-						selectedTab = 'personalization';
-					}}
-				>
-					<div class=" self-center mr-2">
-						<User />
-					</div>
-					<div class=" self-center">{$i18n.t('Personalization')}</div>
-				</button> -->
-
-				<!-- <button
-					class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
-					'audio'
-						? 'bg-gray-200 dark:bg-gray-700'
-						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-					on:click={() => {
-						selectedTab = 'audio';
-					}}
-				>
-					<div class=" self-center mr-2">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 16 16"
-							fill="currentColor"
-							class="w-4 h-4"
-						>
-							<path
-								d="M7.557 2.066A.75.75 0 0 1 8 2.75v10.5a.75.75 0 0 1-1.248.56L3.59 11H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.59l3.162-2.81a.75.75 0 0 1 .805-.124ZM12.95 3.05a.75.75 0 1 0-1.06 1.06 5.5 5.5 0 0 1 0 7.78.75.75 0 1 0 1.06 1.06 7 7 0 0 0 0-9.9Z"
-							/>
-							<path
-								d="M10.828 5.172a.75.75 0 1 0-1.06 1.06 2.5 2.5 0 0 1 0 3.536.75.75 0 1 0 1.06 1.06 4 4 0 0 0 0-5.656Z"
-							/>
-						</svg>
-					</div>
-					<div class=" self-center">{$i18n.t('Audio')}</div>
-				</button> -->
-
 				{#if $user?.role === "superadmin"}
 					<button
-						class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
+						class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
 						'images'
 							? 'bg-gray-200 dark:bg-gray-700'
 							: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
@@ -232,34 +164,8 @@
 					</button>
 				{/if}
 
-				<!-- <button
-					class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
-					'chats'
-						? 'bg-gray-200 dark:bg-gray-700'
-						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-					on:click={() => {
-						selectedTab = 'chats';
-					}}
-				>
-					<div class=" self-center mr-2">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 16 16"
-							fill="currentColor"
-							class="w-4 h-4"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M8 2C4.262 2 1 4.57 1 8c0 1.86.98 3.486 2.455 4.566a3.472 3.472 0 0 1-.469 1.26.75.75 0 0 0 .713 1.14 6.961 6.961 0 0 0 3.06-1.06c.403.062.818.094 1.241.094 3.738 0 7-2.57 7-6s-3.262-6-7-6ZM5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm7-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM8 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</div>
-					<div class=" self-center">{$i18n.t('Chats')}</div>
-				</button> -->
-
 				<button
-					class="px-2.5 py-2.5 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
+					class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
 					'account'
 						? 'bg-gray-200 dark:bg-gray-700'
 						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
@@ -284,7 +190,7 @@
 					<div class=" self-center">{$i18n.t("Account")}</div>
 				</button>
 			</div>
-			<div class="flex-1 md:min-h-[28rem]">
+			<div class="flex-1 md:mt-3 md:min-h-[10rem]">
 				{#if selectedTab === "general"}
 					<General
 						{getModels}
