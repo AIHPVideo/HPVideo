@@ -956,5 +956,8 @@
   "Face verification failed": "人脸验证失败",
   "KYC authentication information is incomplete": "KYC认证信息不完善",
   "Captcha security authentication failed": "验证码安全认证失败",
-  "Video Generating...": "视频生成中..."
+  "Video Generating...": "视频生成中...",
+  "Short": "短",
+  "Medium": "中",
+  "Long": "长"
 }

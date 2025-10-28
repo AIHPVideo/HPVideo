@@ -5,15 +5,11 @@
     mobile,
     modelfiles,
     settings,
-    showNewWalletModal,
-    showOpenWalletModal,
     showSidebar
   } from "$lib/stores";
   import { findWordIndices } from "$lib/utils";
 
   import {
-    SUPPORTED_FILE_TYPE,
-    SUPPORTED_FILE_EXTENSIONS,
     WEBUI_BASE_URL,
   } from "$lib/constants";
 
@@ -21,7 +17,6 @@
   import Tools from "./MessageInput/Tools.svelte";
   import Tooltip from "../common/Tooltip.svelte";
   import XMark from "$lib/components/icons/XMark.svelte";
-  import { user as userStore } from "$lib/stores";
 
   const i18n = getContext("i18n");
 
@@ -30,6 +25,7 @@
 
   export let autoScroll = true;
   export let selectedModel = "";
+  export let currentModel: any = [];
 
   let chatTextAreaElement: HTMLTextAreaElement;
   let filesInputElement: any;
@@ -46,10 +42,11 @@
   export let fileUploadEnabled = true;
 
   export let prompt = "";
+  export let videodura = 8;
   export let videosize = "720*1280";
   export let messages: any[] = [];
 
-  let toolInfo: any = {size: videosize};
+  let toolInfo: any = {duration: videodura, size: videosize};
 
   $: if (prompt) {
     if (chatTextAreaElement) {
@@ -634,8 +631,8 @@
                   {/if}
 
                   <!-- Video Resolution -->
-                  <div class="self-star mb-2 ml-1 mr-1">
-                    <Tools bind:videosize={videosize}/>
+                  <div class="self-star flex gap-x-1 mb-2 ml-1 mr-1">
+                    <Tools bind:videosize={videosize} bind:videodura={videodura} bind:selectedModel={currentModel}/>
                   </div>
                 </div>
                 

@@ -946,5 +946,8 @@
   "Face verification failed": "Xác minh khuôn mặt thất bại",
   "KYC authentication information is incomplete": "Thông tin xác thực KYC không hoàn chỉnh",
   "Captcha security authentication failed": "Xác thực an toàn Captcha thất bại",
-  "Video Generating...": "Đang tạo video..."
+  "Video Generating...": "Đang tạo video...",
+  "Short": "Ngắn",
+  "Medium": "Trung",
+  "Long": "Dài"
 }

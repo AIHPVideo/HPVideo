@@ -92,6 +92,7 @@
     currentId: null,
   };
 
+  let videodura = 8;
   let videosize = "1280*720";
 
   let chatInputPlaceholder = "";
@@ -519,7 +520,7 @@
         {
           source: model.source,
           model: model.id + "/" + (fileFlag ? model.imagemodel : model.textmodel),
-          duration: 12,
+          duration: videodura,
           messages: send_message,
           size: videosize
         }
@@ -804,6 +805,8 @@
   bind:prompt
   bind:autoScroll
   bind:selectedModel={atSelectedModel}
+  bind:currentModel = {selectedModels}
+  bind:videodura
   bind:videosize
   {messages}
   {submitPrompt}

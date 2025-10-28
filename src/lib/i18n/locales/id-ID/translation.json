@@ -957,5 +957,8 @@
   "Face verification failed": "Verifikasi wajah gagal",
   "KYC authentication information is incomplete": "Informasi otentikasi KYC tidak lengkap",
   "Captcha security authentication failed": "Otentikasi keamanan Captcha gagal",
-  "Video Generating...": "Sedang menghasilkan video..."
+  "Video Generating...": "Sedang menghasilkan video...",
+  "Short": "Pendek",
+  "Medium": "Sedang",
+  "Long": "Panjang"
 }

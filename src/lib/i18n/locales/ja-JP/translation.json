@@ -957,5 +957,8 @@
   "Face verification failed": "顔認証に失敗しました",
   "KYC authentication information is incomplete": "KYC認証情報が不完全です",
   "Captcha security authentication failed": "CAPTCHAセキュリティ認証に失敗しました",
-  "Video Generating...": "ビデオ生成中..."
+  "Video Generating...": "ビデオ生成中...",
+  "Short": "みじかい",
+  "Medium": "ちゅう",
+  "Long": "ながい"
 }

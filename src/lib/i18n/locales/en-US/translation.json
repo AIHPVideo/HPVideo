@@ -957,6 +957,9 @@
   "Face verification failed": "",
   "KYC authentication information is incomplete": "",
   "Captcha security authentication failed": "",
-  "Video Generating...": ""
+  "Video Generating...": "",
+  "Short": "",
+  "Medium": "",
+  "Long": ""
 }
 

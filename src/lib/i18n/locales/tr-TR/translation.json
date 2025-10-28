@@ -957,5 +957,8 @@
   "Face verification failed": "Yüz doğrulaması başarısız",
   "KYC authentication information is incomplete": "KYC doğrulama bilgileri eksik",
   "Captcha security authentication failed": "Captcha güvenlik doğrulaması başarısız",
-  "Video Generating...": "Video oluşturuluyor..."
+  "Video Generating...": "Video oluşturuluyor...",
+  "Short": "Kısa",
+  "Medium": "Orta",
+  "Long": "Uzun"
 }

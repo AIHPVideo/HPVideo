@@ -956,5 +956,8 @@
   "Face verification failed": "การตรวจสอบใบหน้าไม่สำเร็จ",
   "KYC authentication information is incomplete": "ข้อมูลการยืนยันตัวตน KYC ไม่สมบูรณ์",
   "Captcha security authentication failed": "การยืนยันตัวตนความปลอดภัย Captcha ไม่สำเร็จ",
-  "Video Generating...": "กำลังสร้างวิดีโอ..."
+  "Video Generating...": "กำลังสร้างวิดีโอ...",
+  "Short": "สั้น",
+  "Medium": "กลาง",
+  "Long": "ยาว"
 }

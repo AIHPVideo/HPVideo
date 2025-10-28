@@ -955,5 +955,8 @@
   "Face verification failed": "Gesichtsprüfung fehlgeschlagen",
   "KYC authentication information is incomplete": "KYC-Identifizierungsinformationen unvollständig",
   "Captcha security authentication failed": "Captcha-Sicherheitsauthentifizierung fehlgeschlagen",
-  "Video Generating...": "Video wird generiert..."
+  "Video Generating...": "Video wird generiert...",
+  "Short": "Kurz",
+  "Medium": "Mittel",
+  "Long": "Lang"
 }

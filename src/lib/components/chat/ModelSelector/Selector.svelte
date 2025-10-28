@@ -23,8 +23,6 @@
 
   export let selectedModelIdx = 0;
 
-  export let className = "w-[380px]";
-
   let show = false;
 
   let selectedModel = "";

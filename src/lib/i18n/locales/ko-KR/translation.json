@@ -957,5 +957,8 @@
   "Face verification failed": "얼굴 인증에 실패했습니다",
   "KYC authentication information is incomplete": "KYC 인증 정보가 불완전합니다",
   "Captcha security authentication failed": "캡챠 보안 인증에 실패했습니다",
-  "Video Generating...": "비디오 생성 중..."
+  "Video Generating...": "비디오 생성 중...",
+  "Short": "짧은",
+  "Medium": "중간의",
+  "Long": "긴"
 }

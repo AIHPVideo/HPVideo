@@ -957,5 +957,8 @@
   "Face verification failed": "Verificação facial falhou",
   "KYC authentication information is incomplete": "Informações de autenticação KYC incompletas",
   "Captcha security authentication failed": "Autenticação de segurança do Captcha falhou",
-  "Video Generating...": "Gerando vídeo..."
+  "Video Generating...": "Gerando vídeo...",
+  "Short": "Curto",
+  "Medium": "Médio",
+  "Long": "Longo"
 }

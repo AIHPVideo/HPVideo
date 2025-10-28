@@ -956,5 +956,8 @@
   "Face verification failed": "Проверка лица не удалась",
   "KYC authentication information is incomplete": "Информация для аутентификации KYC неполна",
   "Captcha security authentication failed": "Аутентификация безопасности Captcha не удалась",
-  "Video Generating...": "Видео генерируется..."
+  "Video Generating...": "Видео генерируется...",
+  "Short": "Короткий",
+  "Medium": "Средний",
+  "Long": "Длинный"
 }
