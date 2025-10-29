@@ -8,18 +8,18 @@
 	$: if(videosize) {
 		if (videosize.includes('*')) {
 			if (Number(videosize.split('*')[0]) > Number(videosize.split('*')[1])) {
-				aspectRatio = '16/9'
+				aspectRatio = '16/9';
 			} else {
-				aspectRatio = '9/16'
+				aspectRatio = '9/16';
 			}
-		}else if (videosize.includes(':')) {
+		} else if (videosize.includes(':')) {
 			if (Number(videosize.split(':')[0]) > Number(videosize.split(':')[1])) {
-				aspectRatio = '16/9'
+				aspectRatio = '16/9';
 			} else {
-				aspectRatio = '9/16'
+				aspectRatio = '9/16';
 			}
 		} else {
-			aspectRatio = '16/9'
+			aspectRatio = '16/9';
 		}
 	}
 
