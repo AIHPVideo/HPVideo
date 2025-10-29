@@ -959,5 +959,6 @@
   "Video Generating...": "Generando vídeo...",
   "Short": "Corto",
   "Medium": "Medio",
-  "Long": "Largo"
+  "Long": "Largo",
+  "This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.": "Esta generación utiliza el modelo de alta calidad {{model}}, el cual consumirá 2 créditos de generación de videos. El tiempo de espera estimado es de 1-3 minutos, y quedan 8 créditos de generación de videos hoy."
 }

@@ -949,5 +949,6 @@
   "Video Generating...": "Đang tạo video...",
   "Short": "Ngắn",
   "Medium": "Trung",
-  "Long": "Dài"
+  "Long": "Dài",
+  "This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.": "Lần tạo ra này sử dụng mô hình chất lượng cao {{model}}, sẽ tiêu tốn 2 tín dụng tạo video. Thời gian chờ dự kiến là 1-3 phút, và còn lại 8 tín dụng tạo video trong ngày hôm nay."
 }

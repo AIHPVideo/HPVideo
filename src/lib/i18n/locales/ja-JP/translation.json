@@ -960,5 +960,6 @@
   "Video Generating...": "ビデオ生成中...",
   "Short": "みじかい",
   "Medium": "ちゅう",
-  "Long": "ながい"
+  "Long": "ながい",
+  "This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.": "今回の生成では{{model}}高品質モデルを使用し、動画生成クレジットが2つ消費されます。予定待ち時間は1～3分で、本日の動画生成クレジットは残り8つです。"
 }

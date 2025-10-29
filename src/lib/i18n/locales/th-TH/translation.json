@@ -959,5 +959,6 @@
   "Video Generating...": "กำลังสร้างวิดีโอ...",
   "Short": "สั้น",
   "Medium": "กลาง",
-  "Long": "ยาว"
+  "Long": "ยาว",
+  "This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.": "การสร้างครั้งนี้ใช้โมเดลคุณภาพสูง {{model}} ซึ่งจะใช้เครดิตการสร้างวิดีโอ 2 เครดิต เวลารอคาดการณ์คือ 1-3 นาที และยังเหลือเครดิตการสร้างวิดีโอ 8 เครดิตสำหรับวันนี้"
 }

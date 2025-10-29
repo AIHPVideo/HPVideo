@@ -554,8 +554,10 @@
 							{:else}
 								{#each tokens as token, tokenIdx}
 									{#if token.raw == 'loading'}
+										<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.", {model: formatModelName(message.model)})}</div>
 										<VideoLoading bind:videosize={message.size}/>
 									{:else if token.raw == 'failed'}
+										<div>{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.", {model: formatModelName(message.model)})}</div>
 										<VideoLoading bind:videosize={message.size}/>
 									{:else}
 										<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>

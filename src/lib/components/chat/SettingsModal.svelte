@@ -1,40 +1,20 @@
 <script lang="ts">
-	import { getContext } from "svelte";
-	import { toast } from "svelte-sonner";
-	import { models, settings, user } from "$lib/stores";
-
+	import { getContext } from 'svelte';
 	import { getModels as _getModels } from "$lib/utils";
-
 	import Modal from "../common/Modal.svelte";
-	import Account from "./Settings/Account.svelte";
-	import General from "./Settings/General.svelte";
-	import Audio from "./Settings/Audio.svelte";
-	import Chats from "./Settings/Chats.svelte";
-	import Images from "./Settings/Images.svelte";
-	import Personalization from "./Settings/Personalization.svelte";
+	import { toast } from 'svelte-sonner';
+	import UserEdit from "./Settings/UserEdit.svelte";
 
-	const i18n = getContext("i18n");
+	const i18n = getContext('i18n');
 
 	export let show = false;
-
-	const saveSettings = async (updated) => {
-		console.log(updated);
-		await settings.set({ ...$settings, ...updated });
-		await models.set(await getModels());
-		localStorage.setItem("settings", JSON.stringify($settings));
-	};
-
-	const getModels = async () => {
-		return await _getModels(localStorage.token);
-	};
-
-	let selectedTab = "general";
+	let modelsize = "sm"
 </script>
 
-<Modal bind:show>
+<Modal bind:size={modelsize} bind:show>
 	<div class="text-gray-700 dark:text-gray-100">
-		<div class="flex justify-between dark:text-gray-300 px-5 pt-4 pb-1">
-			<div class=" text-lg font-medium self-center">{$i18n.t("Settings")}</div>
+		<div class="flex justify-between dark:text-gray-300 px-5 pt-4 pb-2">
+			<div></div>
 			<button
 				class="self-center"
 				on:click={() => {
@@ -54,181 +34,12 @@
 			</button>
 		</div>
 
-		<div class="flex flex-col md:flex-col w-full p-4 md:space-x-4">
-			<div
-				class="tabs flex flex-row space-x-1 md:flex-row w-full md:flex-none md:w-full dark:text-gray-200 text-xs text-left mb-3 md:mb-0"
-			>
-				<button
-					class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
-					'general'
-						? 'bg-gray-200 dark:bg-gray-700'
-						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-					on:click={() => {
-						selectedTab = "general";
-					}}
-				>
-					<div class=" self-center mr-2">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 20 20"
-							fill="currentColor"
-							class="w-4 h-4"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 011.262.125l.962.962a1 1 0 01.125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.294a1 1 0 01.804.98v1.361a1 1 0 01-.804.98l-1.473.295a6.95 6.95 0 01-.587 1.416l.834 1.25a1 1 0 01-.125 1.262l-.962.962a1 1 0 01-1.262.125l-1.25-.834a6.953 6.953 0 01-1.416.587l-.294 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.957 6.957 0 01-1.416-.587l-1.25.834a1 1 0 01-1.262-.125l-.962-.962a1 1 0 01-.125-1.262l.834-1.25a6.957 6.957 0 01-.587-1.416l-1.473-.294A1 1 0 011 10.68V9.32a1 1 0 01.804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 01.125-1.262l.962-.962A1 1 0 015.38 3.03l1.25.834a6.957 6.957 0 011.416-.587l.294-1.473zM13 10a3 3 0 11-6 0 3 3 0 016 0z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</div>
-					<div class=" self-center">{$i18n.t("General")}</div>
-				</button>
-
-				{#if $user?.role === "superadmin"}
-					<button
-						class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
-						'connections'
-							? 'bg-gray-200 dark:bg-gray-700'
-							: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-						on:click={() => {
-							selectedTab = "connections";
-						}}
-					>
-						<div class=" self-center mr-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 16 16"
-								fill="currentColor"
-								class="w-4 h-4"
-							>
-								<path
-									d="M1 9.5A3.5 3.5 0 0 0 4.5 13H12a3 3 0 0 0 .917-5.857 2.503 2.503 0 0 0-3.198-3.019 3.5 3.5 0 0 0-6.628 2.171A3.5 3.5 0 0 0 1 9.5Z"
-								/>
-							</svg>
-						</div>
-						<div class=" self-center">{$i18n.t("Connections")}</div>
-					</button>
-
-					<button
-						class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
-						'models'
-							? 'bg-gray-200 dark:bg-gray-700'
-							: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-						on:click={() => {
-							selectedTab = "models";
-						}}
-					>
-						<div class=" self-center mr-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 20 20"
-								fill="currentColor"
-								class="w-4 h-4"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M10 1c3.866 0 7 1.79 7 4s-3.134 4-7 4-7-1.79-7-4 3.134-4 7-4zm5.694 8.13c.464-.264.91-.583 1.306-.952V10c0 2.21-3.134 4-7 4s-7-1.79-7-4V8.178c.396.37.842.688 1.306.953C5.838 10.006 7.854 10.5 10 10.5s4.162-.494 5.694-1.37zM3 13.179V15c0 2.21 3.134 4 7 4s7-1.79 7-4v-1.822c-.396.37-.842.688-1.306.953-1.532.875-3.548 1.369-5.694 1.369s-4.162-.494-5.694-1.37A7.009 7.009 0 013 13.179z"
-									clip-rule="evenodd"
-								/>
-							</svg>
-						</div>
-						<div class=" self-center">{$i18n.t("Models")}</div>
-					</button>
-				{/if}
-
-				{#if $user?.role === "superadmin"}
-					<button
-						class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
-						'images'
-							? 'bg-gray-200 dark:bg-gray-700'
-							: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-						on:click={() => {
-							selectedTab = "images";
-						}}
-					>
-						<div class=" self-center mr-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 16 16"
-								fill="currentColor"
-								class="w-4 h-4"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M2 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4Zm10.5 5.707a.5.5 0 0 0-.146-.353l-1-1a.5.5 0 0 0-.708 0L9.354 9.646a.5.5 0 0 1-.708 0L6.354 7.354a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0-.146.353V12a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V9.707ZM12 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
-									clip-rule="evenodd"
-								/>
-							</svg>
-						</div>
-						<div class=" self-center">{$i18n.t("Images")}</div>
-					</button>
-				{/if}
-
-				<button
-					class="px-2.5 py-3 min-w-fit rounded-lg flex-1 md:flex-1 flex text-right transition {selectedTab ===
-					'account'
-						? 'bg-gray-200 dark:bg-gray-700'
-						: ' hover:bg-gray-300 dark:hover:bg-gray-800'}"
-					on:click={() => {
-						selectedTab = "account";
-					}}
-				>
-					<div class=" self-center mr-2">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 16 16"
-							fill="currentColor"
-							class="w-4 h-4"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-5-2a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM8 9c-1.825 0-3.422.977-4.295 2.437A5.49 5.49 0 0 0 8 13.5a5.49 5.49 0 0 0 4.294-2.063A4.997 4.997 0 0 0 8 9Z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-					</div>
-					<div class=" self-center">{$i18n.t("Account")}</div>
-				</button>
-			</div>
+		<div class="flex flex-col md:flex-col w-full px-4 py-2 md:space-x-4">
 			<div class="flex-1 md:mt-3 md:min-h-[10rem]">
-				{#if selectedTab === "general"}
-					<General
-						{getModels}
-						{saveSettings}
-						on:save={() => {
-							toast.success($i18n.t("Settings saved successfully!"));
-						}}
-					/>
-				{:else if selectedTab === "personalization"}
-					<Personalization
-						{saveSettings}
-						on:save={() => {
-							toast.success($i18n.t("Settings saved successfully!"));
-						}}
-					/>
-				{:else if selectedTab === "audio"}
-					<Audio
-						{saveSettings}
-						on:save={() => {
-							toast.success($i18n.t("Settings saved successfully!"));
-						}}
-					/>
-				{:else if selectedTab === "images"}
-					<Images
-						{saveSettings}
-						on:save={() => {
-							toast.success($i18n.t("Settings saved successfully!"));
-						}}
-					/>
-				{:else if selectedTab === "chats"}
-					<Chats {saveSettings} />
-				{:else if selectedTab === "account"}
-					<Account
-						saveHandler={() => {
-							toast.success($i18n.t("Settings saved successfully!"));
-						}}
-					/>
-				{/if}
+				<UserEdit saveHandler={() => {
+					toast.success($i18n.t("Settings saved successfully!"));
+					show = false;
+				}}/>
 			</div>
 		</div>
 	</div>
