@@ -537,7 +537,7 @@
 				localStorage.token,
 				{
 					source: model.source,
-          model: model.id + "/" + (fileFlag ? model.imagemodel : model.textmodel),
+          model: fileFlag ? model.imagemodel : model.textmodel,
           duration: videodura,
           messages: send_message,
           size: videosize

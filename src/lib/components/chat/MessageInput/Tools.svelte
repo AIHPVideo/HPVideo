@@ -17,10 +17,8 @@
   let modelObj: any = [];
 
   $: if (selectedModel && selectedModel.length > 0) {
-    console.log("===============1==================")
     if (modelObj.length > 0) {
       if (modelObj[0].id != selectedModel[0]) {
-        console.log("===============2==================", modelObj[0].id, selectedModel[0]);
         modelObj = $models.filter((item) => selectedModel.includes(item.id));
         if (modelObj.length > 0) {
           videodura = modelObj[0].duration[1];
@@ -28,7 +26,6 @@
         }
       }
     } else {
-      console.log("===============3==================")
       modelObj = $models.filter((item) => selectedModel.includes(item.id));
       if (modelObj.length > 0) {
         videodura = modelObj[0].duration[1];

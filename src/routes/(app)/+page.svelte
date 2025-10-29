@@ -519,7 +519,7 @@
         localStorage.token,
         {
           source: model.source,
-          model: model.id + "/" + (fileFlag ? model.imagemodel : model.textmodel),
+          model: fileFlag ? model.imagemodel : model.textmodel,
           duration: videodura,
           messages: send_message,
           size: videosize
@@ -682,21 +682,6 @@
 
       if (model) {
         await sendPromptDeOpenAI(model, responseMessage.id, _chatId, false);
-
-        // if (model?.external) {
-        // 	await sendPromptOpenAI(
-        // model,
-        // history.messages[responseMessage.parentId].content,
-        // responseMessage.id,
-        // _chatId
-        // 	);
-        // } else
-        // 	await sendPromptOllama(
-        // 		model,
-        // 		history.messages[responseMessage.parentId].content,
-        // 		responseMessage.id,
-        // 		_chatId
-        // 	);
       }
     } else {
       console.error($i18n.t(`Model {{modelId}} not found`, {}));

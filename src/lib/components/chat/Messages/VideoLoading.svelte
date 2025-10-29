@@ -2,7 +2,27 @@
 	import { getContext } from 'svelte';
 	import { mobile } from "$lib/stores";
 	const i18n = getContext('i18n');
-	export let aspectRatio = '16/9';
+	export let videosize = '16/9';
+	let aspectRatio = '16/9';
+
+	$: if(videosize) {
+		if (videosize.includes('*')) {
+			if (Number(videosize.split('*')[0]) > Number(videosize.split('*')[1])) {
+				aspectRatio = '16/9'
+			} else {
+				aspectRatio = '9/16'
+			}
+		}else if (videosize.includes(':')) {
+			if (Number(videosize.split(':')[0]) > Number(videosize.split(':')[1])) {
+				aspectRatio = '16/9'
+			} else {
+				aspectRatio = '9/16'
+			}
+		} else {
+			aspectRatio = '16/9'
+		}
+	}
+
 </script>
 
 <div class="w-full mt-3 mb-4">

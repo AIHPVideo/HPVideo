@@ -20,11 +20,19 @@ class WaveApi:
 			"Content-Type": "application/json"
 		}
 		last_message = param.messages[-1]
-		data = {
-			"duration": param.duration,
-			"prompt": last_message.get("content"),
-			"size": param.size
-		}
+		if param.source == 'pixverse':
+			data = {
+				"duration": param.duration,
+				"prompt": last_message.get("content"),
+				"aspect_ratio": param.size,
+				"resolution": "720p"
+			}
+		else:
+			data = {
+				"duration": param.duration,
+				"prompt": last_message.get("content"),
+				"size": param.size
+			}
 		if param.image is not None and param.image.strip() != "":
 			data["image"] = param.image
 

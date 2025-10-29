@@ -20,7 +20,6 @@
 	import {
 		approximateToHumanReadable,
 		extractSentences,
-		revertSanitizedResponseContent,
 		sanitizeResponseContent
 	} from '$lib/utils';
 	import { WEBUI_BASE_URL } from '$lib/constants';
@@ -29,7 +28,6 @@
 	import ProfileImage from './ProfileImage.svelte';
 	import VideoGen from './VideoGen.svelte';
 	import Replying from './Replying.svelte';
-	import Skeleton from './Skeleton.svelte';
 	import Reconnecting from './Reconnecting.svelte'
 	import Image from '$lib/components/common/Image.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
@@ -552,13 +550,13 @@
 									</div>
 								</div>
 							{:else if message.content === '' && !message?.done}
-								<VideoLoading/>
+								<VideoLoading bind:videosize={message.size}/>
 							{:else}
 								{#each tokens as token, tokenIdx}
 									{#if token.raw == 'loading'}
-										<VideoLoading/>
+										<VideoLoading bind:videosize={message.size}/>
 									{:else if token.raw == 'failed'}
-										<VideoLoading/>
+										<VideoLoading bind:videosize={message.size}/>
 									{:else}
 										<VideoPlay bind:videourl={token.raw}/>
 									{/if}

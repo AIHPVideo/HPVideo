@@ -13,6 +13,7 @@ router = APIRouter()
 async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
   def event_generator():
     result = WaveApiInstance.create(param)
+    print("=================video-create======================", result)
     if result is not None and result.get('code') == 200:
       requestId = result['data']['id']
       timeout = 0
