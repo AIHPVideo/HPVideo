@@ -558,7 +558,7 @@
 									{:else if token.raw == 'failed'}
 										<VideoLoading bind:videosize={message.size}/>
 									{:else}
-										<VideoPlay bind:videourl={token.raw}/>
+										<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
 									{/if}
 								{/each}
 								{#if message?.error === true}
