@@ -368,11 +368,7 @@
 					text = p.replaceAll('{{CLIPBOARD}}', clipboardText);
 				}
 
-				if (idx == 0) {
-					chatInputPlaceholder = text;
-				} else {
-					prompt = text;
-				}
+				prompt = text;
 				
 				await tick();
 

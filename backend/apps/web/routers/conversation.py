@@ -44,7 +44,6 @@ async def conversationRefresh(conversation_req: ConversationRequest, user=Depend
 
         # 获取用户当前可使用条数
         total = ConversationUtils.checkTotal(userrole, modelinfo.type, vipStatuss)
-
         print("==========可用会话总数==========:", total)
 
         # 获取用户的聊天次数

@@ -4,7 +4,9 @@ import type { ParsedEvent } from 'eventsource-parser';
 type TextStreamUpdate = {
 	done: boolean;
 	value: string;
-	status?: string
+	status?: string;
+	limit?: any;
+	createId?: string;
 	error?: any;
 };
 
@@ -45,9 +47,8 @@ async function* openAIStreamToIterator(
 
 		try {
 			const parsedData = JSON.parse(data);
-
 			if (parsedData.success) {
-				yield { done: false, value: parsedData.videos, status: parsedData.status };
+				yield { done: false, value: parsedData.videos, limit: parsedData.limit, createId: parsedData.createId, status: parsedData.status };
 			} else {
 				yield { done: true, value: '', error: "error" };
 				break;
@@ -69,7 +70,10 @@ async function* streamLargeDeltasAsRandomChunks(
 			return;
 		}
 		let content = textStreamUpdate.value;
-		yield { done: false, value: content };
+		let status = textStreamUpdate.status;
+		let limit = textStreamUpdate.limit;
+		let createId = textStreamUpdate.createId;
+		yield { done: false, value: content, status: status, limit: limit, createId: createId };
 		continue;
 	}
 }

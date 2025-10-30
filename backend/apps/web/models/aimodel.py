@@ -4,6 +4,7 @@ from typing import Optional
 class AiModelReq(BaseModel):
     project: str
     source: str
+    permodel: str
     model: str
     duration: int
     messages: object

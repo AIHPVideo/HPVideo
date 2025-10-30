@@ -14,12 +14,9 @@
 	const dispatch = createEventDispatcher();
 
 	import { config, settings, models, theme, user, showPriceModal, showSidebar, showWalletView } from '$lib/stores';
-
-	import { synthesizeOpenAISpeech } from '$lib/apis/audio';
 	import { imageGenerations } from '$lib/apis/images';
 	import {
 		approximateToHumanReadable,
-		extractSentences,
 		sanitizeResponseContent
 	} from '$lib/utils';
 	import { WEBUI_BASE_URL } from '$lib/constants';
@@ -27,13 +24,13 @@
 	import Name from './Name.svelte';
 	import ProfileImage from './ProfileImage.svelte';
 	import VideoGen from './VideoGen.svelte';
-	import Replying from './Replying.svelte';
 	import Reconnecting from './Reconnecting.svelte'
 	import Image from '$lib/components/common/Image.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import RateComment from './RateComment.svelte';
 	import CitationsModal from '$lib/components/chat/Messages/CitationsModal.svelte';
   import VideoLoading from './VideoLoading.svelte';
+	import VideoError from './VideoError.svelte';
   import VideoPlay from './VideoPlay.svelte';
 
 	export let modelfiles = [];
@@ -60,19 +57,13 @@
 	let edit = false;
 	let editedContent = '';
 	let editTextAreaElement: HTMLTextAreaElement;
-	let tooltipInstance = null;
-
-	let sentencesAudio = {};
-	let speaking = null;
-	let speakingIdx = null;
-
-	let loadingSpeech = false;
+	let tooltipInstance: any = null;
 	let generatingImage = false;
 
 	let showRateComment = false;
 	let showCitationModal = false;
 
-	let selectedCitation = null;
+	let selectedCitation: any = null;
 
 	$: tokens = thinkAnalysis((message?.think_content??'') + message?.content);
 
@@ -189,119 +180,6 @@
 		}
 	};
 
-	const playAudio = (idx) => {
-		return new Promise((res) => {
-			speakingIdx = idx;
-			const audio = sentencesAudio[idx];
-			audio.play();
-			audio.onended = async (e) => {
-				await new Promise((r) => setTimeout(r, 300));
-
-				if (Object.keys(sentencesAudio).length - 1 === idx) {
-					speaking = null;
-
-					if ($settings.conversationMode) {
-						document.getElementById('voice-input-button')?.click();
-					}
-				}
-
-				res(e);
-			};
-		});
-	};
-
-	const toggleSpeakMessage = async () => {
-		if (speaking) {
-			try {
-				speechSynthesis.cancel();
-
-				sentencesAudio[speakingIdx].pause();
-				sentencesAudio[speakingIdx].currentTime = 0;
-			} catch {}
-
-			speaking = null;
-			speakingIdx = null;
-		} else {
-			speaking = true;
-
-			if ($settings?.audio?.TTSEngine === 'openai') {
-				loadingSpeech = true;
-
-				const sentences = extractSentences(message.content).reduce((mergedTexts, currentText) => {
-					const lastIndex = mergedTexts.length - 1;
-					if (lastIndex >= 0) {
-						const previousText = mergedTexts[lastIndex];
-						const wordCount = previousText.split(/\s+/).length;
-						if (wordCount < 2) {
-							mergedTexts[lastIndex] = previousText + ' ' + currentText;
-						} else {
-							mergedTexts.push(currentText);
-						}
-					} else {
-						mergedTexts.push(currentText);
-					}
-					return mergedTexts;
-				}, []);
-
-				console.log(sentences);
-
-				sentencesAudio = sentences.reduce((a, e, i, arr) => {
-					a[i] = null;
-					return a;
-				}, {});
-
-				let lastPlayedAudioPromise = Promise.resolve(); // Initialize a promise that resolves immediately
-
-				for (const [idx, sentence] of sentences.entries()) {
-					const res = await synthesizeOpenAISpeech(
-						localStorage.token,
-						$settings?.audio?.speaker,
-						sentence,
-						$settings?.audio?.model
-					).catch((error) => {
-						toast.error(error);
-
-						speaking = null;
-						loadingSpeech = false;
-
-						return null;
-					});
-
-					if (res) {
-						const blob = await res.blob();
-						const blobUrl = URL.createObjectURL(blob);
-						const audio = new Audio(blobUrl);
-						sentencesAudio[idx] = audio;
-						loadingSpeech = false;
-						lastPlayedAudioPromise = lastPlayedAudioPromise.then(() => playAudio(idx));
-					}
-				}
-			} else {
-				let voices = [];
-				const getVoicesLoop = setInterval(async () => {
-					voices = await speechSynthesis.getVoices();
-					if (voices.length > 0) {
-						clearInterval(getVoicesLoop);
-
-						const voice =
-							voices?.filter((v) => v.name === $settings?.audio?.speaker)?.at(0) ?? undefined;
-
-						const speak = new SpeechSynthesisUtterance(message.content);
-
-						speak.onend = () => {
-							speaking = null;
-							if ($settings.conversationMode) {
-								document.getElementById('voice-input-button')?.click();
-							}
-						};
-						speak.voice = voice;
-						speechSynthesis.speak(speak);
-					}
-				}, 100);
-			}
-		}
-	};
-
 	const editMessageHandler = async () => {
 		edit = true;
 		editedContent = message.content;
@@ -376,32 +254,6 @@
 		}
 	}
 
-	let webFlag = true;
-	$: webShow = webFlag;
-
-	// 隐藏web搜索
-	const handleWebHidden = () => {
-		webFlag = !webFlag;
-	}
-
-	let thinkHiden = false;
-
-	function highlightedText(content: string, keyword: string) {
-		let keywords = keyword.split("/");
-		if (content.length > 150) {
-			content = content.substring(0, 150);
-		}
-		keywords.forEach((item) => {
-			// 匹配空格或标点符号的正则表达式
-			const regexText = /^[\s.,!?;:'"()[\]{}<>]+$/;
-			if (!regexText.test(item)) {
-				const regex = new RegExp(item, "gi");
-				content = content.replace(regex, match => `<span style="color: rgba(184, 142, 86, 1);">${match}</span>`);
-			}
-		})
-    return content;
-  }
-
 	// 监听主题变化
 	let currentTheme = $theme;
 	$: {
@@ -409,10 +261,6 @@
 	}
 
 	let visibleIndices:any = [];
-	function handleImageLoadFailed({ detail }) {
-        const { index } = detail;
-        visibleIndices[index] = false;
-    }
 
 </script>
 
@@ -437,15 +285,7 @@
 					{message.model ? ` ${formatModelName(message.model)}` : ''}
 				{/if}
 				{#if message.content == '' && !message?.done}
-					{#if message?.toolflag}
-						{#if message?.parseInfo?.web|| message?.parseInfo?.videos || message?.parseInfo?.content}
-							<Replying/>
-						{:else}
-							<VideoGen/>
-						{/if}	
-					{:else}
-						<VideoGen/>
-					{/if}
+					<VideoGen/>
 				{:else}
 					{#if message?.replytime && checkModelImage(message.model)}
 						<span class="text-xs">{ $i18n.t("Last for {{ time }} seconds", {time:(message?.replytime - message?.timestamp) % 60}) }</span>
@@ -553,14 +393,19 @@
 								<VideoLoading bind:videosize={message.size}/>
 							{:else}
 								{#each tokens as token, tokenIdx}
-									{#if token.raw == 'loading'}
-										<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.", {model: formatModelName(message.model)})}</div>
-										<VideoLoading bind:videosize={message.size}/>
-									{:else if token.raw == 'failed'}
-										<div>{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are 8 remaining video generation credits for today.", {model: formatModelName(message.model)})}</div>
-										<VideoLoading bind:videosize={message.size}/>
+									{#if message?.limit?.total - message?.limit?.use < 0}
+										<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The estimated wait time is 1-3 minutes. Your daily video generation credits have been used up.", {model: formatModelName(message.model)})}</div>
 									{:else}
-										<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
+										{#if message.status == 'completed'}
+											<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
+											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
+										{:else if message.status == 'failed'}
+											<div>{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
+											<VideoError bind:videosize={message.size}/>
+										{:else}
+											<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
+											<VideoLoading bind:videosize={message.size}/>
+										{/if}
 									{/if}
 								{/each}
 								{#if message?.error === true}
@@ -706,7 +551,7 @@
 
 									{#if message.done}
 										<div class="flex justify-start min-w-fit mr-4">
-											{#if !readOnly}
+											<!-- {#if !readOnly}
 												<Tooltip content={$i18n.t('Edit')} placement="bottom">
 													<button
 														class="{isLastMessage
@@ -732,114 +577,7 @@
 														</svg>
 													</button>
 												</Tooltip>
-											{/if}
-
-											<Tooltip content={$i18n.t('Copy')} placement="bottom">
-												<button
-													class="{isLastMessage
-														? 'visible'
-														: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition copy-response-button"
-													on:click={() => {
-														copyToClipboard(message.content, true);
-													}}
-												>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														fill="none"
-														viewBox="0 0 24 24"
-														stroke-width="2.3"
-														stroke="currentColor"
-														class="w-4 h-4"
-													>
-														<path
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
-														/>
-													</svg>
-												</button>
-											</Tooltip>
-
-											<Tooltip content={$i18n.t('Read Aloud')} placement="bottom">
-												<button
-													id="speak-button-{message.id}"
-													class="{isLastMessage
-														? 'visible'
-														: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition"
-													on:click={() => {
-														if (!loadingSpeech) {
-															toggleSpeakMessage(message);
-														}
-													}}
-												>
-													{#if loadingSpeech}
-														<svg
-															class=" w-4 h-4"
-															fill="currentColor"
-															viewBox="0 0 24 24"
-															xmlns="http://www.w3.org/2000/svg"
-															><style>
-																.spinner_S1WN {
-																	animation: spinner_MGfb 0.8s linear infinite;
-																	animation-delay: -0.8s;
-																}
-																.spinner_Km9P {
-																	animation-delay: -0.65s;
-																}
-																.spinner_JApP {
-																	animation-delay: -0.5s;
-																}
-																@keyframes spinner_MGfb {
-																	93.75%,
-																	100% {
-																		opacity: 0.2;
-																	}
-																}
-															</style><circle class="spinner_S1WN" cx="4" cy="12" r="3" /><circle
-																class="spinner_S1WN spinner_Km9P"
-																cx="12"
-																cy="12"
-																r="3"
-															/><circle
-																class="spinner_S1WN spinner_JApP"
-																cx="20"
-																cy="12"
-																r="3"
-															/></svg
-														>
-													{:else if speaking}
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke-width="2.3"
-															stroke="currentColor"
-															class="w-4 h-4"
-														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z"
-															/>
-														</svg>
-													{:else}
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke-width="2.3"
-															stroke="currentColor"
-															class="w-4 h-4"
-														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
-															/>
-														</svg>
-													{/if}
-												</button>
-											</Tooltip>
+											{/if} -->
 
 											{#if $config.images && !readOnly}
 												<Tooltip content="Generate Image" placement="bottom">
@@ -1009,38 +747,6 @@
 											{/if}
 
 											{#if isLastMessage && !readOnly}
-												<Tooltip content={$i18n.t('Continue Response')} placement="bottom">
-													<button
-														type="button"
-														class="{isLastMessage
-															? 'visible'
-															: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition regenerate-response-button"
-														on:click={() => {
-															continueGeneration();
-														}}
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke-width="2.3"
-															stroke="currentColor"
-															class="w-4 h-4"
-														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-															/>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z"
-															/>
-														</svg>
-													</button>
-												</Tooltip>
-
 												<Tooltip content={$i18n.t('Regenerate')} placement="bottom">
 													<button
 														type="button"

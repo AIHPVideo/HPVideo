@@ -318,28 +318,11 @@
       prompt = "";
       files = [];
 
+      await tick()
       scrollToBottom();
 
       // 代码有调用接口，放到try中可方便捕获异常
       try {
-        // 校验模型已使用次数
-        let modelLimit:any = {}
-        const {passed, data} = await conversationRefresh(localStorage.token, selectedModels[0]);
-        if (passed) {
-          for (const item of selectedModels) {
-            data.forEach((dItem:any) => {
-              if(dItem.model == item) {
-                if (!dItem.passed) {
-                  modelLimit[dItem.model] = dItem.message;
-                }
-              }
-            }) 
-          }
-        }
-
-        // Wait until history/message have been updated
-        await tick();
-
         // Create new chat if only one message in messages
         if (messages.length == 2) {
           if ($settings.saveChatHistory ?? true) {
@@ -365,7 +348,7 @@
         }
 
         // Send prompt
-        await sendPrompt(userPrompt, responseMap, modelLimit);
+        await sendPrompt(userPrompt, responseMap);
 
       } catch (err) {
         const _chatId = JSON.parse(JSON.stringify($chatId));
@@ -387,7 +370,7 @@
     }
   };
 
-  const sendPrompt = async (prompt, responseMap = null, modelLimit = {}, modelId = null, reload = false) => {
+  const sendPrompt = async (prompt, responseMap = null, modelId = null, reload = false) => {
     const _chatId = JSON.parse(JSON.stringify($chatId));
     await Promise.all(
       (modelId ? [modelId] : atSelectedModel !== '' ? [atSelectedModel.id] : Object.keys(responseMap)).map(
@@ -426,17 +409,10 @@
               }
             }
             responseMessage.userContext = userContext;
-
-            // check limits
-            if (modelLimit[model.id]) {
-              await handleLimitError(modelLimit[model.id], responseMessage);
-            } else {  
-              // ai request
-              await sendPromptDeOpenAI(model, responseMessageId, _chatId, reload);
-            }
+            // send a video request
+            await sendPromptDeOpenAI(model, responseMessageId, _chatId, reload);
           } else {
             console.error($i18n.t(`Model {{modelId}} not found`, {}));
-            // toast.error($i18n.t(`Model {{modelId}} not found`, { modelId }));
           }
       })
     );
@@ -514,11 +490,11 @@
                 : message?.raContent ?? message.content,
           }),
       }));
-
       const [res, controller] = await getDeOpenAIChatCompletion(
         localStorage.token,
         {
           source: model.source,
+          permodel: model.id,
           model: fileFlag ? model.imagemodel : model.textmodel,
           duration: videodura,
           messages: send_message,
@@ -537,9 +513,14 @@
         }
         const textStream = await createOpenAITextStream(res.body, true);
         for await (const update of textStream) {
-          let { value, status, done, error } = update;
-
-          responseMessage.status = status;
+          let { value, limit, createId, status, done, error } = update;
+          if (status) {
+            responseMessage.status = status;
+          }
+          if (!done) {
+            responseMessage.limit = limit;
+            responseMessage.createId = createId;
+          } 
           messages = messages;
         
           if (error) {

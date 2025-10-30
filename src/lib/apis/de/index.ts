@@ -11,14 +11,14 @@ export const getDeModels = async (token: string = "") => {
         name: "WAN 2.5",
         source: "alibaba",
         model: "wan-2.5",
-        textmodel: "wan-2.5/text-to-video-fast",
+        textmodel: "wan-2.5/text-to-video",
         imagemodel: "wan-2.5/image-to-video",
         duration: [4, 8, 10],
         size: ["480*832","832*480","720*1280","1280*720","1080*1920","1920*1080"],
         tip: "WAN 2.5",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
+        desc: "Multi-resolution with synchronized audio and video generation",
         modelicon: "/static/icon/qwen.png",
         modelinfo: ""
       },
@@ -33,7 +33,7 @@ export const getDeModels = async (token: string = "") => {
         tip: "SORA 2",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
+        desc: "Physically accurate, synchronized audio and video",
         modelicon: "/static/icon/gpt3.png",
         modelinfo: ""
       },
@@ -48,8 +48,8 @@ export const getDeModels = async (token: string = "") => {
         tip: "OVI",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
-        modelicon: "/static/icon/gpt3.png",
+        desc: "Strong comprehension, generates precise videos",
+        modelicon: "/static/icon/gemini.png",
         modelinfo: ""
       },
       {
@@ -63,8 +63,8 @@ export const getDeModels = async (token: string = "") => {
         tip: "VEO 3.1",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
-        modelicon: "/static/icon/gpt3.png",
+        desc: "High-quality long videos with smooth visual coherence",
+        modelicon: "/static/icon/gemini.png",
         modelinfo: ""
       },
       {
@@ -78,8 +78,8 @@ export const getDeModels = async (token: string = "") => {
         tip: "LTX 2 PRO",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
-        modelicon: "/static/icon/gpt3.png",
+        desc: "Realistic details and smooth motion",
+        modelicon: "/static/icon/ltx.png",
         modelinfo: ""
       },
       {
@@ -93,8 +93,8 @@ export const getDeModels = async (token: string = "") => {
         tip: "HAILUO 02",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
-        modelicon: "/static/icon/gpt3.png",
+        desc: "Realistic rendering of dynamic scenes",
+        modelicon: "/static/icon/hailuo.png",
         modelinfo: ""
       },
       {
@@ -108,8 +108,8 @@ export const getDeModels = async (token: string = "") => {
         tip: "SEEDANCE V1",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
-        modelicon: "/static/icon/gpt3.png",
+        desc: "Diverse styles of dance videos",
+        modelicon: "/static/icon/doubao.png",
         modelinfo: ""
       },
       {
@@ -123,8 +123,8 @@ export const getDeModels = async (token: string = "") => {
         tip: "KLING V2.0",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
-        modelicon: "/static/icon/gpt3.png",
+        desc: "Accurate physical motion simulation",
+        modelicon: "/static/icon/kling.png",
         modelinfo: ""
       },
       {
@@ -138,8 +138,8 @@ export const getDeModels = async (token: string = "") => {
         tip: "PIXVERSE V4.5",
         support: "image",
         type: 1,
-        desc: "Suitable for reasoning and writing",
-        modelicon: "/static/icon/gpt3.png",
+        desc: "Fluid motion and lifelike details",
+        modelicon: "/static/icon/pixverse.png",
         modelinfo: ""
       }
     ],

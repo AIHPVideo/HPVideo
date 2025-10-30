@@ -5,21 +5,20 @@
   import {
     WEBUI_NAME,
     chatId,
-    showArchivedChats,
     showSidebar,
     user,
-    initPageFlag
+    initPageFlag,
+    showSettings
   } from "$lib/stores";
 
   import ShareChatModal from "../chat/ShareChatModal.svelte";
   import ModelSelector from "../chat/ModelSelector.svelte";
   import Tooltip from "../common/Tooltip.svelte";
   import Menu from "./Navbar/Menu.svelte";
-  import UserMenu from "./Sidebar/UserMenu.svelte";
   import MenuLines from "../icons/MenuLines.svelte";
-  import { generateInitialsImage } from '$lib/utils';
+  import { generateInitialsImage } from "$lib/utils";
 
-  import { getLanguages } from '$lib/i18n';
+  import { getLanguages } from "$lib/i18n";
   const i18n = getContext("i18n");
 
   export let initNewChat: Function;
@@ -41,34 +40,32 @@
     // 检查是否为移动端设备
     isMobile = /android|iPad|iPhone|iPod|IEMobile|Opera Mini/i.test(userAgent);
     languages = await getLanguages();
-	});
+  });
 
-
-	const demo = async () => {
-
+  const demo = async () => {
     // 在调用服务端初始化请求时需要传入该MetaInfo值
     const MetaInfo = window.getMetaInfo();
 
     console.log("MetaInfo:", MetaInfo);
-    toast.success(JSON.stringify(MetaInfo))
-    
+    toast.success(JSON.stringify(MetaInfo));
+
     // 接下来您进行调用服务端初始化请求获取TransactionUrl
-    const TransactionUrl = ''; // 此处值应为调用服务端初始化接口返回的TransactionUrl
+    const TransactionUrl = ""; // 此处值应为调用服务端初始化接口返回的TransactionUrl
 
     // // 接下来直接跳转TransactionUrl即可开始服务
     // window.location.href = TransactionUrl;
-
-}
-
+  };
 </script>
-
-
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
 <nav id="nav" class=" sticky py-2.5 top-0 flex flex-row justify-center z-30">
   <div class=" flex max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
     <div class="flex items-center w-full max-w-full">
-      <div class="{$showSidebar ? 'md:hidden' : ''} mr-3 self-start flex flex-none items-center text-gray-600 dark:text-gray-400">
+      <div
+        class="{$showSidebar
+          ? 'md:hidden'
+          : ''} mr-3 self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
+      >
         <button
           id="sidebar-toggle-button"
           class="cursor-pointer px-2 py-2 flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition"
@@ -126,7 +123,7 @@
             </button>
           </Menu>
         {/if}
-        
+
         <Tooltip content={$i18n.t("New Chat")}>
           <button
             id="new-chat-button"
@@ -155,29 +152,49 @@
           </button>
         </Tooltip>
         {#if $initPageFlag}
-          <UserMenu
+          <button
+            class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+            aria-label="User Menu"
+            on:click={ async() => {await showSettings.set(true);}}
+          >
+            <div class=" self-center">
+              <div class="size-8 object-cover rounded-full bg-primary">
+                <img
+                  src={$user.profile_image_url == ""
+                    ? generateInitialsImage($user.name)
+                    : $user.profile_image_url}
+                  alt="profile"
+                  class=" rounded-full size-8 object-cover"
+                />
+              </div>
+            </div>
+          </button>
+          <!-- <UserMenu
             className="max-w-[200px]"
             role={$user?.role}
             on:show={(e) => {
               if (e.detail === "archived-chat") {
                 showArchivedChats.set(true);
               }
-            }}>
-              <button
-                class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-100 dark:hover:bg-gray-850 transition"
-                aria-label="User Menu"
-              >
-                <div class=" self-center">
-                  <div class="size-8 object-cover rounded-full bg-primary">
-                    <img
-                      src={ $user.profile_image_url=="" ? generateInitialsImage($user.name) : $user.profile_image_url }
-                      alt="profile"
-                      class=" rounded-full size-8 object-cover"
-                    />
-                  </div>
+            }}
+          >
+            <button
+              class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+              aria-label="User Menu"
+            >
+              <div class=" self-center">
+                <div class="size-8 object-cover rounded-full bg-primary">
+                  <img
+                    src={$user.profile_image_url == ""
+                      ? generateInitialsImage($user.name)
+                      : $user.profile_image_url}
+                    alt="profile"
+                    class=" rounded-full size-8 object-cover"
+                  />
                 </div>
-              </button>
-          </UserMenu>
+              </div>
+            </button>
+          </UserMenu> -->
         {/if}
       </div>
     </div>

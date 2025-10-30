@@ -1,36 +1,38 @@
-from peewee import Model, CharField, IntegerField, BigIntegerField # 导入Peewee中的Model、CharField和DateTimeField
-from apps.web.internal.db import DB  # 导入数据库实例DB
-from pydantic import BaseModel  # 导入Pydantic中的BaseModel
-from typing import Optional, List  # 导入类型提示
-from playhouse.shortcuts import model_to_dict  # 导入Peewee中的model_to_dict方法
+from peewee import Model, CharField, IntegerField, BigIntegerField
+from apps.web.internal.db import DB
+from pydantic import BaseModel
+from typing import Optional, List
+from playhouse.shortcuts import model_to_dict
 
-# 定义ModelLimit模型
+# Define the ModelLimit model
 class ModelLimit(Model):
-    id = IntegerField(primary_key=True, unique=True)  # 主键
-    user_tier = CharField()  # 用户类型
-    model_type = CharField() # 模型类型
-    vip = CharField() # VIP类型
-    limits = IntegerField()  # 访问次数
-    created_at = BigIntegerField()  # 定义默认值为当前时间的日期时间字段created_at
+    id = IntegerField(primary_key=True, unique=True)  # Primary
+    user_tier = CharField()  # User Type
+    model_type = CharField() # Model Type
+    vip = CharField() # VIP Type
+    limits = IntegerField()  # Daily Count Limit
+    per = IntegerField() # Quantity Consumed Per Time
+    created_at = BigIntegerField()  # Create Time
 
     class Meta:
-        database = DB  # 指定数据库
-        table_name = 'model_limit'  # 指定表名
+        database = DB  # Specify the Database
+        table_name = 'model_limit'  # Specify the Table Name
 
-# 定义Pydantic模型EmailCodeModel
+# Define the Pydantic model ModelLimitModel
 class ModelLimitModel(BaseModel):
-    id: int  # 主键
-    user_tier: str  # 用户类型
-    model_type: str # 模型类型
-    vip: str # VIP类型
-    limits: int  # 访问次数
-    created_at: int  # 定义created_at字段，类型为日期时间
+    id: int  # Primary
+    user_tier: str  # User Type
+    model_type: str # Model Type
+    vip: str # VIP Type 
+    limits: int  # Daily Count Limit
+    per: int # Quantity Consumed Per Time
+    created_at: int  # Create Time
 
-# 定义ModelLimitTable类
+# Define the ModelLimitTable class
 class ModelLimitTable:
     def __init__(self, db):
-        self.db = db  # 初始化数据库实例
-        self.db.create_tables([ModelLimit])  # 创建EmailCodeTable表
+        self.db = db  # Initialize the database instance
+        self.db.create_tables([ModelLimit])  # Create the ModelLimit table
 
     def get_info_by_user_vip(self, user_tier: str, vip: str, type: str) -> Optional[ModelLimitModel]:
         try:
@@ -49,6 +51,6 @@ class ModelLimitTable:
             return None
 
 
-# 实例化ModelLimitTable类
+# Instantiate the ModelLimitTable class
 ModelLimitInstance = ModelLimitTable(DB)
 

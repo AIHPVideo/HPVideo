@@ -316,30 +316,10 @@
 			prompt = "";
 			files = [];
 
+			await tick();
 			scrollToBottom();
 
 			try {
-				// 校验模型已使用次数
-				let modelLimit: any = {};
-				const { passed, data } = await conversationRefresh(
-					localStorage.token,
-					selectedModels[0]
-				);
-				if (passed) {
-					for (const item of selectedModels) {
-						data.forEach((dItem: any) => {
-							if (dItem.model == item) {
-								if (!dItem.passed) {
-									modelLimit[dItem.model] = dItem.message;
-								}
-							}
-						});
-					}
-				}
-
-				// 等待 history/message 更新完成
-				await tick();
-
 				// 如果 messages 中只有一条消息，则创建新的聊天
 				if (messages.length == 2) {
 					if ($settings.saveChatHistory ?? true) {
@@ -365,7 +345,7 @@
 				}
 
 				// 发送提示
-				await sendPrompt(userPrompt, responseMap, modelLimit);
+				await sendPrompt(userPrompt, responseMap);
 			} catch (err) {
 				const _chatId = JSON.parse(JSON.stringify($chatId));
 				Object.keys(responseMap).map(async (modelId) => {
@@ -388,9 +368,8 @@
 
 	// 3\2. 继续聊天会话
 	const sendPrompt = async (
-		prompt,
-		responseMap,
-		modelLimit,
+		prompt: string,
+		responseMap: any,
 		modelId = null,
 		reload = false
 	) => {
@@ -438,13 +417,8 @@
 					}
 					responseMessage.userContext = userContext;
 
-					// 校验是否超过次数
-					if (modelLimit[model.id]) {
-						await handleLimitError(modelLimit[model.id], responseMessage);
-					} else {
-						// 文本搜索
-						await sendPromptDeOpenAI(model, responseMessageId, _chatId, reload);
-					}
+					// send a video request
+					await sendPromptDeOpenAI(model, responseMessageId, _chatId, reload);
 				} else {
 					console.error($i18n.t(`Model {{modelId}} not found`, {}));
 				}
@@ -537,6 +511,7 @@
 				localStorage.token,
 				{
 					source: model.source,
+					permodel: model.id,
           model: fileFlag ? model.imagemodel : model.textmodel,
           duration: videodura,
           messages: send_message,
@@ -557,9 +532,14 @@
         }
         const textStream = await createOpenAITextStream(res.body, true);
         for await (const update of textStream) {
-          let { value, status, done, error } = update;
-
-          responseMessage.status = status;
+          let { value, limit, createId, status, done, error } = update;
+					if (status) {
+            responseMessage.status = status;
+          }
+					if (!done) {
+            responseMessage.limit = limit;
+						responseMessage.createId = createId;
+          }
           messages = messages;
         
           if (error) {
