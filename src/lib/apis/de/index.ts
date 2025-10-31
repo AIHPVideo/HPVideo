@@ -108,7 +108,7 @@ export const getDeModels = async (token: string = "") => {
         tip: "SEEDANCE V1",
         support: "image",
         type: 1,
-        desc: "Diverse styles of dance videos",
+        desc: "Multi-shot narrative, stable and smooth visuals",
         modelicon: "/static/icon/doubao.png",
         modelinfo: ""
       },
