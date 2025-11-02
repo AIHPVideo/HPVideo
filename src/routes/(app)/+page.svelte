@@ -512,12 +512,12 @@
         }
         const textStream = await createOpenAITextStream(res.body, true);
 
-        let errornum = 0;
+        // let errornum = 0;
         for await (const update of textStream) {
-          errornum++;
-          if (errornum > 20) {
-            throw new Error("error");
-          }
+          // errornum++;
+          // if (errornum > 20) {
+          //   throw new Error("error");
+          // }
           let { value, limit, createId, status, done, error } = update;
           if (status) {
             responseMessage.status = status;
