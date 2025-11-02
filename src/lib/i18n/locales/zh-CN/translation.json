@@ -977,5 +977,6 @@
 	"Realistic rendering of dynamic scenes": "动态场景逼真渲染",
 	"Multi-shot narrative, stable and smooth visuals": "多镜头叙事，画面稳定流畅",
 	"Accurate physical motion simulation": "精准物理运动模拟",
-	"Fluid motion and lifelike details": "动态流畅, 细节逼真"
+	"Fluid motion and lifelike details": "动态流畅, 细节逼真",
+  "It seems that you are offline, Please check your network and try generating again": "您似乎已离线，请检查网络后再重新生成"
 }

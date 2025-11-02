@@ -18,6 +18,7 @@
 	export let chatId = '';
 	export let readOnly = false;
 	export let sendPrompt: Function;
+	export let resentVideoResult: Function
 	export let continueGeneration: Function;
 	export let regenerateResponse: Function;
 
@@ -135,60 +136,29 @@
 		await sendPrompt(userPrompt, responseMap, modelLimit);
 	};
 
-	const resentMessage = async (messageId, reload) => {
+	const resentMessage = async (messageId) => {
 		let userMessage = {
 			...history.messages[messageId]
 		};
-		
-		if (toolTypes.includes(userMessage?.tooltype)) {
-			userMessage = {
-				...userMessage,
-				parseInfo: ""
-			};
-		}
 
 		let userPrompt = userMessage?.content;
-
-		// 校验模型是否是思考模型，思考模型重新回复
-		let currModel = $models.filter(item => item.id == userMessage?.models[0]);
-		if (currModel[0]?.think) {
-			reload = false;
-		}
 		
 		// Create Simulate ResopnseMessage
-		let responseMap: any = {};
+		let currentMessage: any = {};
 		history.messages[messageId].childrenIds.forEach((responseMessageId: string) => {
 			let responseMessage = history.messages[responseMessageId];
-			responseMessage = {
+			currentMessage = {
 				...responseMessage,
-				parseInfo: "",
+				status: "",
+				content: "",
 				error: false,
-				content: reload  ? responseMessage.content : "",
-				done: false,
-				reload: reload
+				errmsg: "",
+				done: false
 			}
-			history.messages[responseMessageId] = responseMessage;
-
-			responseMap[responseMessage?.model] = responseMessage;
 		});
 
-		// check model limit
-    let modelLimit = {}
-		const {passed, data} = await conversationRefresh(localStorage.token, userMessage?.models[0]);
-    if (passed) {
-      for (const item of selectedModels) {
-        data.forEach((dItem:any) => {
-          if(dItem.model == item) {
-            if (!dItem.passed) {
-              modelLimit[dItem.model] = dItem.message;
-            }
-          }
-      	}) 
-    	}
-    }
-
 		await tick();
-		await sendPrompt(userPrompt, responseMap, modelLimit, userMessage?.models[0], reload);
+		await resentVideoResult(userMessage?.models[0], userPrompt, currentMessage, chatId);
 	};
 
 	const updateChatMessages = async () => {

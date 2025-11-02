@@ -21,15 +21,25 @@
       if (modelObj[0].id != selectedModel[0]) {
         modelObj = $models.filter((item) => selectedModel.includes(item.id));
         if (modelObj.length > 0) {
-          videodura = modelObj[0].duration[1];
-          videosize = modelObj[0].size.at(-1);
+          videodura = modelObj[0].duration[0];
+          videosize = modelObj[0].size[0];
+          if (modelObj[0].duration.length > 2) {
+            seldura = ["Short", "Medium", "Long"]
+          } else {
+            seldura = ["Short", "Long"]
+          }
         }
       }
     } else {
       modelObj = $models.filter((item) => selectedModel.includes(item.id));
       if (modelObj.length > 0) {
-        videodura = modelObj[0].duration[1];
-        videosize = modelObj[0].size.at(-1);
+        videodura = modelObj[0].duration[0];
+        videosize = modelObj[0].size[0];
+        if (modelObj[0].duration.length > 2) {
+          seldura = ["Short", "Medium", "Long"]
+        } else {
+          seldura = ["Short", "Long"]
+        }
       }
     }
     

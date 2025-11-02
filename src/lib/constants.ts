@@ -10,7 +10,7 @@ export const WEBUI_BASE_URL = browser
 
 export const WEBUI_API_BASE_URL = `${WEBUI_BASE_URL}/api/v1`;
 export const DEGPT_API_BASE_URL = 'https://www.degpt.ai/api/v1';
-export const DEGPT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxY2M5ZjhhOWZjMjE2MDNhZWMxNGIxNzBiMGZiNDM0IiwiZXhwIjoxNzY5MDQ0ODE5fQ.fU12478h48wt5Pec6yD5DX4-ALhu1jFAP708Q7qv844';
+export const DEGPT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjB4ZGU4Nzg0MDExZTFDODY0RTM3Njk3ZmFFMjhhNkUxOWFlNEU2REQ5ZCIsImV4cCI6MTc2OTY3ODk0Mn0.yFJYgjMRU5V0t7pZeV4GM6PLZfHMcpv3if1d-k1bdEc';
 
 export const LITELLM_API_BASE_URL = `${WEBUI_BASE_URL}/litellm/api`;
 export const OPENAI_API_BASE_URL = `${WEBUI_BASE_URL}/openai/api`;

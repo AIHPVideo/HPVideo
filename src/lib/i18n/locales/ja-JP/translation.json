@@ -978,5 +978,6 @@
   "Realistic rendering of dynamic scenes": "動的シーンのリアルなレンダリング",
   "Multi-shot narrative, stable and smooth visuals": "マルチシーン叙事、安定かつ滑らかな映像シーケンス",
   "Accurate physical motion simulation": "精密な物理運動シミュレーション",
-  "Fluid motion and lifelike details": "流動的な動き、生き生きとした細部"
+  "Fluid motion and lifelike details": "流動的な動き、生き生きとした細部",
+  "It seems that you are offline, Please check your network and try generating again": "オフラインのようです, ネットワークを確認して、もう一度生成してください"
 }

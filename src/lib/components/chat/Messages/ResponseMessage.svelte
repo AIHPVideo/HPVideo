@@ -24,7 +24,6 @@
 	import Name from './Name.svelte';
 	import ProfileImage from './ProfileImage.svelte';
 	import VideoGen from './VideoGen.svelte';
-	import Reconnecting from './Reconnecting.svelte'
 	import Image from '$lib/components/common/Image.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import RateComment from './RateComment.svelte';
@@ -41,7 +40,7 @@
 
 	export let readOnly = false;
 
-	// 重新获取会话
+	// Regain the session
 	export let resentMessage: Function;
 
 	export let updateChatMessages: Function;
@@ -65,29 +64,7 @@
 
 	let selectedCitation: any = null;
 
-	$: tokens = thinkAnalysis((message?.think_content??'') + message?.content);
-
-	function thinkAnalysis(content: any) {
-		if (content.startsWith("<think>")) {
-			let firstIndex = content.indexOf('</think>');
-			if (firstIndex == -1) {
-				return [{type: "thinking", raw: content.replace("<think>", "")}];	
-			} else {
-				let token = content.split('</think>');
-				let thinkObj = {type: "thinking", raw: token[0].replace("<think>", "")};
-				if (token.length > 1) {
-					return [
-						thinkObj,
-						...marked.lexer(sanitizeResponseContent(token[1]))
-					]
-				} else {
-					return [thinkObj];
-				}	
-			}
-		} else {
-			return marked.lexer(sanitizeResponseContent(content));
-		}
-	}
+	$: tokens = marked.lexer(sanitizeResponseContent("" + message?.content));
 
 	const renderer = new marked.Renderer();
 
@@ -180,15 +157,9 @@
 		}
 	};
 
-	const editMessageHandler = async () => {
-		edit = true;
-		editedContent = message.content;
-
-		await tick();
-
-		editTextAreaElement.style.height = '';
-		editTextAreaElement.style.height = `${editTextAreaElement.scrollHeight}px`;
-	};
+	const resentMessageHandler = async () => {
+		await resentMessage(message?.parentId);
+	}
 
 	const editMessageConfirmHandler = async () => {
 		if (editedContent === '') {
@@ -260,7 +231,8 @@
 		currentTheme = ($theme === "system" || $theme === "light") ? 'light' : 'dark';
 	}
 
-	let visibleIndices:any = [];
+	let reqeuestErr = "Video Generation Failed";
+	let internetErr = "It seems that you are offline, Please check your network and try generating again";
 
 </script>
 
@@ -389,6 +361,11 @@
 										{/if}
 									</div>
 								</div>
+							{:else if message?.error === true}
+								{#if message?.limit?.total - message?.limit?.use > 0}
+									<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The estimated wait time is 1-3 minutes. Your daily video generation credits have been used up.", {model: formatModelName(message.model)})}</div>
+								{/if}
+								<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={internetErr} {resentMessageHandler}/>
 							{:else if message.content === '' && !message?.done}
 								<VideoLoading bind:videosize={message.size}/>
 							{:else}
@@ -401,51 +378,13 @@
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
 										{:else if message.status == 'failed'}
 											<div>{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
-											<VideoError bind:videosize={message.size}/>
+											<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
 										{:else}
 											<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
 											<VideoLoading bind:videosize={message.size}/>
 										{/if}
 									{/if}
 								{/each}
-								{#if message?.error === true}
-									<div
-										class="flex mt-2 mb-4 space-x-2 border px-4 py-3 border-red-800 bg-red-800/30 font-medium rounded-lg"
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke-width="1.5"
-											stroke="currentColor"
-											class="size-[1.3rem] self-center"
-											>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-											/>
-										</svg>
-										<div class="w-full inline-block">
-											<!-- 默认错误输出信息 -->
-											<span class="mr-2">{$i18n.t("It seems that you are offline. Please reconnect to send messages.")}</span>
-											{#if isLastMessage}
-												<button class="bg-[#C420F1] text-white flex flex-row float-right px-2 rounded-lg" on:click={() => {
-													resentMessage(message?.parentId, true);
-												}}>
-													<span class="mr-1">{$i18n.t("Reconnect")}</span>
-													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1402 1024" version="1.1" fill="currentColor" class="size-[1rem] self-center">
-														<path d="M56.256426 523.180601a54.884318 54.884318 0 0 1-37.046915-94.675448l189.350896-177.001925a54.884318 54.884318 0 0 1 75.465937 1.372108l181.118249 177.001925a54.884318 54.884318 0 0 1-76.838045 78.210153L244.235214 366.760296 93.30334 508.087414a54.884318 54.884318 0 0 1-37.046914 15.093187zM1166.291751 789.369542a54.884318 54.884318 0 0 1-37.046914-15.093188L938.521833 597.27443a55.337113 55.337113 0 1 1 75.465937-80.954369l150.931873 142.699226 144.071334-141.327118a54.884318 54.884318 0 0 1 76.838045 78.210153L1204.710774 774.276354a54.884318 54.884318 0 0 1-38.419023 15.093188z"/>
-														<path d="M1163.547535 785.253218a54.884318 54.884318 0 0 1-54.884317-54.884318V513.575845c0-222.281487-181.118248-403.399735-403.399736-403.399735a403.399735 403.399735 0 0 0-264.816832 98.791772 54.922737 54.922737 0 0 1-72.721721-82.326476 513.16837 513.16837 0 0 1 850.706924 386.934439v216.793055a54.884318 54.884318 0 0 1-54.884318 54.884318zM705.263482 1024a513.16837 513.16837 0 0 1-513.16837-513.16837V294.038575a54.884318 54.884318 0 0 1 109.768635 0v216.793055c0 222.281487 181.118248 403.399735 403.399735 403.399735a402.027627 402.027627 0 0 0 271.677373-105.652312 54.884318 54.884318 0 0 1 74.093829 80.954369 511.796263 511.796263 0 0 1-345.771202 134.466578z"/>
-													</svg>
-												</button>
-											{/if}
-										</div>
-									</div>
-								{/if}
-								{#if message?.reload === true}
-									<Reconnecting/>	
-								{/if}
 							{/if}
 
 							{#if message.citations}
@@ -551,34 +490,6 @@
 
 									{#if message.done}
 										<div class="flex justify-start min-w-fit mr-4">
-											<!-- {#if !readOnly}
-												<Tooltip content={$i18n.t('Edit')} placement="bottom">
-													<button
-														class="{isLastMessage
-															? 'visible'
-															: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition"
-														on:click={() => {
-															editMessageHandler();
-														}}
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke-width="2.3"
-															stroke="currentColor"
-															class="w-4 h-4"
-														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-															/>
-														</svg>
-													</button>
-												</Tooltip>
-											{/if} -->
-
 											{#if $config.images && !readOnly}
 												<Tooltip content="Generate Image" placement="bottom">
 													<button
@@ -710,7 +621,6 @@
 														>
 													</button>
 												</Tooltip>
-
 												<Tooltip content={$i18n.t('Bad Response')} placement="bottom">
 													<button
 														class="{isLastMessage
@@ -745,34 +655,35 @@
 													</button>
 												</Tooltip>
 											{/if}
-
-											{#if isLastMessage && !readOnly}
-												<Tooltip content={$i18n.t('Regenerate')} placement="bottom">
-													<button
-														type="button"
-														class="{isLastMessage
-															? 'visible'
-															: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition regenerate-response-button"
-														on:click={() => {
-															resentMessage(message?.parentId, false);
-														}}
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke-width="2.3"
-															stroke="currentColor"
-															class="w-4 h-4"
+											{#if message.status == 'failed'}
+												{#if isLastMessage && !readOnly}
+													<Tooltip content={$i18n.t('Regenerate')} placement="bottom">
+														<button
+															type="button"
+															class="{isLastMessage
+																? 'visible'
+																: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition regenerate-response-button"
+															on:click={() => {
+																resentMessage(message?.parentId, false);
+															}}
 														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-															/>
-														</svg>
-													</button>
-												</Tooltip>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																fill="none"
+																viewBox="0 0 24 24"
+																stroke-width="2.3"
+																stroke="currentColor"
+																class="w-4 h-4"
+															>
+																<path
+																	stroke-linecap="round"
+																	stroke-linejoin="round"
+																	d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+																/>
+															</svg>
+														</button>
+													</Tooltip>
+												{/if}
 											{/if}
 										</div>
 									{/if}

@@ -22,6 +22,7 @@
 
 	import {
 		getDeOpenAIChatCompletion,
+		getDeOpenAIChatResult,
 		generateDeTitle,
 	} from "$lib/apis/de";
 	import { DEGPT_TOKEN } from "$lib/constants"
@@ -31,8 +32,7 @@
 		getChatById,
 		getChatList,
 		getTagsById,
-		updateChatById,
-		conversationRefresh,
+		updateChatById
 	} from "$lib/apis/chats";
 	import MessageInput from "$lib/components/chat/MessageInput.svelte";
 	import Messages from "$lib/components/chat/Messages.svelte";
@@ -53,7 +53,6 @@
 
 	// let chatId = $page.params.id;
 	let showModelSelector = true;
-	let deepsearch = false;
 
 	let selectedModels = [""];
 	let atSelectedModel = "";
@@ -606,6 +605,75 @@
 		}
 	};
 
+	const getVideoResult = async (responseMessage: any, _chatId: string) => {  
+    scrollToBottom();
+    try {
+      const [res, controller] = await getDeOpenAIChatResult(
+        localStorage.token,
+        { requestId: responseMessage.createId}
+      );
+
+			history.messages[responseMessage?.id] = responseMessage;
+      await tick();
+      scrollToBottom();
+			
+      if (res && res.ok && res.body) {
+        const textStream = await createOpenAITextStream(res.body, true);
+        for await (const update of textStream) {
+          let { value, status, done, error } = update;
+          if (status) {
+            responseMessage.status = status;
+          }
+          messages = messages;
+
+          if (error) {
+            await handleOpenAIError(error, null, null, responseMessage);
+            break;
+          }
+
+          if (done || stopResponseFlag || _chatId !== $chatId) {
+            responseMessage.done = true;
+            messages = messages;
+            if (stopResponseFlag) {
+              controller.abort("User: Stop Response");
+            }
+            break;
+          }
+
+          if (responseMessage.content == "" && value == "") {
+            continue;
+          } else {
+            responseMessage.content = value;
+          }
+
+          if (autoScroll) {
+            scrollToBottom();
+          }  
+        } 
+      }
+    } catch (error) {
+      await handleOpenAIError(error, null, null, responseMessage);
+    }
+
+    // 更新消息到数据库
+    await updateChatMessage($chatId);
+
+    await tick();
+
+    if (autoScroll) {
+      scrollToBottom();
+    }
+  }
+
+  const resentVideoResult = async (model: string, prompt: string, responseMessage: any, _chatId: string) => {
+		console.log("==================================", model, prompt, responseMessage, _chatId);
+    if (responseMessage.createId) {
+      await getVideoResult(responseMessage, _chatId);
+    } else {
+
+    }
+  }
+
 	// 更新消息到数据库
 	const updateChatMessage = async (_chatId: string) => {
 		messages = messages;
@@ -661,19 +729,6 @@
 			"It seems that you are offline. Please reconnect to send messages.";
 		responseMessage.done = true;
 		messages = messages;
-	};
-
-	const handleLimitError = async (content: string, responseMessage: any) => {
-		responseMessage.content = $i18n.t(content);
-		responseMessage.replytime = Math.floor(Date.now() / 1000);
-		responseMessage.warning = true;
-		responseMessage.done = true;
-		messages = messages;
-		scrollToBottom();
-		await updateChatById(localStorage.token, $chatId, {
-			messages: messages,
-			history: history,
-		});
 	};
 
 	const stopResponse = () => {
@@ -800,6 +855,7 @@
 						bind:chatInputPlaceholder
 						bottomPadding={files.length > 0}
 						{sendPrompt}
+						{resentVideoResult}
 						{continueGeneration}
 						{regenerateResponse}
 					/>

@@ -977,5 +977,6 @@
   "Realistic rendering of dynamic scenes": "เรนเดอร์ภาพฉากไดนามิกอย่างสมจริง",
   "Multi-shot narrative, stable and smooth visuals": "การเล่าเรื่องหลายฉาก ลำดับภาพที่มั่นคงและลื่นไหล",
   "Accurate physical motion simulation": "การจำลองการเคลื่อนไหวทางกายภาพที่แม่นยำ",
-  "Fluid motion and lifelike details": "การเคลื่อนไหวลื่นไหลและรายละเอียดสมจริง"
+  "Fluid motion and lifelike details": "การเคลื่อนไหวลื่นไหลและรายละเอียดสมจริง",
+  "It seems that you are offline, Please check your network and try generating again": "ดูเหมือนว่าคุณออฟไลน์อยู่ กรุณาตรวจสอบเครือข่ายและลองสร้างอีกครั้ง"
 }

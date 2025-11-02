@@ -13,7 +13,7 @@ export const getDeModels = async (token: string = "") => {
         model: "wan-2.5",
         textmodel: "wan-2.5/text-to-video",
         imagemodel: "wan-2.5/image-to-video",
-        duration: [4, 8, 10],
+        duration: [5, 10],
         size: ["480*832","832*480","720*1280","1280*720","1080*1920","1920*1080"],
         tip: "WAN 2.5",
         support: "image",
@@ -151,7 +151,7 @@ export const getDeModels = async (token: string = "") => {
   }));
 };
 
-// ai会话请求封装
+// AI Video Request Encapsulation
 export const getDeOpenAIChatCompletion = async (
   token: string = "",
   body: Object
@@ -170,6 +170,41 @@ export const getDeOpenAIChatCompletion = async (
       body: JSON.stringify({
         ...body,
         project: "HPVideo"
+      }),
+    });
+    if (res.status != 200) {
+      throw new Error("error");
+    }
+  } catch (err) {
+    error = err;
+    res = null;
+  }
+
+  if (error) {
+    throw error;
+  }
+
+  return [res, controller];
+}
+
+// AI Video Result Request Encapsulation
+export const getDeOpenAIChatResult = async (
+  token: string = "",
+  body: Object
+) => {
+  let res: any;
+  let error = null;
+  const controller = new AbortController();
+  try {
+    res = await fetch(`${WEBUI_API_BASE_URL}/chat/video/result`, {
+      signal: controller.signal,
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...body
       }),
     });
     if (res.status != 200) {
