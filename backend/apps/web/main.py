@@ -19,7 +19,8 @@ from apps.web.routers import (
     error_log,
     completion,
     daily_users,
-    fileupload
+    fileupload,
+    coinpay
 )
 from config import (
     WEBUI_AUTH,
@@ -84,6 +85,7 @@ app.include_router(error_log.router, prefix="/errorlog", tags=["error_log"])
 app.include_router(completion.router, prefix="/chat", tags=["aliqwen"])
 app.include_router(daily_users.router, prefix="/daily", tags=["daily_users"])
 app.include_router(fileupload.router, prefix="/upload", tags=["aliupload"])
+app.include_router(coinpay.router, prefix="/x402", tags=["coinpay"])
 
 @app.get("/")
 async def get_status():

@@ -78,12 +78,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **🌟 Enhanced RAG Pipeline**: Now with hybrid searching via 'BM25', reranking powered by 'CrossEncoder', and configurable relevance score thresholds.
 - **🛢️ External Database Support**: Seamlessly connect to custom SQLite or Postgres databases using the 'DATABASE_URL' environment variable.
-- **🌐 Remote ChromaDB Support**: Introducing the capability to connect to remote ChromaDB servers.
 - **👨‍💼 Improved Admin Panel**: Admins can now conveniently check users' chat lists and last active status directly from the admin panel.
 - **🎨 Splash Screen**: Introducing a loading splash screen for a smoother user experience.
 - **🌍 Language Support Expansion**: Added support for Bangla (bn-BD), along with enhancements to Chinese, Spanish, and Ukrainian translations.
 - **💻 Improved LaTeX Rendering Performance**: Enjoy faster rendering times for LaTeX equations.
-- **🔧 More Environment Variables**: Explore additional environment variables in our documentation (https://docs.openwebui.com), including the 'ENABLE_LITELLM' option to manage memory usage.
+- **🔧 More Environment Variables**: Explore additional environment variables in our documentation (https://docs.openwebui.com), including the 
 
 ### Fixed
 
@@ -101,7 +100,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **🔧 Translation Issues**: Addressed various translation discrepancies.
-- **🔒 LiteLLM Security Fix**: Updated LiteLLM version to resolve a security vulnerability.
 - **🖥️ HTML Tag Display**: Rectified the issue where the '< br >' tag wasn't displaying correctly.
 - **🔗 WebSocket Connection**: Resolved the failure of WebSocket connection under HTTPS security for ComfyUI server.
 - **📜 FileReader Optimization**: Implemented FileReader initialization per image in multi-file drag & drop to ensure reusability.
@@ -197,7 +195,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **🔽 Auto-Scrolling**: Addressed OpenAI auto-scrolling issue.
 - **🏷️ Tag Validation**: Implemented tag validation to prevent empty string tags.
-- **🚫 Model Whitelisting**: Resolved LiteLLM model whitelisting issue.
 - **✅ Spelling**: Corrected various spelling issues for improved readability.
 
 ## [0.1.115] - 2024-03-24
@@ -222,8 +219,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **🔗 Webhook Integration**: Now you can subscribe to new user sign-up events via webhook. Simply navigate to the admin panel > admin settings > webhook URL.
-- **🛡️ Enhanced Model Filtering**: Alongside Ollama, OpenAI proxy model whitelisting, we've added model filtering functionality for LiteLLM proxy.
+- **🔗 Webhook Integration**: Now you can subscribe to new user sign-up events via webhook. Simply navigate to the admin panel > admin settings proxy.
 - **🌍 Expanded Language Support**: Spanish, Catalan, and Vietnamese languages are now available, with improvements made to others.
 
 ### Fixed
@@ -386,11 +382,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.103] - 2024-02-25
 
 ### Added
-
-- **🔗 Built-in LiteLLM Proxy**: Now includes LiteLLM proxy within DeGPT for enhanced functionality.
-
-  - Easily integrate existing LiteLLM configurations using `-v /path/to/config.yaml:/app/backend/data/litellm/config.yaml` flag.
-  - When utilizing Docker container to run DeGPT, ensure connections to localhost use `host.docker.internal`.
 
 - **🖼️ Image Generation Enhancements**: Introducing Advanced Settings with Image Preview Feature.
   - Customize image generation by setting the number of steps; defaults to A1111 value.

@@ -47,7 +47,6 @@ log_sources = [
     "CONFIG",
     "DB",
     "IMAGES",
-    "LITELLM",
     "MAIN",
     "MODELS",
     "OLLAMA",
@@ -314,76 +313,6 @@ Path(CACHE_DIR).mkdir(parents=True, exist_ok=True)
 DOCS_DIR = os.getenv("DOCS_DIR", f"{DATA_DIR}/docs")
 Path(DOCS_DIR).mkdir(parents=True, exist_ok=True)
 
-
-####################################
-# LITELLM_CONFIG
-####################################
-
-
-def create_config_file(file_path):
-    directory = os.path.dirname(file_path)
-
-    # Check if directory exists, if not, create it
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    # Data to write into the YAML file
-    config_data = {
-        "general_settings": {},
-        "litellm_settings": {},
-        "model_list": [],
-        "router_settings": {},
-    }
-
-    # Write data to YAML file
-    with open(file_path, "w") as file:
-        yaml.dump(config_data, file)
-
-
-LITELLM_CONFIG_PATH = f"{DATA_DIR}/litellm/config.yaml"
-
-if not os.path.exists(LITELLM_CONFIG_PATH):
-    log.info("Config file doesn't exist. Creating...")
-    create_config_file(LITELLM_CONFIG_PATH)
-    log.info("Config file created successfully.")
-
-
-####################################
-# OLLAMA_BASE_URL
-####################################
-
-OLLAMA_API_BASE_URL = os.environ.get(
-    "OLLAMA_API_BASE_URL", "http://localhost:11434/api"
-)
-
-OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "")
-K8S_FLAG = os.environ.get("K8S_FLAG", "")
-USE_OLLAMA_DOCKER = os.environ.get("USE_OLLAMA_DOCKER", "false")
-
-if OLLAMA_BASE_URL == "" and OLLAMA_API_BASE_URL != "":
-    OLLAMA_BASE_URL = (
-        OLLAMA_API_BASE_URL[:-4]
-        if OLLAMA_API_BASE_URL.endswith("/api")
-        else OLLAMA_API_BASE_URL
-    )
-
-if ENV == "prod":
-    if OLLAMA_BASE_URL == "/ollama" and not K8S_FLAG:
-        if USE_OLLAMA_DOCKER.lower() == "true":
-            OLLAMA_BASE_URL = "http://localhost:11434"
-        else:
-            OLLAMA_BASE_URL = "http://host.docker.internal:11434"
-    elif K8S_FLAG:
-        OLLAMA_BASE_URL = "http://ollama-service.open-webui.svc.cluster.local:11434"
-
-
-OLLAMA_BASE_URLS = os.environ.get("OLLAMA_BASE_URLS", "")
-OLLAMA_BASE_URLS = OLLAMA_BASE_URLS if OLLAMA_BASE_URLS != "" else OLLAMA_BASE_URL
-
-OLLAMA_BASE_URLS = [url.strip() for url in OLLAMA_BASE_URLS.split(";")]
-OLLAMA_BASE_URLS = PersistentConfig(
-    "OLLAMA_BASE_URLS", "ollama.base_urls", OLLAMA_BASE_URLS
-)
 
 ####################################
 # OPENAI_API
@@ -762,13 +691,3 @@ AUDIO_OPENAI_API_VOICE = PersistentConfig(
     "audio.openai.api_voice",
     os.getenv("AUDIO_OPENAI_API_VOICE", "alloy"),
 )
-
-####################################
-# LiteLLM
-####################################
-ENABLE_LITELLM = os.environ.get("ENABLE_LITELLM", "True").lower() == "true"
-
-LITELLM_PROXY_PORT = int(os.getenv("LITELLM_PROXY_PORT", "14365"))
-if LITELLM_PROXY_PORT < 0 or LITELLM_PROXY_PORT > 65535:
-    raise ValueError("Invalid port number for LITELLM_PROXY_PORT")
-LITELLM_PROXY_HOST = os.getenv("LITELLM_PROXY_HOST", "127.0.0.1")
