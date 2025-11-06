@@ -56,9 +56,13 @@ from cdp.x402 import create_facilitator_config
 from x402.fastapi.middleware import require_payment
 import os
 
+COINBASE_KEY = os.getenv("COINBASE_KEY")
+COINBASE_SECRET = os.getenv("COINBASE_SECRET")
+COINBASE_ADDRESS = os.getenv("COINBASE_ADDRESS")
+
 facilitator_config = create_facilitator_config(
-    api_key_id= os.getenv("COINBASE_KEY"),
-    api_key_secret= os.getenv("COINBASE_SECRET")
+    api_key_id= COINBASE_KEY,
+    api_key_secret= COINBASE_SECRET
 )
 
 app.add_middleware(
@@ -74,7 +78,7 @@ app.middleware("http")(
     require_payment(
         path="/api/v1/x402/creator",
         price="$0.001",
-        pay_to_address=os.getenv("COINBASE_ADDRESS"),
+        pay_to_address=COINBASE_ADDRESS,
         network="base",
         facilitator_config=facilitator_config
     )
