@@ -53,7 +53,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@coinbase/coinbase-sdk": "^0.25.0",
 		"@fingerprintjs/fingerprintjs": "^4.3.0",
 		"@gregg-cbs/svelte-date-picker": "^3.0.3",
 		"@polkadot/api": "^11.2.1",

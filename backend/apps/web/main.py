@@ -20,8 +20,9 @@ from apps.web.routers import (
     completion,
     daily_users,
     fileupload,
-    coinpay
+    x402pay
 )
+
 from config import (
     WEBUI_AUTH,
     DEFAULT_MODELS,
@@ -51,6 +52,14 @@ app.state.config.USER_PERMISSIONS = USER_PERMISSIONS
 app.state.config.WEBHOOK_URL = WEBHOOK_URL
 app.state.AUTH_TRUSTED_EMAIL_HEADER = WEBUI_AUTH_TRUSTED_EMAIL_HEADER
 
+from cdp.x402 import create_facilitator_config
+from x402.fastapi.middleware import require_payment
+import os
+
+facilitator_config = create_facilitator_config(
+    api_key_id= os.getenv("COINBASE_KEY"),
+    api_key_secret= os.getenv("COINBASE_SECRET")
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -60,6 +69,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Apply payment middleware to specific routes
+app.middleware("http")(
+    require_payment(
+        path="/api/v1/x402/creator",
+        price="$0.001",
+        pay_to_address=os.getenv("COINBASE_ADDRESS"),
+        network="base",
+        facilitator_config=facilitator_config
+    )
+)
 
 app.include_router(auths.router, prefix="/auths", tags=["auths"])
 app.include_router(users.router, prefix="/users", tags=["users"])
@@ -85,7 +104,7 @@ app.include_router(error_log.router, prefix="/errorlog", tags=["error_log"])
 app.include_router(completion.router, prefix="/chat", tags=["aliqwen"])
 app.include_router(daily_users.router, prefix="/daily", tags=["daily_users"])
 app.include_router(fileupload.router, prefix="/upload", tags=["aliupload"])
-app.include_router(coinpay.router, prefix="/x402", tags=["coinpay"])
+app.include_router(x402pay.router, prefix="/x402", tags=["x402pay"])
 
 @app.get("/")
 async def get_status():
