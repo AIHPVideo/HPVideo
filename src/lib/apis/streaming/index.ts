@@ -6,6 +6,8 @@ type TextStreamUpdate = {
 	value: string;
 	status?: string;
 	limit?: any;
+	paystatus?: boolean;
+	paymoney?: string;
 	createId?: string;
 	error?: any;
 };
@@ -48,7 +50,7 @@ async function* openAIStreamToIterator(
 		try {
 			const parsedData = JSON.parse(data);
 			if (parsedData.success) {
-				yield { done: false, value: parsedData.videos, limit: parsedData.limit, createId: parsedData.createId, status: parsedData.status };
+				yield { done: false, value: parsedData.videos, limit: parsedData.limit, paystatus: parsedData.paystatus, paymoney: parsedData.paymoney, createId: parsedData.createId, status: parsedData.status };
 			} else {
 				yield { done: true, value: '', error: "error" };
 				break;
@@ -71,9 +73,11 @@ async function* streamLargeDeltasAsRandomChunks(
 		}
 		let content = textStreamUpdate.value;
 		let status = textStreamUpdate.status;
+		let paystatus = textStreamUpdate.paystatus;
+		let paymoney = textStreamUpdate.paymoney;
 		let limit = textStreamUpdate.limit;
 		let createId = textStreamUpdate.createId;
-		yield { done: false, value: content, status: status, limit: limit, createId: createId };
+		yield { done: false, value: content, status: status, paystatus: paystatus, paymoney: paymoney, limit: limit, createId: createId };
 		continue;
 	}
 }

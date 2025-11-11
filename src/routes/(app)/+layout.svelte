@@ -28,10 +28,7 @@
 	import ShortcutsModal from "$lib/components/chat/ShortcutsModal.svelte";
 	import Tooltip from "$lib/components/common/Tooltip.svelte";
 	import FingerprintJS from "@fingerprintjs/fingerprintjs";
-	import { updateWalletData } from "$lib/utils/wallet/walletUtils";
-	import { getUserInfo, isPro } from "$lib/apis/users";
-	import { unlockWalletWithPrivateKey } from "$lib/utils/wallet/ether/utils";
-	import { signOut } from "$lib/utils/wallet/ether/utils";
+	import { printSignIn } from "$lib/apis/auths";
 	import { getLanguages } from "$lib/i18n/index";
 	import { getChatList } from "$lib/apis/chats";
 
@@ -39,8 +36,8 @@
 
 	let loaded = false;
 	let showShortcutsButtonElement: HTMLButtonElement;
-	let DB = null;
-	let localDBChats = [];
+	let DB: any = null;
+	let localDBChats: any[] = [];
 
 	let showShortcuts = false;
 
@@ -49,6 +46,17 @@
 
 		return _getModels(localStorage.token);
 	};
+
+	// 游客登陆
+  async function signIn() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("walletImported");
+    localStorage.removeItem("walletKey");
+    const res = await printSignIn("");
+    localStorage.token = res.token;
+    user.set(res);
+  }
 
 	async function checkLogin() {
     // 加载 FingerprintJS 库
@@ -68,94 +76,17 @@
 			role: "visitor"
 		});
 
-    if (localStorage?.token) {
-      // 获取缓存用户信息
-      try {
-        let localUser = JSON.parse(localStorage?.user);
-        if (localUser?.address_type == "dbc") {
-          getUserInfo(localStorage.token).then(async (res) => {
-						if (res?.id === localUser?.id) {
-							// 获取用户信息更新一次用户Token
-							if (res?.token) {
-								localStorage.token = res.token;
-							}	
-							const vipInfo = await isPro(localStorage.token);
-							await user.set({
-								...localUser,
-								token: res?.token,
-								vipInfo: vipInfo ?? [],
-								models: res?.models,
-								verified: res?.verified,
-								language: res?.language
-							});
-							
-						}
-						localStorage.user = JSON.stringify($user);
-
-						// 校验钱包
-						if (localStorage.walletImported) {
-							let walletImported = JSON.parse(localStorage.walletImported);
-							if (walletImported) {
-								const walletImportedInfo = await unlockWalletWithPrivateKey(
-									walletImported?.privateKey
-								);
-								updateWalletData(walletImportedInfo?.data);
-							}
-						}
-
-						// 密码是否保存
-						if (localStorage.walletkey) {
-							let walletKeyObj = JSON.parse(localStorage.walletkey);
-              await walletKey.set(walletKeyObj);
-						}
-
-						// 更新用户模型
-						await initUserModels();
-						// 更新系统语言
-						await initLanguage();
-						// 更新用户聊天记录
-						// await updateChats();
-						// 初始化完成
-						$initPageFlag = true;
-					});
-          
-        } else {
-          signOut($channel).then(async() => {
-						// 更新用户模型
-						await initUserModels();
-						// 更新系统语言
-						await initLanguage();
-						// 更新用户聊天记录
-						await updateChats();
-						// 初始化完成
-						$initPageFlag = true;
-					});
-          
-        }
-      } catch (error) {
-        signOut($channel).then(async() => {
-					// 更新用户模型
-					await initUserModels();
-					// 更新系统语言
-					await initLanguage();
-					// 更新用户聊天记录
-					await updateChats();
-					// 初始化完成
-					$initPageFlag = true;
-				});
-      }
-    } else {
-      signOut($channel).then(async() => {
-				// 更新用户模型
-				await initUserModels();
-				// 更新系统语言
-				await initLanguage();
-				// 更新用户聊天记录
-				await updateChats();
-				// 初始化完成
-				$initPageFlag = true;
-			});
-    }
+		await signIn();
+    if (localStorage?.token) {  
+      // 更新用户模型
+			await initUserModels();
+			// 更新系统语言
+			await initLanguage();
+			// 更新用户聊天记录
+			await updateChats();
+			// 初始化完成
+			$initPageFlag = true;
+		}
   }
 
 	// 更新用户模型
@@ -242,16 +173,6 @@
 
 			await models.set(await getModels());
 			await settings.set(JSON.parse(localStorage.getItem("settings") ?? "{}"));
-
-			// await modelfiles.set(await getModelfiles(localStorage.token));
-			// await prompts.set(await getPrompts(localStorage.token));
-			// await documents.set(await getDocs(localStorage.token));
-			// await tags.set(await getAllChatTags(localStorage.token));
-
-			// modelfiles.subscribe(async () => {
-			// 	// should fetch models
-			// 	await models.set(await getModels());
-			// });
 
 			document.addEventListener("keydown", function (event) {
 				const isCtrlPressed = event.ctrlKey || event.metaKey; // metaKey is for Cmd key on Mac
@@ -367,50 +288,7 @@
 		class=" text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 min-h-screen overflow-auto flex flex-row"
 	>
 		{#if loaded}
-			{#if false}
-				<div class="fixed w-full h-full flex z-[999]">
-					<div
-						class="absolute w-full h-full backdrop-blur-lg bg-white/10 dark:bg-gray-900/50 flex justify-center"
-					>
-						<div class="m-auto pb-10 flex flex-col justify-center">
-							<div class="max-w-md">
-								<div
-									class="text-center dark:text-white text-2xl font-medium z-50"
-								>
-									Account Activation Pending<br /> Contact Admin for WebUI Access
-								</div>
-
-								<div
-									class=" mt-4 text-center text-sm dark:text-gray-200 w-full"
-								>
-									Your account status is currently pending activation. To access
-									the WebUI, please reach out to the administrator. Admins can
-									manage user statuses from the Admin Panel.
-								</div>
-
-								<div class=" mt-6 mx-auto relative group w-fit">
-									<button
-										class="relative z-20 flex px-5 py-2 rounded-full bg-white border border-gray-100 dark:border-none hover:bg-gray-100 text-gray-700 transition font-medium text-sm"
-										on:click={async () => {
-											location.href = "/";
-										}}
-									>
-										{$i18n.t("Check Again")}
-									</button>
-
-									<!-- <button
-										class="text-xs text-center w-full mt-2 text-gray-400 underline"
-										on:click={async () => {
-											// localStorage.removeItem('token');
-											// location.href = '/auth';
-										}}>{$i18n.t('Sign Out')}</button
-									> -->
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			{:else if localDBChats.length > 0}
+			{#if localDBChats.length > 0}
 				<div class="fixed w-full h-full flex z-50">
 					<div
 						class="absolute w-full h-full backdrop-blur-md bg-white/20 dark:bg-gray-900/50 flex justify-center"

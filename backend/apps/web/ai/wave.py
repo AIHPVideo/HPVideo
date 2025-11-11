@@ -71,4 +71,8 @@ class WaveApi:
 				"error": f"Err: {str(e)}"
       }
 
+	# Get the model price
+	def get_model_price(self, model: str, duration: int, size: str):
+		return f"${0.01 * duration}"
+
 WaveApiInstance = WaveApi()

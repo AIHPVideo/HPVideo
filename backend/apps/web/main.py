@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Depends
-from fastapi.routing import APIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from apps.web.routers import (
     auths,
@@ -52,18 +51,7 @@ app.state.config.USER_PERMISSIONS = USER_PERMISSIONS
 app.state.config.WEBHOOK_URL = WEBHOOK_URL
 app.state.AUTH_TRUSTED_EMAIL_HEADER = WEBUI_AUTH_TRUSTED_EMAIL_HEADER
 
-from cdp.x402 import create_facilitator_config
-from x402.fastapi.middleware import require_payment
-import os
 
-COINBASE_KEY = os.getenv("COINBASE_KEY")
-COINBASE_SECRET = os.getenv("COINBASE_SECRET")
-COINBASE_ADDRESS = os.getenv("COINBASE_ADDRESS")
-
-facilitator_config = create_facilitator_config(
-    api_key_id= COINBASE_KEY,
-    api_key_secret= COINBASE_SECRET
-)
 
 app.add_middleware(
     CORSMiddleware,
@@ -74,15 +62,7 @@ app.add_middleware(
 )
 
 # Apply payment middleware to specific routes
-app.middleware("http")(
-    require_payment(
-        path="/api/v1/x402/creator",
-        price="$0.001",
-        pay_to_address=COINBASE_ADDRESS,
-        network="base",
-        facilitator_config=facilitator_config
-    )
-)
+app.middleware("http")(x402pay.payment_middleware)
 
 app.include_router(auths.router, prefix="/auths", tags=["auths"])
 app.include_router(users.router, prefix="/users", tags=["users"])

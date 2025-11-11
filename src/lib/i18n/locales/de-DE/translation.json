@@ -971,5 +971,9 @@
   "Multi-shot narrative, stable and smooth visuals": "Multiszenen-Erzählung, stabile und flüssige Bildsequenz",
   "Accurate physical motion simulation": "Präzise Simulation physikalischer Bewegungen",
   "Fluid motion and lifelike details": "Fließende Bewegung und lebensechte Details",
-  "It seems that you are offline, Please check your network and try generating again": "Sie scheinen offline zu sein, Bitte überprüfen Sie Ihr Netzwerk und versuchen Sie es erneut"
+  "It seems that you are offline, Please check your network and try generating again": "Sie scheinen offline zu sein, Bitte überprüfen Sie Ihr Netzwerk und versuchen Sie es erneut",
+  "Paying": "Bezahlung läuft",
+  "Payment timeout": "Zahlungszeitüberschreitung",
+  "Paid": "Bezahlt",
+  "This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.": "Diese Generierung verwendet das hochwertige {{model}}-Modell, es werden {{paymoney}} USDC verbraucht. Die erwartete Wartezeit beträgt 1-3 Minuten."
 }

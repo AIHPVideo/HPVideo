@@ -362,26 +362,75 @@
 									</div>
 								</div>
 							{:else if message?.error === true}
-								{#if message?.limit?.total - message?.limit?.use > 0}
-									<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The estimated wait time is 1-3 minutes. Your daily video generation credits have been used up.", {model: formatModelName(message.model)})}</div>
+								{#if message.paymoney}
+									<div class="max-w-[600px]">
+										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+										{#if message.paystatus}
+											{$i18n.t("Paid")}
+										{:else}
+											{$i18n.t("Paying")}
+										{/if}
+									</div>
 								{/if}
 								<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={internetErr} {resentMessageHandler}/>
 							{:else if message.content === '' && !message?.done}
-								<VideoLoading bind:videosize={message.size}/>
+								{#if message.paymoney}
+									<div class="max-w-[600px]">
+										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+										{#if message.paystatus}
+											{$i18n.t("Paid")}
+										{:else}
+											{$i18n.t("Paying")}
+										{/if}
+									</div>
+								{/if}
+								{#if message.paystatus}
+									<VideoLoading bind:videosize={message.size}/>
+								{/if}
 							{:else}
 								{#each tokens as token, tokenIdx}
-									{#if message?.limit?.total - message?.limit?.use < 0}
-										<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The estimated wait time is 1-3 minutes. Your daily video generation credits have been used up.", {model: formatModelName(message.model)})}</div>
+									{#if !message?.paystatus}
+										<div class="max-w-[600px]">
+											{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+											{#if message.paystatus}
+												{$i18n.t("Paid")}
+											{:else}
+												{$i18n.t("Paying")}
+											{/if}
+										</div>
 									{:else}
 										{#if message.status == 'completed'}
-											<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
+											<div class="max-w-[600px]">
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{#if message.paystatus}
+													{$i18n.t("Paid")}
+												{:else}
+													{$i18n.t("Paying")}
+												{/if}
+											</div>
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
 										{:else if message.status == 'failed'}
-											<div>{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
+											<div>
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{#if message.paystatus}
+													{$i18n.t("Paid")}
+												{:else}
+													{$i18n.t("Paying")}
+												{/if}
+											</div>
 											<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
 										{:else}
-											<div class="max-w-[600px]">{$i18n.t("This generation uses the {{model}} high-quality model, which will consume 2 video generation credits. The expected wait time is 1-3 minutes, and there are {{num}} remaining video generation credits for today.", {model: formatModelName(message.model), num: (message?.limit?.total - message?.limit?.use)})}</div>
-											<VideoLoading bind:videosize={message.size}/>
+											<div class="max-w-[600px]">
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{#if message.paystatus}
+													{$i18n.t("Paid")}
+												{:else}
+													{$i18n.t("Paying")}
+												{/if}
+											</div>
+											{#if message.paystatus}
+												<VideoLoading bind:videosize={message.size}/>
+											{/if}
 										{/if}
 									{/if}
 								{/each}

@@ -266,38 +266,6 @@
 
     <div class="bg-white dark:bg-gray-900">
       <div class="px-2.5 md:px-20 mx-auto inset-x-0">
-        <!-- {#if messages?.filter((item) => item.role === "assistant").length >= 5 && $userStore?.role === "visitor"}
-          <div
-            class="flex gap-1 items-center flex-wrap flex-1 justify-between mb-2 p-4 px-6 bg-gray-50 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-800 rounded-3xl transition group"
-          >
-            <span>
-              {$i18n.t(
-                "Get smarter replies, upload files and pictures, and enjoy more features."
-              )}
-            </span>
-
-            <div class="flex gap-2">
-              <button
-                class=" px-2 py-1 primaryButton text-gray-100 transition rounded-lg"
-                on:click={async () => {
-                  $showOpenWalletModal = true;
-                }}
-              >
-                {$i18n.t("Open Wallet")}
-              </button>
-
-              <button
-                class=" px-2 py-1 primaryButton text-gray-100 transition rounded-lg"
-                on:click={async () => {
-                  $showNewWalletModal = true;
-                }}
-              >
-                {$i18n.t("Create Wallet")}
-              </button>
-            </div>
-          </div>
-        {/if} -->
-
         <div class=" pb-4">
           <input
             bind:this={filesInputElement}

@@ -7,6 +7,7 @@ class AiModelReq(BaseModel):
     permodel: str
     model: str
     duration: int
+    messageid: str
     messages: object
     image: Optional[str] = None
     size: str

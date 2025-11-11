@@ -8,13 +8,13 @@
     mobile,
     inviterId,
     channel,
-    binanceFlag
+    user
   } from "$lib/stores";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { Toaster } from "svelte-sonner";
 
-  import { getBackendConfig, defaultBackendConfig } from "$lib/apis";
+  import { defaultBackendConfig } from "$lib/apis";
 
   import "../tailwind.css";
   import "../app.css";
@@ -28,7 +28,6 @@
 
   import { WEBUI_BASE_URL } from "$lib/constants";
   import i18n, { initI18n } from "$lib/i18n";
-  import { getRegionInfo, getRegionDict } from "$lib/apis/utils/index";
   import { addErrorLog } from '$lib/apis/errorlog';
 
   setContext("i18n", i18n);
@@ -123,23 +122,9 @@
     }
   }
 
-  // 校验是否是币安浏览器
-  const checkBinance = async () => {
-    if (isBinanceAppDappBrowser()) {
-      await binanceFlag.set(true);
-    } else {
-      await binanceFlag.set(false);
-    }
-  }
-  function isBinanceAppDappBrowser() {
-    return /BNC/i.test(navigator.userAgent) && !!window.binancew3w;
-  }
-
   onMount(async () => {
-    await checkBinance();
-    await registServiceWorker();
+    // await registServiceWorker();
     try {
-      let currentAddress = window.location.href;
       await initData();
       await initUrlParam();
       loaded = true;
@@ -156,16 +141,6 @@
     rel="icon"
     href="{WEBUI_BASE_URL}/static/favicon.png"
   />
-
-  <!-- <script
-    type="text/javascript"
-    src="https://hkwebcdn.yuncloudauth.com/cdn/jsvm_all.js"
-  ></script> -->
-
-  <!-- rosepine themes have been disabled as it's not up to date with our latest version. -->
-  <!-- feel free to make a PR to fix if anyone wants to see it return -->
-  <!-- <link rel="stylesheet" type="text/css" href="/themes/rosepine.css" />
-	<link rel="stylesheet" type="text/css" href="/themes/rosepine-dawn.css" /> -->
 </svelte:head>
 
 {#if loaded}

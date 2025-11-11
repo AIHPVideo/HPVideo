@@ -34,7 +34,7 @@
     getDeOpenAIChatResult,
     generateDeTitle
   } from "$lib/apis/de";
-  import { DEGPT_TOKEN } from "$lib/constants"
+  import { DEGPT_TOKEN, WEBUI_API_BASE_URL } from "$lib/constants"
 
   import { queryMemory } from "$lib/apis/memories";
   import { createOpenAITextStream } from "$lib/apis/streaming";
@@ -489,6 +489,9 @@
                 : message?.raContent ?? message.content,
           }),
       }));
+
+      window.open(`${WEBUI_API_BASE_URL}/x402/creator?model=${model.id}&messageid=${responseMessageId}`,"_blank");
+
       const [res, controller] = await getDeOpenAIChatCompletion(
         localStorage.token,
         {
@@ -496,6 +499,7 @@
           permodel: model.id,
           model: fileFlag ? model.imagemodel : model.textmodel,
           duration: videodura,
+          messageid: responseMessageId,
           messages: send_message,
           size: videosize
         }
@@ -518,7 +522,11 @@
           // if (errornum > 20) {
           //   throw new Error("error");
           // }
-          let { value, limit, createId, status, done, error } = update;
+          let { value, limit, createId, status, paystatus, paymoney, done, error } = update;
+					if (paymoney) {
+						responseMessage.paystatus = paystatus;
+						responseMessage.paymoney = paymoney;
+					}
           if (status) {
             responseMessage.status = status;
           }

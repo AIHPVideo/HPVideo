@@ -34,7 +34,6 @@
 	function calculateOnLoadedMetadata() {
 		const originalWidth = videoElement.videoWidth;
     const originalHeight = videoElement.videoHeight;
-		console.log("=========================", originalWidth, originalHeight, videoWidth, videoHeight);
 		videoHeight = videoWidth * originalHeight / originalWidth;
 	}
 

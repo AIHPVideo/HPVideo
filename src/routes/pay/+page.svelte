@@ -1,65 +1,179 @@
-<script>
-  import { onMount } from 'svelte';
-	import { WEBUI_API_BASE_URL } from '$lib/constants';
+<script lang="ts">
+  import { onMount } from "svelte";
+  import { ethers } from "ethers";
+  import { theme } from "$lib/stores";
+  import { WEBUI_API_BASE_URL } from '$lib/constants';
 
-  // 初始化 Coinbase Wallet SDK
+  import { createWeb3Modal } from "@web3modal/wagmi";
+  import { config, projectId } from "$lib/utils/wallet/index";
+  import { watchConnections, getAccount } from "@wagmi/core";
+
+  let address: string = "";
+  let modal: any = { options: { themeMode: "dark" } };
   onMount(() => {
-    
-  });
+    const account = getAccount(config);
+    if (account?.address) {
+      address = account?.address;
+    }
 
-  // 发起支付
-  async function startPayment() {
-    try {
-      // 2. 定义 x402 支付参数（符合协议规范）
-      const paymentParams = {
-        amount: "0.001", // 支付金额
-        currency: "USDT", // 支付货币
-        destination: "0x8b0b8c7f984dd3f2b580149ade3cdab504d3af1f", // 收款地址
-        metadata: { order_id: "ORD-123123123123123123", description: "测试商品支付" }
-      };
-
-      // 3. 生成 x402 协议头（用于后端验证）
-      const x402Header = `amount=${paymentParams.amount}; currency=${paymentParams.currency}; destination=${paymentParams.destination}`;
-
-      // 4. 调用后端创建支付订单
-      const createResponse = await fetch(`${WEBUI_API_BASE_URL}/x402/create-payment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'CB-402': x402Header
-        },
-        body: JSON.stringify(paymentParams.metadata)
-      });
-
-      const { transaction_id, payment_url, error } = await createResponse.json();
-      if (error) throw new Error(error);
-
-      // 5. 唤起 Coinbase Wallet 完成支付
-			console.log("============================", payment_url);
-      window.open(payment_url, '_blank');
-
-      // 6. 轮询查询支付状态
-      const checkInterval = setInterval(async () => {
-        const statusResponse = await fetch(`${WEBUI_API_BASE_URL}/check-payment?tx_id=${transaction_id}`);
-        const { status } = await statusResponse.json();
-        
-        if (status === 'completed') {
-          console.log("===============支付成功===================");
-          clearInterval(checkInterval);
-        } else if (status === 'failed') {
-					console.log("===============支付失败===================");
-          clearInterval(checkInterval);
+    watchConnections(config, {
+      async onChange(data) {
+        if (address == "") {
+          if (data.length) {
+            address = data[0].accounts[0];
+          } else {
+            address = "";
+          }
+        } else {
+          clearConnector();
+          address = "";
         }
-      }, 3000);
+      },
+    });
 
+    modal = createWeb3Modal({
+      themeMode: "dark",
+      wagmiConfig: config,
+      projectId,
+      enableAnalytics: true,
+      enableOnramp: true,
+    });
+  });
+  function clearConnector() {
+    config.state.connections.forEach((item) => {
+      config.state.connections.delete(item.connector.uid);
+    });
+  }
+
+  function checkModalTheme() {
+    if ($theme === "system" || $theme === "light") {
+      modal.setThemeMode("light");
+    } else {
+      modal.setThemeMode("dark");
+    }
+  }
+
+  function connect() {
+    checkModalTheme();
+    modal.open();
+  }
+
+  // format wallet address
+  function formatAddress(address: string) {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  }
+
+  // start pay
+  async function startPayment() {
+    if (!checkWalletConnect()) {
+      return;
+    }
+    try {
+      const response = await fetch(`${WEBUI_API_BASE_URL}/x402/creator?model=wan2.5&messageid=2222222`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status == 402) {
+        const paymentInfo = await response.json();
+        // sign to pay
+        await handleWeb3Payment(paymentInfo);
+      }
     } catch (err) {
-      console.log("===============支付异常===================", err);
       console.error(err);
     }
+  }
+
+  // check wallet connect
+  function checkWalletConnect() {
+    // 检查是否安装 Web3 钱包
+    if (typeof window.ethereum === "undefined") {
+      throw new Error("Web3 wallet not found. Please install.");
+    }
+    // 连接钱包
+    if (address == "") {
+      connect();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // sign to pay
+  async function handleWeb3Payment(paymentInfo: any) {
+    try {
+      const paymentScheme = paymentInfo.accepts[0];
+      const { resource } = paymentScheme;
+
+      const xpayment = await createXPaymentHeader(paymentInfo);
+
+      const response = await fetch(resource, {
+        method: "GET",
+        headers: {
+          "X-PAYMENT": xpayment,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("==============支付成功===========", data);
+      } else {
+        const error = await response.text();
+        console.log("==============支付失败===========", error);
+      }
+    } catch (error) {
+      console.error("Web3 payment failed:", error);
+      throw error;
+    }
+  }
+
+  // create Base64 X-PAYMENT header
+  async function createXPaymentHeader(paymentInfo: any) {
+    // get wallet signer
+    const account = getAccount(config);
+    const provider: any = await account?.connector?.getProvider();
+    const eprovider = new ethers.BrowserProvider(provider);
+    await eprovider.send("eth_requestAccounts", []);
+    const signer = await eprovider.getSigner();
+
+    const paymentScheme = paymentInfo.accepts[0];
+    const { payTo, maxAmountRequired } = paymentScheme;
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    const paymentPayload = {
+      x402Version: paymentInfo.x402Version,
+      scheme: paymentScheme.scheme,
+      network: paymentScheme.network,
+      payload: {
+        signature: "",
+        authorization: {
+          from: account?.address?.toLowerCase(),
+          to: payTo,
+          value: maxAmountRequired,
+          validAfter: timestamp.toString(),
+          validBefore: (timestamp + 600).toString(),
+          nonce: ethers.hexlify(ethers.randomBytes(32))
+        },
+      },
+    };
+
+    const msg = JSON.stringify(paymentPayload.payload.authorization);
+    const signature = await signer.signMessage(msg);
+    paymentPayload.payload.signature = signature;
+    const paymentPayloadString = JSON.stringify(paymentPayload);
+    const base64EncodedPayload = Buffer.from(paymentPayloadString).toString("base64");
+    return base64EncodedPayload;
   }
 </script>
 
 <div class="flex flex-col justify-start p-2">
   <h2>x402 支付演示（Svelte + Python）</h2>
-  <button class="primaryButton p-2 rounded-lg mt-2 w-[200px]" on:click={startPayment}>发起 0.001 USDT 支付</button>
+  <button class="primaryButton p-2 rounded-lg mt-2 w-[200px]" on:click={connect}
+    >{address == "" ? "连接钱包" : formatAddress(address)}</button
+  >
+  <button
+    class="primaryButton p-2 rounded-lg mt-2 w-[200px]"
+    on:click={startPayment}>发起 0.001 USDT 支付</button
+  >
 </div>

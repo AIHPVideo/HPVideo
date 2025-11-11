@@ -972,5 +972,9 @@
   "Multi-shot narrative, stable and smooth visuals": "Мультисценарное повествование, стабильная и плавная визуальная последовательность",
   "Accurate physical motion simulation": "Точное моделирование физического движения",
   "Fluid motion and lifelike details": "Плавное движение и реалистичные детали",
-  "It seems that you are offline, Please check your network and try generating again": "Кажется, вы не в сети. Пожалуйста, проверьте подключение и попробуйте снова"
+  "It seems that you are offline, Please check your network and try generating again": "Кажется, вы не в сети. Пожалуйста, проверьте подключение и попробуйте снова",
+  "Paying": "Оплата в процессе",
+  "Payment timeout": "Истекло время оплаты",
+  "Paid": "Оплачено",
+  "This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.": "Данное поколение использует высококачественную модель {{model}}, оно потребовало {{paymoney}} USDC. Ожидаемое время ожидания — 1-3 минуты."
 }
