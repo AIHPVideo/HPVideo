@@ -169,11 +169,6 @@
 
   // check wallet connect
   const checkWalletConnect = () => {
-    // 检查是否安装 Web3 钱包
-    if (typeof window.ethereum === "undefined") {
-      throw new Error("Web3 wallet not found. Please install.");
-    }
-    // 连接钱包
     const account = getAccount(config);
     if (account?.address) {
       return true;
