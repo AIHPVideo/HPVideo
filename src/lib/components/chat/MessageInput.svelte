@@ -5,7 +5,8 @@
     mobile,
     modelfiles,
     settings,
-    showSidebar
+    showSidebar,
+    theme
   } from "$lib/stores";
   import { findWordIndices } from "$lib/utils";
 
@@ -17,6 +18,8 @@
   import Tools from "./MessageInput/Tools.svelte";
   import Tooltip from "../common/Tooltip.svelte";
   import XMark from "$lib/components/icons/XMark.svelte";
+  import { config, modal } from "$lib/utils/wallet/index";
+  import { getAccount } from "@wagmi/core";
 
   const i18n = getContext("i18n");
 
@@ -163,6 +166,33 @@
     };
   });
   const know_ext = "image/*"
+
+  // check wallet connect
+  const checkWalletConnect = () => {
+    // 检查是否安装 Web3 钱包
+    if (typeof window.ethereum === "undefined") {
+      throw new Error("Web3 wallet not found. Please install.");
+    }
+    // 连接钱包
+    const account = getAccount(config);
+    if (account?.address) {
+      return true;
+    } else {
+      connect();
+      return false;
+    }
+  }
+  const connect = () => {
+    checkModalTheme();
+    modal.open();
+  }
+  const checkModalTheme = () => {
+    if ($theme === "system" || $theme === "light") {
+      modal.setThemeMode("light");
+    } else {
+      modal.setThemeMode("dark");
+    }
+  }
 </script>
 
 {#if dragged}
@@ -331,7 +361,9 @@
             dir={$settings?.chatDirection ?? "LTR"}
             class=" flex flex-col relative w-full rounded-3xl px-1.5 bg-gray-100 dark:bg-gray-850 dark:text-gray-100 button-select-none"
             on:submit|preventDefault={() => {
-              submitPrompt(prompt, toolInfo, user);
+              if (checkWalletConnect()) {
+                submitPrompt(prompt, toolInfo, user);
+              } 
             }}
           >
             {#if files.length > 0}
@@ -370,56 +402,6 @@
                   </div>
                 {/each}
               </div>
-              <!-- Quick Image Prompt -->
-              <!-- {#if files[0]?.type === "image"}
-                <div class="flex flex-wrap gap-2 mt-1">
-                  <button class="flex items-center bg-white dark:bg-gray-950 ml-2 px-2 py-1 text-sm rounded-lg"
-                    on:click={() => {
-                      prompt = $i18n.t("What does this picture mean?");
-                    }}>
-                    <span class="mr-1">{ $i18n.t("What does this picture mean?") }</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24">
-                      <path fill="currentColor" fill-rule="evenodd" d="M12.793 3.793a1 1 0 0 1 1.414 0l7.5 7.5a1 1 0 0 1 0 1.414l-7.5 7.5a1 1 0 0 1-1.414-1.414L18.586 13H3a1 1 0 1 1 0-2h15.586l-5.793-5.793a1 1 0 0 1 0-1.414" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                  <button class="flex items-center bg-white dark:bg-gray-950 ml-2 px-2 py-1 text-sm rounded-lg"
-                    on:click={() => {
-                      prompt = $i18n.t("Explain this picture");
-                    }}>
-                    <span class="mr-1">{ $i18n.t("Explain this picture") }</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24">
-                      <path fill="currentColor" fill-rule="evenodd" d="M12.793 3.793a1 1 0 0 1 1.414 0l7.5 7.5a1 1 0 0 1 0 1.414l-7.5 7.5a1 1 0 0 1-1.414-1.414L18.586 13H3a1 1 0 1 1 0-2h15.586l-5.793-5.793a1 1 0 0 1 0-1.414" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                  <button class="flex items-center bg-white dark:bg-gray-950 ml-2 px-2 py-1 text-sm rounded-lg"
-                    on:click={() => {
-                      prompt = $i18n.t("What is the main idea of this picture?");
-                    }}>
-                    <span class="mr-1">{ $i18n.t("What is the main idea of this picture?") }</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24">
-                      <path fill="currentColor" fill-rule="evenodd" d="M12.793 3.793a1 1 0 0 1 1.414 0l7.5 7.5a1 1 0 0 1 0 1.414l-7.5 7.5a1 1 0 0 1-1.414-1.414L18.586 13H3a1 1 0 1 1 0-2h15.586l-5.793-5.793a1 1 0 0 1 0-1.414" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                  <button class="flex items-center bg-white dark:bg-gray-950 ml-2 px-2 py-1 text-sm rounded-lg"
-                    on:click={() => {
-                      prompt = $i18n.t("What does the symbol in the picture represent?");
-                    }}>
-                    <span class="mr-1">{ $i18n.t("What does the symbol in the picture represent?") }</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24">
-                      <path fill="currentColor" fill-rule="evenodd" d="M12.793 3.793a1 1 0 0 1 1.414 0l7.5 7.5a1 1 0 0 1 0 1.414l-7.5 7.5a1 1 0 0 1-1.414-1.414L18.586 13H3a1 1 0 1 1 0-2h15.586l-5.793-5.793a1 1 0 0 1 0-1.414" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                  <button class="flex items-center bg-white dark:bg-gray-950 ml-2 px-2 py-1 text-sm rounded-lg"
-                    on:click={() => {
-                      prompt = $i18n.t("Help me solve problems");
-                    }}>
-                    <span class="mr-1">{ $i18n.t("Help me solve problems") }</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24">
-                      <path fill="currentColor" fill-rule="evenodd" d="M12.793 3.793a1 1 0 0 1 1.414 0l7.5 7.5a1 1 0 0 1 0 1.414l-7.5 7.5a1 1 0 0 1-1.414-1.414L18.586 13H3a1 1 0 1 1 0-2h15.586l-5.793-5.793a1 1 0 0 1 0-1.414" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                </div>
-              {/if} -->
             {/if}
             <div class="flex flex-col">
               <textarea
@@ -443,7 +425,9 @@
                       e.preventDefault();
                     }
                     if (prompt !== "" && e.keyCode == 13 && !e.shiftKey) {
-                      submitPrompt(prompt, toolInfo, user);
+                      if (checkWalletConnect()) {
+                        submitPrompt(prompt, toolInfo, user);
+                      }   
                     }
                   }
                 }}

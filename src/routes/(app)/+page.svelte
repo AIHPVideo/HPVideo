@@ -20,7 +20,8 @@
     showSidebar,
     showUserVerifyModal,
     user,
-    switchModel
+    switchModel,
+    theme
   } from "$lib/stores";
 
   import {
@@ -41,6 +42,10 @@
   import MessageInput from "$lib/components/chat/MessageInput.svelte";
   import Messages from "$lib/components/chat/Messages.svelte";
   import Navbar from "$lib/components/layout/Navbar.svelte";
+
+  import { config as web3Config, domain, types } from "$lib/utils/wallet/index";
+  import { getAccount, signTypedData } from "@wagmi/core";
+  import { ethers } from "ethers";
 
   let inviter: any = "";
   let channelName: any = "";
@@ -490,7 +495,8 @@
           }),
       }));
 
-      window.open(`${WEBUI_API_BASE_URL}/x402/creator?model=${model.id}&messageid=${responseMessageId}`,"_blank");
+      // start pay
+      startPayment(model.id, responseMessageId);
 
       const [res, controller] = await getDeOpenAIChatCompletion(
         localStorage.token,
@@ -766,6 +772,92 @@
       await chats.set(await getChatList(localStorage.token));
     }
   };
+
+  // start pay
+  const startPayment = async (model: string, messageid: string) => {
+    try {
+      const response = await fetch(`${WEBUI_API_BASE_URL}/x402/creator?model=${model}&messageid=${messageid}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status == 402) {
+        const paymentInfo = await response.json();
+        await handleWeb3Payment(paymentInfo);        
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // sign to pay
+  async function handleWeb3Payment(paymentInfo: any) {
+    try {
+      const paymentScheme = paymentInfo.accepts[0];
+      const { resource } = paymentScheme;
+
+      const xpayment = await createXPaymentHeader(paymentInfo);
+
+      const response = await fetch(resource, {
+        method: "GET",
+        headers: {
+          "X-PAYMENT": xpayment,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("==============支付成功===========", data);
+      } else {
+        const error = await response.text();
+        console.log("==============支付失败===========", error);
+      }
+    } catch (error) {
+      console.error("Web3 payment failed:", error);
+      throw error;
+    }
+  }
+
+  // create Base64 X-PAYMENT header
+  async function createXPaymentHeader(paymentInfo: any) {
+    // get wallet signer
+    const account = getAccount(web3Config);
+    let fromAddress = account?.address;
+
+    const paymentScheme = paymentInfo.accepts[0];
+    const { payTo, maxAmountRequired } = paymentScheme;
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    const paymentPayload = {
+      x402Version: paymentInfo.x402Version,
+      scheme: paymentScheme.scheme,
+      network: paymentScheme.network,
+      payload: {
+        signature: "",
+        authorization: {
+          from: fromAddress,
+          to: payTo,
+          value: maxAmountRequired,
+          validAfter: timestamp.toString(),
+          validBefore: (timestamp + 600).toString(),
+          nonce: ethers.hexlify(ethers.randomBytes(32))
+        },
+      },
+    };
+
+    const signature = await signTypedData(web3Config, {
+      domain,
+      types,
+      primaryType: "TransferWithAuthorization",
+      message: paymentPayload.payload.authorization
+    });
+
+    paymentPayload.payload.signature = signature;
+    const paymentPayloadString = JSON.stringify(paymentPayload);
+    const base64EncodedPayload = Buffer.from(paymentPayloadString).toString("base64");
+    return base64EncodedPayload;
+  }
 </script>
 
 <svelte:head>
