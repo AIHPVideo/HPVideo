@@ -845,6 +845,8 @@
       if (response.ok) {
         const data = await response.json();
         console.log("==============支付成功===========", data);
+				await tick();
+        scrollToBottom();
       } else {
         const error = await response.text();
         console.log("==============支付失败===========", error);
