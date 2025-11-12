@@ -136,6 +136,9 @@
     const eprovider = new ethers.BrowserProvider(provider);
     await eprovider.send("eth_requestAccounts", []);
     const signer = await eprovider.getSigner();
+    const fromAddress = await signer.getAddress();
+
+    console.log("==============fromAddress==============", fromAddress);
 
     const paymentScheme = paymentInfo.accepts[0];
     const { payTo, maxAmountRequired } = paymentScheme;
@@ -148,7 +151,7 @@
       payload: {
         signature: "",
         authorization: {
-          from: account?.address?.toLowerCase(),
+          from: fromAddress,
           to: payTo,
           value: maxAmountRequired,
           validAfter: timestamp.toString(),
@@ -160,6 +163,21 @@
 
     const msg = JSON.stringify(paymentPayload.payload.authorization);
     const signature = await signer.signMessage(msg);
+
+    const authorization = {
+      "from": "0x8B0b8c7f984dd3f2b580149ade3cdab504d3af1F",
+      "to": "0x8b0b8c7f984dd3f2b580149ade3cdab504d3af1f",
+      "value": "20000",
+      "validAfter": "1762856726",
+      "validBefore": "1762857386",
+      "nonce": "0xbd56a512949865d0b2a7725062885d2110f29bd235ec254b76cadda652baa54c"
+    }
+    const sortedFields = ["from", "to", "value", "validAfter", "validBefore", "nonce"];
+    const testmsg = JSON.stringify(authorization, sortedFields);
+    const testsignature = "0x4112e00f20f07a011251af71a2615c89f1860fbdde3ac92b6cd547b0438838ff4140e3aa69793debd8474879e5f18408cb812a30a9ea67a45259562e01f5d1001c";
+    const recoveredAddress = ethers.verifyMessage(testmsg, testsignature);
+    console.log("===============recoveredAddress============", recoveredAddress);
+
     paymentPayload.payload.signature = signature;
     const paymentPayloadString = JSON.stringify(paymentPayload);
     const base64EncodedPayload = Buffer.from(paymentPayloadString).toString("base64");
