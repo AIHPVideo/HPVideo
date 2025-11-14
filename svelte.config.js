@@ -21,10 +21,10 @@ const config = {
 		version: {
 			name: Date.now().toString() // 每次构建生成唯一版本ID
 		},
-		// 所有路由和资源路径添加 /app 前缀
+		// 所有路由和资源路径添加 /creator 前缀
     paths: {
       base: '/creator',
-    },
+    }
 	},
 	onwarn: (warning, handler) => {
 		const { code, _ } = warning;

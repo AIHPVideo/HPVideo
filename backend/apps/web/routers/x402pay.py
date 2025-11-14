@@ -19,13 +19,13 @@ facilitator_config = create_facilitator_config(
 # Define an outer middleware
 async def payment_middleware(request: Request, call_next):
     # Only effective for the target path
-    if request.url.path == "/api/v1/x402/creator":
+    if request.url.path == "/creator/api/v1/x402/creator":
         # Calculate the price
         price = calTotal(request)
         
         # Call require_payment middleware
         inner_middleware = require_payment(
-            path="/api/v1/x402/creator",
+            path="/creator/api/v1/x402/creator",
             price=price,
             pay_to_address=COINBASE_ADDRESS,
             network="base",
