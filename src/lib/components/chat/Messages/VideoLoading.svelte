@@ -35,7 +35,7 @@
 	<div class="animate-pulse flex w-full">
 		<div class="flex justify-center flex-col items-center w-full {$mobile ? '' : (sizeflag ? 'max-w-[600px]' : 'max-w-[300px]')} rounded-lg
 			bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" style={`aspect-ratio: ${aspectRatio}`}>
-			<img class="size-10" src="/static/video/video_generating.png" alt=""/>
+			<img class="size-10" src="/creator/static/video/video_generating.png" alt=""/>
 			<span class="text-sm text-gray-50 mt-1">{ $i18n.t("Video Generating...") }</span>
 		</div>
 	</div>

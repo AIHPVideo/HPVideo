@@ -17,7 +17,7 @@
 			const modelfile = JSON.parse(event.data);
 			sessionStorage.modelfile = JSON.stringify(modelfile);
 
-			goto('/workspace/modelfiles/create');
+			goto('/creator/workspace/modelfiles/create');
 		});
 
 		if (window.opener ?? false) {

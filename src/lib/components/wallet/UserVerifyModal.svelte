@@ -172,7 +172,7 @@
             faceUrl.set({
               url: res.transaction_url
             })
-            goto("/kyc")
+            goto("/creator/kyc")
           } else {
             await goto(res.transaction_url);
           }
@@ -198,7 +198,7 @@
   function getQrCode(url: string) {
     let token = localStorage.token;
     let lang = $i18n.language;
-    url = "https://test.degpt.ai/static/kyc/index.html?token=" + token + "&lang=" + lang;
+    url = "https://test.degpt.ai/creator/static/kyc/index.html?token=" + token + "&lang=" + lang;
     console.log("============ewm_url==========", url);
     let qrConfig = {
       errorCorrectionLevel: 'M',

@@ -203,7 +203,7 @@
 
     if (res) {
       if ($chatId === id) {
-        goto("/");
+        goto("/creator");
       }
 
       await chats.set(await getChatList(localStorage.token));
@@ -327,7 +327,7 @@
         draggable="false"
         on:click={async () => {
           selectedChatId = null;
-          await goto("/");
+          await goto("/creator");
           const newChatButton = document.getElementById("new-chat-button");
           setTimeout(() => {
             newChatButton?.click();
@@ -341,7 +341,7 @@
         <div class="self-center mx-1.5">
           <img
             crossorigin="anonymous"
-            src="/static/favicon.png"
+            src="/creator/static/favicon.png"
             class=" size-8 -translate-x-1.5 rounded-full bg-white"
             alt="logo"
           />

@@ -17,7 +17,7 @@
 </script>
 
 <div class="flex flex-col justify-center items-center w-full h-screen">
-  <img src="/static/logo.png" alt=""/>
+  <img src="/creator/static/logo.png" alt=""/>
   {#if !loading}
     <div class="mt-2">{$i18n.t(message)}</div>
   {/if}

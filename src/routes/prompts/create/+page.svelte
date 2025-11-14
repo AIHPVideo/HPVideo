@@ -17,7 +17,7 @@
 			const prompts = JSON.parse(event.data);
 			sessionStorage.modelfile = JSON.stringify(prompts);
 
-			goto('/workspace/prompts/create');
+			goto('/creator/workspace/prompts/create');
 		});
 
 		if (window.opener ?? false) {

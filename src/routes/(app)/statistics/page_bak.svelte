@@ -78,7 +78,7 @@
     <button
       class="self-center"
       on:click={() => {
-        goto("/");
+        goto("/creator");
       }}
     >
       <svg

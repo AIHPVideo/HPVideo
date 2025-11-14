@@ -70,7 +70,7 @@
 				<button
 					class="flex rounded-md py-2 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
 					on:click={ async () => {
-						goto("/statistics");
+						goto("/creator/statistics");
 					}}
 				>
 					<div class=" self-center mr-3">
@@ -104,7 +104,7 @@
 				<button
 					class="flex rounded-md py-2 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
 					on:click={() => {
-						goto("/admin");
+						goto("/creator/admin");
 						show = false;
 					}}
 				>
@@ -131,7 +131,7 @@
 				<button
 					class="flex rounded-md py-2 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
 					on:click={ async () => {
-						goto("/rewardup");
+						goto("/creator/rewardup");
 					}}
 				>
 					<div class=" self-center mr-3">

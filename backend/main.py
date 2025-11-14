@@ -81,7 +81,7 @@ https://github.com/open-webui/open-webui
 
 
 app = FastAPI(
-    docs_url="/docs" if ENV == "dev" else None, redoc_url=None, lifespan=None
+    root_path="/creator", docs_url="/docs" if ENV == "dev" else None, redoc_url=None, lifespan=None
 )
 
 app.state.config = AppConfig()
@@ -272,7 +272,7 @@ async def get_manifest_json():
         "background_color": "#343541",
         "theme_color": "#343541",
         "orientation": "portrait-primary",
-        "icons": [{"src": "/static/logo.png", "type": "image/png", "sizes": "500x500"}],
+        "icons": [{"src": "/creator/static/logo.png", "type": "image/png", "sizes": "500x500"}],
     }
 
 

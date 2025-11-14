@@ -19,7 +19,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Multi-resolution with synchronized audio and video generation",
-        modelicon: "/static/icon/qwen.png",
+        modelicon: "/creator/static/icon/qwen.png",
         modelinfo: ""
       },
       {
@@ -34,7 +34,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Physically accurate, synchronized audio and video",
-        modelicon: "/static/icon/gpt3.png",
+        modelicon: "/creator/static/icon/gpt3.png",
         modelinfo: ""
       },
       {
@@ -49,7 +49,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Strong comprehension, generates precise videos",
-        modelicon: "/static/icon/gemini.png",
+        modelicon: "/creator/static/icon/gemini.png",
         modelinfo: ""
       },
       {
@@ -64,7 +64,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "High-quality long videos with smooth visual coherence",
-        modelicon: "/static/icon/gemini.png",
+        modelicon: "/creator/static/icon/gemini.png",
         modelinfo: ""
       },
       {
@@ -79,7 +79,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Realistic details and smooth motion",
-        modelicon: "/static/icon/ltx.png",
+        modelicon: "/creator/static/icon/ltx.png",
         modelinfo: ""
       },
       {
@@ -94,7 +94,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Realistic rendering of dynamic scenes",
-        modelicon: "/static/icon/hailuo.png",
+        modelicon: "/creator/static/icon/hailuo.png",
         modelinfo: ""
       },
       {
@@ -109,7 +109,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Multi-shot narrative, stable and smooth visuals",
-        modelicon: "/static/icon/doubao.png",
+        modelicon: "/creator/static/icon/doubao.png",
         modelinfo: ""
       },
       {
@@ -124,7 +124,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Accurate physical motion simulation",
-        modelicon: "/static/icon/kling.png",
+        modelicon: "/creator/static/icon/kling.png",
         modelinfo: ""
       },
       {
@@ -139,7 +139,7 @@ export const getDeModels = async (token: string = "") => {
         support: "image",
         type: 1,
         desc: "Fluid motion and lifelike details",
-        modelicon: "/static/icon/pixverse.png",
+        modelicon: "/creator/static/icon/pixverse.png",
         modelinfo: ""
       }
     ],

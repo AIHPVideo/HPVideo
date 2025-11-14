@@ -76,7 +76,7 @@
 	};
 
 	const deleteChats = async () => {
-		await goto('/');
+		await goto('/creator');
 		await deleteAllChats(localStorage.token).catch((error) => {
 			toast.error(error);
 		});
@@ -88,7 +88,7 @@
 		console.log(saveChatHistory);
 
 		if (saveChatHistory === false) {
-			await goto('/');
+			await goto('/creator');
 		}
 		saveSettings({ saveChatHistory: saveChatHistory });
 	};

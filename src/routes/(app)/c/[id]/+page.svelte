@@ -132,7 +132,7 @@
 				// const chatInput = document.getElementById('chat-textarea');
 				// chatInput?.focus();
 			} else {
-				await goto("/");
+				await goto("/creator");
 			}
 		})();
 	}
@@ -145,7 +145,7 @@
 		await chatId.set($page.params.id);
 		chat = await getChatById(localStorage.token, $chatId).catch(
 			async (error) => {
-				await goto("/");
+				await goto("/creator");
 				return null;
 			}
 		);
@@ -806,7 +806,7 @@
 
 	onMount(async () => {
 		if (!($settings.saveChatHistory ?? true)) {
-			await goto("/");
+			await goto("/creator");
 		}
 	});
 	// start pay
@@ -926,7 +926,7 @@
 					currentRequestId = null;
 				}
 				prompt = "";
-				goto("/");
+				goto("/creator");
 			}}
 		/>
 		<div class="flex flex-col flex-auto">

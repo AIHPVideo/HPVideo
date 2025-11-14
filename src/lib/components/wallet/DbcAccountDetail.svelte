@@ -65,7 +65,7 @@
       });
     }
     localStorage.setItem("settings", JSON.stringify($settings));
-    goto("/");
+    goto("/creator");
     const newChatButton = document.getElementById("new-chat-button");
     setTimeout(() => {
       newChatButton?.click();

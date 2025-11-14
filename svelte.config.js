@@ -20,7 +20,11 @@ const config = {
 		// 确保输出文件带哈希（默认已启用，显式声明更明确）
 		version: {
 			name: Date.now().toString() // 每次构建生成唯一版本ID
-		}
+		},
+		// 所有路由和资源路径添加 /app 前缀
+    paths: {
+      base: '/creator',
+    },
 	},
 	onwarn: (warning, handler) => {
 		const { code, _ } = warning;

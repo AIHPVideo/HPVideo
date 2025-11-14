@@ -74,7 +74,7 @@
 				const chatInput = document.getElementById('chat-textarea');
 				chatInput?.focus();
 			} else {
-				await goto('/');
+				await goto('/creator');
 			}
 		})();
 	}
@@ -86,7 +86,7 @@
 	const loadSharedChat = async () => {
 		await chatId.set($page.params.id);
 		chat = await getChatByShareId(localStorage.token, $chatId).catch(async (error) => {
-			await goto('/');
+			await goto('/creator');
 			return null;
 		});
 
