@@ -580,7 +580,7 @@
                     : chat.id === selectedChatId
                     ? 'bg-gray-100 dark:bg-gray-950'
                     : ' group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
-                  href="/c/{chat.id}"
+                  href="/creator/c/{chat.id}"
                   on:click={() => {
                     selectedChatId = chat.id;
                     if ($mobile) {

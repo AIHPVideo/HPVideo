@@ -154,7 +154,7 @@
     if (currentRequestId !== null) {
       currentRequestId = null;
     }
-    window.history.replaceState(history.state, "", `/`);
+    window.history.replaceState(history.state, "", `/creator`);
     await chatId.set("");
 
     autoScroll = true;
@@ -426,7 +426,7 @@
 
     // 加载聊天列表（赋值聊天title）
     if (messages.length == 2) {
-      window.history.replaceState(history.state, "", `/c/${_chatId}`);
+      window.history.replaceState(history.state, "", `/creator/c/${_chatId}`);
       const _title = await generateDeChatTitle(prompt);
       await setChatTitle(_chatId, _title);
     } else {
