@@ -2,6 +2,7 @@
   import { DropdownMenu } from "bits-ui";
   import { models } from "$lib/stores";
   import { onMount, getContext } from "svelte";
+
   const i18n = getContext("i18n");
 
   let sizeshow = false;
@@ -9,7 +10,8 @@
   let button: HTMLElement;
   let buttonWidth: number;
   let resizeObserver: ResizeObserver;
-  let seldura = ["Short", "Medium", "Long"]
+  let seldura = ["Short", "Medium", "Long"];
+  let amount: any[] = [];
 
   export let videodura = 10;
   export let videosize = "720*1280";
@@ -24,10 +26,11 @@
           videodura = modelObj[0].duration[0];
           videosize = modelObj[0].size[0];
           if (modelObj[0].duration.length > 2) {
-            seldura = ["Short", "Medium", "Long"]
+            seldura = ["Short", "Medium", "Long"];
           } else {
-            seldura = ["Short", "Long"]
+            seldura = ["Short", "Long"];
           }
+          checkmoney(modelObj[0].amount);
         }
       }
     } else {
@@ -36,15 +39,29 @@
         videodura = modelObj[0].duration[0];
         videosize = modelObj[0].size[0];
         if (modelObj[0].duration.length > 2) {
-          seldura = ["Short", "Medium", "Long"]
+          seldura = ["Short", "Medium", "Long"];
         } else {
-          seldura = ["Short", "Long"]
+          seldura = ["Short", "Long"];
         }
+        checkmoney(modelObj[0].amount);
       }
     }
     
   } else {
     modelObj = [];
+  }
+
+  const checkmoney = (amounts: any) => {
+    const keys = Object.keys(amounts);
+    if (keys.length == 1) {
+      amount = amounts[keys[0]];
+    } else {
+      keys.forEach((item: string) => {
+        if (videosize.includes(item)) {
+          amount = amounts[item];
+        }
+      })
+    }
   }
 
   onMount(() => {
@@ -90,6 +107,7 @@
               on:click={(e) => {
                 e.preventDefault();
                 videosize = item;
+                checkmoney(modelObj[0].amount);
                 sizeshow = false;
               }}
             >
@@ -180,7 +198,7 @@
                   <path d="M512 0C230.4 0 0 230.4 0 512s230.4 512 512 512 512-230.4 512-512S793.6 0 512 0z m42.666667 934.4V853.333333c0-25.6-17.066667-42.666667-42.666667-42.666666s-42.666667 17.066667-42.666667 42.666666v81.066667c-200.533333-21.333333-362.666667-179.2-379.733333-379.733333H170.666667c25.6 0 42.666667-17.066667 42.666666-42.666667s-17.066667-42.666667-42.666666-42.666667H89.6c17.066667-200.533333 179.2-362.666667 379.733333-379.733333V170.666667c0 25.6 17.066667 42.666667 42.666667 42.666666s42.666667-17.066667 42.666667-42.666666V89.6c200.533333 21.333333 362.666667 179.2 379.733333 379.733333H853.333333c-25.6 0-42.666667 17.066667-42.666666 42.666667s17.066667 42.666667 42.666666 42.666667h81.066667c-17.066667 200.533333-179.2 362.666667-379.733333 379.733333z"/>
                   <path d="M704 580.266667l-153.6-89.6-46.933333-174.933334c-4.266667-21.333333-29.866667-38.4-51.2-29.866666-25.6 8.533333-38.4 34.133333-34.133334 55.466666l51.2 192c0 4.266667 4.266667 8.533333 8.533334 12.8l4.266666 4.266667 8.533334 8.533333 170.666666 98.133334c8.533333 4.266667 12.8 4.266667 21.333334 4.266666 12.8 0 29.866667-8.533333 38.4-21.333333 8.533333-21.333333 4.266667-46.933333-17.066667-59.733333z"/>
                 </svg>
-                <span class="text-sm ml-1">{$i18n.t(seldura[index])}</span>
+                <span class="text-sm ml-1">{$i18n.t(seldura[index])} { "(" + item + "s - $" + amount[index] + ")"}</span>
               </div>
             </button>
           {/each}

@@ -35,7 +35,7 @@
     getDeOpenAIChatResult,
     generateDeTitle
   } from "$lib/apis/de";
-  import { DEGPT_TOKEN, WEBUI_API_BASE_URL } from "$lib/constants"
+  import { DEGPT_TOKEN } from "$lib/constants"
 
   import { queryMemory } from "$lib/apis/memories";
   import { createOpenAITextStream } from "$lib/apis/streaming";
@@ -46,6 +46,7 @@
   import { config as web3Config, domain, types } from "$lib/utils/wallet/index";
   import { getAccount, signTypedData } from "@wagmi/core";
   import { ethers } from "ethers";
+  import { x402pay } from "$lib/apis/pay";
 
   let inviter: any = "";
   let channelName: any = "";
@@ -496,7 +497,7 @@
       }));
 
       // start pay
-      startPayment(model.id, responseMessageId);
+      startPayment(model.id, videosize, videodura, responseMessageId);
 
       const [res, controller] = await getDeOpenAIChatCompletion(
         localStorage.token,
@@ -774,14 +775,11 @@
   };
 
   // start pay
-  const startPayment = async (model: string, messageid: string) => {
+  const startPayment = async (model: string, size: string, duration: number, messageid: string) => {
     try {
-      const response = await fetch(`${WEBUI_API_BASE_URL}/x402/creator?model=${model}&messageid=${messageid}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const account = getAccount(web3Config);
+      const fromAddress = account?.address;
+      const response = await x402pay(fromAddress as string, model, size, duration, messageid);
       if (response.status == 402) {
         const paymentInfo = await response.json();
         await handleWeb3Payment(paymentInfo);        
