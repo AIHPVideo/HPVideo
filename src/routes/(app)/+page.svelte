@@ -16,12 +16,9 @@
     models,
     pageUpdateNumber,
     settings,
-    showNewWalletModal,
     showSidebar,
-    showUserVerifyModal,
     user,
-    switchModel,
-    theme
+    switchModel
   } from "$lib/stores";
 
   import {
@@ -128,15 +125,10 @@
     inviter = queryParams.get("inviter");
     channelName = queryParams.get("channel");
     if (inviter) {
-      $showNewWalletModal = true;
       $inviterId = inviter;
     }
     if (channelName) {
       await channel.set(channelName);
-    }
-    const verifyAgain = queryParams.get("verifyAgain");
-    if (verifyAgain && $user?.id) {
-      $showUserVerifyModal = true;
     }
 
     await initNewChat();

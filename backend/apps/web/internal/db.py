@@ -31,7 +31,7 @@ router.run()
 DB.close()
 DB.connect(reuse_if_open=True)
 
-# 定义切面装饰器，用于包裹数据库操作函数
+# Define an aspect-oriented decorator to wrap database operation functions
 def aspect_database_operations(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -39,7 +39,7 @@ def aspect_database_operations(func):
             DB.close()
         DB.connect(reuse_if_open=True)
         try:
-            # 执行被装饰的数据库操作函数
+            # Execute the decorated database operation function
             result = func(*args, **kwargs)
             return result
         except Exception as e:

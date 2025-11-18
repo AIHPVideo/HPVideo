@@ -8,14 +8,7 @@
     showSidebar,
     mobile,
     showArchivedChats,
-    showBuyCoinModal,
-    showShareModal,
     pageUpdateNumber,
-    showRewardDetailModal,
-    showRewardsHistoryModal,
-    showTransactionsModal,
-    showUserVerifyModal,
-    showCoinIntruModal,
     showFollowTwitterModal,
     showFollowTGGroupModal,
     showWalletView,
@@ -37,13 +30,6 @@
   import ChatMenu from "./Sidebar/ChatMenu.svelte";
   import ShareChatModal from "../chat/ShareChatModal.svelte";
   import ArchivedChatsModal from "./Sidebar/ArchivedChatsModal.svelte";
-  import BuyCoinModal from "../wallet/BuyCoinModal.svelte";
-  import ShareModal from "../wallet/ShareModal.svelte";
-  import RewardsHistoryModal from "../wallet/RewardsHistoryModal.svelte";
-  import RewardDetailModal from "../wallet/RewardDetailModal.svelte";
-  import TransactionsModal from "../wallet/TransactionsModal.svelte";
-  import UserVerifyModal from "../wallet/UserVerifyModal.svelte";
-  import CoinIntruModal from "../wallet/CoinIntruModal.svelte";
   import FollowTwitterModal from "../twitter/FollowTwitterModal.svelte";
   import FollowTgGroupModal from "../twitter/FollowTgGroupModal.svelte";
 
@@ -236,38 +222,6 @@
     await chats.set(await getChatList(localStorage.token));
   }}
 />
-
-<BuyCoinModal bind:show={$showBuyCoinModal} />
-
-<!-- 分享弹窗 -->
-{#if showRewardsHistoryModal}
-  <ShareModal bind:show={$showShareModal} />
-{/if}
-
-<!-- 奖励记录弹窗 -->
-{#if showRewardsHistoryModal}
-  <RewardsHistoryModal bind:show={$showRewardsHistoryModal} />
-{/if}
-
-<!-- 奖励操作界面 -->
-{#if showRewardDetailModal}
-  <RewardDetailModal bind:show={$showRewardDetailModal} />
-{/if}
-
-<!-- 转账记录弹窗 -->
-{#if showTransactionsModal}
-  <TransactionsModal bind:show={$showTransactionsModal} />
-{/if}
-
-<!-- KYC认证弹窗 -->
-{#if showUserVerifyModal}
-  <UserVerifyModal bind:show={$showUserVerifyModal} />
-{/if}
-
-<!-- KYC认证弹窗 -->
-{#if showCoinIntruModal}
-  <CoinIntruModal bind:show={$showCoinIntruModal} />
-{/if}
 
 <!-- 关注推特弹窗 -->
 {#if showFollowTwitterModal}

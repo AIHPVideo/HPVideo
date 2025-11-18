@@ -16,8 +16,6 @@ export const OPENAI_API_BASE_URL = `${WEBUI_BASE_URL}/openai/api`;
 export const AUDIO_API_BASE_URL = `${WEBUI_BASE_URL}/audio/api/v1`;
 export const IMAGES_API_BASE_URL = `${WEBUI_BASE_URL}/images/api/v1`;
 export const RAG_API_BASE_URL = `${WEBUI_BASE_URL}/rag/api/v1`;
-// export const DE_API_BASE_URL = `https://usa-chat.degpt.ai/api`;
-//export const DE_API_BASE_URL = `https://chat.degpt.ai/api`;
 
 export const UPLOAD_API_BASE_URL = `http://localhost:8081/api/v1`;
 

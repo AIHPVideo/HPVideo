@@ -4,7 +4,7 @@ import os
 import uuid
 import datetime
 
-# 配置访问密钥和Endpoint
+# Configure the access key and endpoint
 access_key_id = os.getenv("FILE_ACCESS_KEY_ID")
 access_key_secret = os.getenv("FILE_ACCESS_KEY_SECRET")
 endpoint = os.getenv("FILE_ENDPOINT")
@@ -13,7 +13,7 @@ oss_url = os.getenv("FILE_OSS_URL")
 
 class OssUtil:
     def __init__(self):
-        # 创建Bucket对象
+        # Create a Bucket object
         auth = oss2.Auth(access_key_id, access_key_secret)
         self.bucket = oss2.Bucket(auth, endpoint, bucket_name)
 
@@ -25,11 +25,11 @@ class OssUtil:
             formatted_date = now.strftime('%Y/%m/%d')
             file_name = f'{formatted_date}/image_{uuid.uuid4()}.png'
 
-            # 检查并清理 Base64 前缀
+            # Check and clean the Base64 prefix
             if ',' in base64_str:
                 base64_str = base64_str.split(',')[1]
             
-            # 解码 Base64 字符串
+            # Decode the Base64 string
             image_data = base64.b64decode(base64_str)
             
             # Upload to OSS

@@ -28,7 +28,6 @@
 
   import { WEBUI_BASE_URL } from "$lib/constants";
   import i18n, { initI18n } from "$lib/i18n";
-  import { addErrorLog } from '$lib/apis/errorlog';
 
   setContext("i18n", i18n);
   let loaded = false;
@@ -129,7 +128,7 @@
       await initUrlParam();
       loaded = true;
     } catch (error) {
-      addErrorLog("首页初始化", error.toString());
+      console.log("==============", error);
     }
   });
 </script>

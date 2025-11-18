@@ -13,7 +13,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { config, settings, models, theme, user, showPriceModal, showSidebar, showWalletView } from '$lib/stores';
+	import { config, settings, models, theme, user, showSidebar, showWalletView } from '$lib/stores';
 	import { imageGenerations } from '$lib/apis/images';
 	import {
 		approximateToHumanReadable,
@@ -326,42 +326,7 @@
 						</div>
 					{:else}
 						<div class="w-full">
-							{#if message?.warning === true}
-								<div
-									class="flex mt-2 mb-4 space-x-2 border px-4 py-3 border-amber-600 bg-amber-600/30 font-medium rounded-lg"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke-width="1.5"
-										stroke="currentColor"
-										class="w-5 h-5 self-center"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-										/>
-									</svg>
-									<div class="self-center w-full">
-										{message.content}
-										{#if $user?.id?.startsWith("0x")}
-											<button class="primaryButton text-white text-sm px-2 py-1 rounded-lg float-right"
-												on:click={() => { $showPriceModal = true; }}>
-												{$i18n.t("Click To Upgrade")}
-											</button>
-										{:else}
-											<button class="primaryButton text-white text-sm px-2 py-1 rounded-lg float-right"
-												on:click={() => { 
-													$showSidebar = true;
-          								$showWalletView = true; }}>
-												{$i18n.t("Enter wallet")}
-											</button>
-										{/if}
-									</div>
-								</div>
-							{:else if message?.error === true}
+							{#if message?.error === true}
 								{#if message.paymoney}
 									<div class="max-w-[600px]">
 										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}

@@ -1,18 +1,16 @@
-from fastapi import Response, Request
-from fastapi import Depends, FastAPI, HTTPException, status
-from datetime import datetime, timedelta, date
+from fastapi import Request
+from fastapi import Depends, HTTPException, status
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from typing import List, Union, Optional, Any
+from typing import List, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
 import logging
-import time
 
 from apps.web.models.users import UserModel, UserUpdateForm, UserRoleUpdateForm, Users, UserRoleUpdateProForm, UserModelsUpdateForm, ChannelTotalModel, UserTotalModel, UserDisperModel, UserLanguageUpdateForm
 from apps.web.models.auths import Auths
 from apps.web.models.chats import Chats
-from apps.web.models.rewards import RewardsTableInstance
 from apps.web.models.vipstatus import VIPStatuses, VIPStatusModelResp, VipTotalModel
 from apps.web.models.daily_users import DailyUsersInstance
 from apps.web.models.appversion import AppVersionInstance
@@ -233,48 +231,18 @@ def get_transaction_receipt(tx_hash):
         return None
 
 
-
-# def update_user_vip(user_id, tx_hash):
-#     try:
-
-#         # 插入新的VIP状态
-#         new_vip_status = VIPStatuses.insert_vip_status(
-#             user_id=user_id,
-#             start_date=date(2024, 1, 1),
-#             end_date=date(2025, 1, 1),
-#             order_id=tx_hash
-#         )
-#         print(new_vip_status)
-
-#         # 获取用户的VIP状态
-#         vip_status = VIPStatuses.get_vip_status_by_user_id(user_id)
-#         print(vip_status)
-
-#         # 更新VIP结束日期
-#         updated = VIPStatuses.update_vip_end_date(user_id, date(2025, 12, 31))
-#         print(f"Update successful: {updated}")
-
-#         # 检查VIP状态是否有效
-#         is_active = VIPStatuses.is_vip_active(user_id)
-#         print(f"VIP is active: {is_active}")
-#     except Exception as e:
-#         print("更新vip报错", e)
-#         raise HTTPException(400, detail="update_user_vip error")
-
-
 def update_user_vip(user_id, tx_hash, vip, time):
     try:
-        # 获取当前时间并计算一个月后的日期
+        # Get the current time and calculate the date one month later
         start_date = datetime.now().date()
         if (time == "month"):
             end_date = (datetime.now() + timedelta(days=31)).date()
         else:
             end_date = (datetime.now() + relativedelta(years=1)).date()
 
-        # 获取用户的VIP状态
+        # Get the user's VIP status
         vip_status = VIPStatuses.get_vip_status_by_userid_vip(user_id, vip) 
         if vip_status:
-            # 用户已经是VIP
             if (time == "month"):
                 new_end_date = vip_status.end_date + timedelta(days=31)
             else:
@@ -282,7 +250,6 @@ def update_user_vip(user_id, tx_hash, vip, time):
             
             VIPStatuses.update_vip_end_date(vip_status.id, new_end_date)
         else:
-            # 用户不是VIP，创建新的VIP状态并设置时长为一个月
             level = 1
             if vip == "standard":
                 level = 2
@@ -299,18 +266,18 @@ def update_user_vip(user_id, tx_hash, vip, time):
             )
             
     except Exception as e:
-        print("更新vip报错", e)
+        print("update vip error", e)
         raise HTTPException(400, detail="update_user_vip error")
 
 
 
-# 升级为pro
+# upgrade to pro
 @router.post("/pro")
 async def openPro(form_data: UserRoleUpdateProForm, session_user=Depends(get_current_user)):
 
     if session_user:
         try:
-            # 获取交易Hash信息
+            # get tran hash value
             tx_hash = form_data.tx
             # tx = w3.eth.get_transaction(tx_hash)
             if form_data.binanceflag:
@@ -321,20 +288,17 @@ async def openPro(form_data: UserRoleUpdateProForm, session_user=Depends(get_cur
             print("receipt", tx_receipt)
 
             if tx_receipt.status == 1:
-                # 解析事件日志
+                # Parse the event log
                 for log in tx_receipt['logs']:
-                    # 打印日志信息
-                    print(log)
-                        
-                    # 解析日志中的目标地址（假设合约事件中包含目标地址）
-                    # 这里需要根据你的具体合约和事件定义进行解析
-                    # 比如，如果你的合约事件定义为：event Transfer(address indexed from, address indexed to, uint256 value);
+                    # Parse the target address in the log (assuming the contract event includes the target address).
+                    # This parsing depends on your specific contract and event definitions.
+                    # For example, if your contract event is defined as: event Transfer(address indexed from, address indexed to, uint256 value);
                     event_signature_hash = w3.keccak(text='Transfer(address,address,uint256)').hex()
                     if log['topics'][0].hex() == event_signature_hash:
                         from_address_hex = log['topics'][1].hex()
                         to_address_hex = log['topics'][2].hex()
 
-                        # 处理地址
+                        # Process the address
                         from_address_hex = from_address_hex[26:]
                         to_address_hex = to_address_hex[26:]
 
@@ -345,10 +309,10 @@ async def openPro(form_data: UserRoleUpdateProForm, session_user=Depends(get_cur
                         print(f"To: {to_address}")
                             
                         if to_address == tranAddress:
-                            print("执行update_user_vip")
+                            print("run update_user_vip")
                             update_user_vip(session_user.id, tx_hash, form_data.vip, form_data.viptime)
 
-                            # 获取VIP信息
+                            # get vip info
                             viplist = VIPStatuses.get_vip_status_by_user_id(session_user.id)
                             return {"ok": True, "data": viplist}
                 else:
@@ -370,12 +334,11 @@ async def isPro(session_user=Depends(get_current_user)):
     if session_user:
         try:
             user_id = session_user.id
-            # print("user_id", user_id, session_user.id, session_user.role)
-            # 获取用户的VIP状态
+            # Obtain the user's VIP status
             vip_status = VIPStatuses.get_vip_status_by_user_id(user_id)
             return vip_status
         except Exception as e:
-            print("判断是否为vip", e)
+            print("get vip status error", e)
             raise HTTPException(400, detail="Error is_pro")
             
 
@@ -385,7 +348,7 @@ async def get_user_info(request: Request,  user=Depends(get_current_user)):
     # print("isPro session_user", session_user)
     if user:
         try:
-            # 更新用户活跃数
+            # Update the number of active users
             DailyUsersInstance.refresh_active_today(user.last_active_at)
             Users.update_user_last_active_by_id(user.id)
             token = create_token(
@@ -409,10 +372,10 @@ async def get_user_info(request: Request,  user=Depends(get_current_user)):
             return response
                     
         except Exception as e:
-            print("获取用户信息报错", e)
+            print("Error occurred while retrieving user information", e)
             raise HTTPException(400, detail="Error get_user_info")
 
-# 更新用户选择模型       
+# Update the user's selected model       
 @router.post("/update/models", response_model=bool)
 async def update_user_role(form_data: UserModelsUpdateForm, user=Depends(get_current_user)):
 
@@ -424,7 +387,7 @@ async def update_user_role(form_data: UserModelsUpdateForm, user=Depends(get_cur
         detail=ERROR_MESSAGES.ACTION_PROHIBITED,
     )
 
-# 更新用户选择语言       
+# Update the user's selected language       
 @router.post("/update/language", response_model=bool)
 async def update_user_role(form_data: UserLanguageUpdateForm, user=Depends(get_current_user)):
 
@@ -436,7 +399,7 @@ async def update_user_role(form_data: UserLanguageUpdateForm, user=Depends(get_c
         detail=ERROR_MESSAGES.ACTION_PROHIBITED,
     )
 
-# 获取用户注册分布     
+# Obtain the user registration distribution     
 @router.post("/disper/total", response_model=UserTotalModel)
 async def disper_total(user=Depends(get_current_user)):
 
@@ -448,19 +411,19 @@ async def disper_total(user=Depends(get_current_user)):
         detail=ERROR_MESSAGES.ACTION_PROHIBITED,
     )
 
-# 获取近15天用户数据分布     
+# Obtain the user data distribution from the past 15 days     
 @router.post("/disper/user", response_model=UserDisperModel)
 async def disper_total(user=Depends(get_current_user)):
 
     if user is not None:
-        # 获取前15天日期并以月日格式存储在列表中
+        # Obtain the dates of the previous 15 days and store them in a list in the "MM-DD" format
         date_list = []
         today = datetime.today()
         for i in range(15):
             date = today - timedelta(days=14-i)
             date_list.append(date.strftime('%m-%d'))
         
-        # 获取用户注册数近15天数据
+        # Obtain the user registration data in the past 15 days
         users = Users.get_user_lately()
         wallet_list = []
         channel_list = []
@@ -489,7 +452,7 @@ async def disper_total(user=Depends(get_current_user)):
         detail=ERROR_MESSAGES.ACTION_PROHIBITED,
     )
 
-# 获取VIP升级分布     
+# Get VIP upgrade distribution     
 @router.post("/disper/vip", response_model=VipTotalModel)
 async def disper_total(user=Depends(get_current_user)):
 
@@ -501,7 +464,7 @@ async def disper_total(user=Depends(get_current_user)):
         detail=ERROR_MESSAGES.ACTION_PROHIBITED,
     )
 
-# 获取第三方注册统计数据      
+# Obtain third-party registration statistics      
 @router.post("/third/total", response_model=List[ChannelTotalModel])
 async def third_total(user=Depends(get_current_user)):
 
@@ -513,27 +476,8 @@ async def third_total(user=Depends(get_current_user)):
         detail=ERROR_MESSAGES.ACTION_PROHIBITED,
     )
 
-# 获取用户注册奖励统计数据      
-@router.post("/regist/total")
-async def regist_total(user=Depends(get_current_user)):
 
-    if user is not None:
-        regist_total = Users.get_regist_total()
-        reward_total = Users.get_regist_reward_total()
-        issue_total = RewardsTableInstance.get_issue_reward()
-        return {
-            "regist_total": regist_total,
-            "reward_total": reward_total,
-            "issue_total": issue_total
-        }
-
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail=ERROR_MESSAGES.ACTION_PROHIBITED,
-    )
-
-
-# 校验APP版本
+# Verify the APP version
 @router.get("/check/appversion")
 async def check_appversion():
     return AppVersionInstance.get_app_version()

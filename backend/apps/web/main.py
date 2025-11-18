@@ -11,11 +11,7 @@ from apps.web.routers import (
     utils,
     device,
     ip_log,
-    rewards,
-    reward_date,
     conversation,
-    kycrestrict,
-    error_log,
     completion,
     daily_users,
     fileupload,
@@ -79,11 +75,7 @@ app.include_router(utils.router, prefix="/utils", tags=["utils"])
 
 app.include_router(device.router, prefix="/devices", tags=["devices"])
 app.include_router(ip_log.router, prefix="/ip_logs", tags=["ip_logs"])
-app.include_router(rewards.router, prefix="/rewards", tags=["rewards"])
-app.include_router(reward_date.router, prefix="/rewarddate", tags=["reward_date"])
 app.include_router(conversation.router, prefix="/conversation", tags=["conversation"])
-app.include_router(kycrestrict.router, prefix="/kyc", tags=["kyc"])
-app.include_router(error_log.router, prefix="/errorlog", tags=["error_log"])
 
 app.include_router(completion.router, prefix="/chat", tags=["aliqwen"])
 app.include_router(daily_users.router, prefix="/daily", tags=["daily_users"])

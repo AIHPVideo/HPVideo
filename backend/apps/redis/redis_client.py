@@ -15,13 +15,12 @@ class RedisClient:
                 port=port,
                 db=db,
                 password=password,
-                decode_responses=True  # 让返回值为字符串类型
+                decode_responses=True  # Make the return value a string type
             )
-            # 测试连接
             self.redis_client.ping()
-            print("成功连接到 Redis 服务器")
+            print("Successfully connected to the Redis server")
         except redis.ConnectionError:
-            print("无法连接到 Redis 服务器")
+            print("Failed to connect to the Redis server")
 
     def add_key_value(self, key, value):
         try:
@@ -29,7 +28,7 @@ class RedisClient:
             result = self.redis_client.set(key, value_json)
             return result
         except Exception as e:
-            print("添加键值对时发生错误", e)
+            print("An error occurred while adding the key-value pair", e)
             return False
         
     def get_value_by_key(self, key):
@@ -37,7 +36,7 @@ class RedisClient:
             value = self.redis_client.get(key)
             return json.loads(value)
         except Exception as e:
-            print("查询键值对时发生错误", e)
+            print("An error occurred while querying the key-value pair", e)
             return None
         
     def delete_key(self, key):
@@ -45,7 +44,7 @@ class RedisClient:
             result = self.redis_client.delete(key)
             return result
         except Exception as e:
-            print("删除键值对时发生错误", e)
+            print("An error occurred while deleting the key-value pair", e)
             return 0
         
 RedisClientInstance = RedisClient()

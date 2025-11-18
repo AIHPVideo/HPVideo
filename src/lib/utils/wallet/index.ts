@@ -8,7 +8,7 @@ export const projectId = "59443aa943b8865491317c04a19a8be3";
 
 // 2. Create wagmiConfig
 const metadata = {
-  name: "hpvideo",
+  name: "HPVideo",
   description: "Web3Modal Example",
   url: "https://web3modal.com",
   icons: ["https://avatars.githubusercontent.com/u/37784886"],

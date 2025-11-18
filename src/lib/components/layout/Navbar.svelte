@@ -169,32 +169,6 @@
               </div>
             </div>
           </button>
-          <!-- <UserMenu
-            className="max-w-[200px]"
-            role={$user?.role}
-            on:show={(e) => {
-              if (e.detail === "archived-chat") {
-                showArchivedChats.set(true);
-              }
-            }}
-          >
-            <button
-              class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-100 dark:hover:bg-gray-850 transition"
-              aria-label="User Menu"
-            >
-              <div class=" self-center">
-                <div class="size-8 object-cover rounded-full bg-primary">
-                  <img
-                    src={$user.profile_image_url == ""
-                      ? generateInitialsImage($user.name)
-                      : $user.profile_image_url}
-                    alt="profile"
-                    class=" rounded-full size-8 object-cover"
-                  />
-                </div>
-              </div>
-            </button>
-          </UserMenu> -->
         {/if}
       </div>
     </div>

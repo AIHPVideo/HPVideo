@@ -43,24 +43,6 @@ export const showSettings = writable(false);
 export const showArchivedChats = writable(false);
 export const showChangelog = writable(false);
 
-
-// ###########
-// 钱包相关
-export const showNewWalletModal = writable(false);
-export const showPriceModal = writable(false);
-export const showBuyCoinModal = writable(false);
-export const showShareModal = writable(false);
-export const showRewardsModal = writable(false);
-export const showRewardsHistoryModal = writable(false);
-export const showRewardDetailModal = writable(false);
-export const showTransactionsModal = writable(false);
-export const showUserVerifyModal = writable(false);
-export const showConfirmUpgradeModal = writable(false);
-export const showCoinIntruModal = writable(false);
-export const showCoinIntruType = writable('dgc');
-export const dbcRate = writable({rate: 0.0002});
-export const dgcRate = writable({rate: 0.00001});
-
 // 升级VIP标志用于实时更新升级数据
 export const vipupgrade = writable(false);
 

@@ -1,23 +1,14 @@
 from pydantic import BaseModel  # 导入Pydantic中的BaseModel
 from peewee import *  # 导入Peewee中的所有模块
 from playhouse.shortcuts import model_to_dict  # 导入Peewee中的model_to_dict方法
-from typing import List, Union, Optional  # 导入类型提示
+from typing import List, Optional  # 导入类型提示
 import time  # 导入time模块
 from datetime import datetime, timedelta
 
-import uuid
-
-from utils.misc import get_gravatar_url  # 导入获取Gravatar URL的方法
-
 from apps.web.internal.db import DB, aspect_database_operations  # 导入数据库实例DB
 from apps.web.models.chats import Chats  # 导入Chats模型
-from apps.web.models.rewards import RewardsTableInstance
-from fastapi import APIRouter, Depends, HTTPException, Request
 from apps.web.models.vipstatus import VIPStatus
 from apps.redis.redis_client import RedisClientInstance
-import json
-from apps.web.models.reward_data import RewardDateTableInstance
-from apps.web.api.rewardapi import RegistAmount, InviteAmount
 from apps.web.models.daily_users import DailyUsersInstance
 
 
@@ -209,42 +200,6 @@ class UsersTable:
         Users.update_user_last_active_by_id(result.id)
 
         print("User.create result", result.id)
-
-        rewarddate = RewardDateTableInstance.get_current_open()
-        if rewarddate is not None:
-            # 获取当前日期
-            current_date = datetime.now().date()
-            if rewarddate.start_time.date() <= current_date <= rewarddate.end_time.date():
-                # 在这里给新钱包发送奖励
-                if result and UsersTable.is_ethereum_address(result.id):
-                    print("============创建注册奖励1============")
-                    # 添加邀请建立
-                    if user.inviter_id is not None and user.inviter_id != '':
-                        # 获取邀请人信息
-                        invite_user_ret = User.get_or_none(User.id == inviter_id)
-                        # 邀请人存在创建注册奖励和邀请奖励
-                        if invite_user_ret is not None:
-                            # 生成关联字符串
-                            invitee = str(uuid.uuid4())
-                            invite_list = RewardsTableInstance.get_invitee_today_history(inviter_id)   
-                            # 校验邀请人是否KYC认证
-                            invite_user_dict = model_to_dict(invite_user_ret)
-                            invite_user = UserModel(**invite_user_dict)
-                            if invite_user.verified:
-                                # 注册奖励绑定邀请人
-                                RewardsTableInstance.create_reward(user.id, RegistAmount, "new_wallet",True, invitee)
-                                if len(invite_list) < 20:
-                                    print("邀请人得奖励", user.inviter_id)
-                                    RewardsTableInstance.create_reward(user.inviter_id, InviteAmount, "invite", True, invitee)
-                            else:
-                                # 注册奖励绑定邀请人
-                                RewardsTableInstance.create_reward(user.id, RegistAmount, "new_wallet",True, invitee)
-                                if len(invite_list) < 20:
-                                    print("邀请人得奖励0", user.inviter_id)
-                                    RewardsTableInstance.create_reward(user.inviter_id, 0, "invite", False, invitee)
-                    else:
-                        # 注册奖励
-                        RewardsTableInstance.create_reward(user.id, RegistAmount, "new_wallet",True)
         
         # return user info:
         return user  # 返回创建的用户 

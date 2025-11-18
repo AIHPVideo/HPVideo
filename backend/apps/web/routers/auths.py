@@ -10,13 +10,9 @@ from utils.utils import (
     create_token,
     create_api_key,
 )
-from apps.web.api.rewardapi import RewardApiInstance
-from apps.web.models.rewards import RewardsTableInstance
-from apps.web.models.faceLib import face_lib
-from apps.web.models.faceCompare import face_compare
 from apps.web.models.device import devices_table
 from apps.web.models.ip_log import ip_logs_table
-from apps.web.models.users import Users, UserRequest
+from apps.web.models.users import Users
 from apps.web.models.auths import (
     SigninForm,
     FingerprintSignInForm,
@@ -28,18 +24,13 @@ from apps.web.models.auths import (
     UserResponse,
     SigninResponse,
     Auths,
-    ApiKey,
-    FaceLivenessRequest,
-    FaceLivenessResponse,
-    FaceLivenessCheckResponse
+    ApiKey
 )
 from eth_account.messages import encode_defunct
 from web3.auto import w3
 from web3 import Web3
-import json
 import logging
 from typing import List, Dict
-from utils.utils import get_verified_user
 
 from fastapi import Request, WebSocket, WebSocketDisconnect
 from fastapi import Depends, HTTPException, status
@@ -49,25 +40,12 @@ import re
 import uuid
 import base64
 
-from apps.web.models.email_codes import (
-    email_code_operations,
-    EmailRequest,
-    TimeRequest,
-    VerifyCodeRequest
-)
-
-from apps.web.models.kyc_restrict import KycRestrictInstance
-from apps.web.api.captcha import CaptchaApiInstance
-
-from apps.redis.redis_client import RedisClientInstance
 from apps.web.models.daily_users import DailyUsersInstance
 
-from constants import USER_CONSTANTS
 import logging
 log = logging.getLogger(__name__)
 
 # --------钱包相关--------
-#w3 = Web3(Web3.HTTPProvider('https://rpc-testnet.dbcwallet.io'))  # 旧以太坊主网
 w3 = Web3(Web3.HTTPProvider('https://rpc1.dbcwallet.io')) # 新以太坊主网
 
 # ————————————————————————
@@ -644,386 +622,11 @@ async def delete_api_key(user=Depends(get_current_user)):
     success = Users.update_user_api_key_by_id(user.id, None)
     return success
 
-# 发送邮箱验证码
-@router.post("/send_code")
-async def send_code(email_request: EmailRequest, user=Depends(get_current_user)):
-    email = email_request.email
-
-    # 校验邮箱是否已经认证过
-    emailRet = KycRestrictInstance.check_email(email)
-    if emailRet:
-        return {"pass": False, "message": "One email can only be used for KYC verification once"}
-
-    code = email_code_operations.generate_code()  # 生成验证码
-    result = email_code_operations.create(email, code)  # 将验证码保存到数据库
-    if result:
-        email_body = email_code_operations.create_email_body(user.id, code, email_request.language)
-        # 发送邮件
-        email_code_operations.send_email(email, "DeGPT Code", email_body) 
-        return {"pass": True, "message": "验证码已发送"}
-    else:
-        raise HTTPException(status_code=500, detail="无法创建验证码记录")
-
 # 获取服务器时间
-
-
 @router.post("/serve_time")
 async def serve_time():
     local_time = datetime.now()
     return {"data": local_time}
-
-# 校验邮箱验证码
-
-
-@router.post("/verify_code")
-async def verify_code(verify_code_request: VerifyCodeRequest, user=Depends(get_verified_user)):
-    email = verify_code_request.email
-    code = verify_code_request.code
-
-    record = email_code_operations.get_by_email(email)
-
-    if not record:
-        raise HTTPException(
-            status_code=404, detail="The verification code record does not exist")
-
-    if email_code_operations.is_expired(record.created_at):
-        raise HTTPException(
-            status_code=400, detail="The verification code has expired")
-
-    if record.code == code:
-        KycRestrictInstance.update_email(user.id, email)
-        return {"message": "The verification code has been verified successfully"}
-    else:
-        raise HTTPException(
-            status_code=400, detail="The verification code is invalid")
-
-
-# 生成人脸识别库
-@router.get("/create_face")
-async def create_face():
-    # 生成人脸识别库
-    return face_lib.create_face_db()
-
-# 获取人脸识别连接
-@router.post("/face_liveness", response_model=FaceLivenessResponse)
-async def face_liveness(form_data: FaceLivenessRequest, user=Depends(get_current_user)):
-    if user.id.startswith("0x"):
-        kycrestrict = KycRestrictInstance.get_by_userid(user.id)
-        if kycrestrict is None or kycrestrict.email is None or kycrestrict.captcha_code is None:
-            raise HTTPException(404, detail=ERROR_MESSAGES.API_KEY_NOT_FOUND)
-        # print("face compare success", form_data.sourceFacePictureBase64,  form_data.targetFacePictureBase64)
-        response = face_compare.face_liveness({
-            "deviceType": form_data.metaInfo.deviceType,
-            "ua": form_data.metaInfo.ua,
-            "bioMetaInfo": form_data.metaInfo.bioMetaInfo,
-            "user_id": user.id
-        })
-
-        merchant_biz_id = response["merchant_biz_id"]
-        transaction_id = response["transaction_id"]
-        transaction_url = response["transaction_url"]
-
-        # 存储该用户的验证信息
-        face_time = datetime.now()
-        Users.update_user_verify_info(
-            user.id, transaction_id, merchant_biz_id, face_time)
-        
-        # 添加到redis缓存中
-        redisdata = {"url": transaction_url, "time": face_time.isoformat()}
-        RedisClientInstance.add_key_value(f"face:{user.id}", redisdata)
-
-        return {
-            "merchant_biz_id": merchant_biz_id,
-            "transaction_id": transaction_id,
-            "transaction_url": transaction_url,
-            "face_time": face_time,
-        }
-
-    else:
-        raise HTTPException(404, detail=ERROR_MESSAGES.API_KEY_NOT_FOUND)
-    
-# 获取人脸识别连接
-@router.get("/get_liveness")
-async def get_liveness(user=Depends(get_current_user)):
-    face_data = RedisClientInstance.get_value_by_key(f"face:{user.id}")
-    if face_data is not None:
-        face_time = face_data.get("time")
-        now_time = datetime.now()
-        # 计算时间差
-        facetime = datetime.strptime(face_time, "%Y-%m-%dT%H:%M:%S.%f")
-        time_difference = now_time - facetime
-        if (time_difference.total_seconds() > 300):
-            return {
-                "passed": False,
-                "message": "Time expired"
-            }
-        else:
-            return {
-                "passed": True,
-                "data": face_data.get("url")
-            }
-    else:
-        return {
-            "passed": False,
-            "message": "QR code is invalid"
-        }
-
-# 人脸绑定
-@router.post("/faceliveness_bind", response_model=FaceLivenessCheckResponse)
-async def faceliveness_bind(user: UserRequest):
-    passedInfo = await faceliveness_check_for_ws(user.user_id)
-    await manager.broadcast(json.dumps(passedInfo), user.user_id)
-    return passedInfo
-
-
-# 人脸识别校验
-@router.post("/faceliveness_check", response_model=FaceLivenessCheckResponse)
-async def faceliveness_check(user=Depends(get_current_user)):
-    # 获取查询参数
-    # print("Query Parameters:", form_data,form_data.merchant_biz_id, form_data.transaction_id )
-    merchant_biz_id = user.merchant_biz_id
-    transaction_id = user.transaction_id
-
-    print("form_data.", merchant_biz_id, transaction_id)
-
-    if True:
-        # print("face compare success", form_data.sourceFacePictureBase64,  form_data.targetFacePictureBase64)
-        # response = face_compare.check_result({
-        #     "transaction_id": form_data.transaction_id,
-        #     "merchant_biz_id":form_data.merchant_biz_id,
-        # })
-        response = face_compare.check_result(
-            transaction_id=transaction_id,
-            merchant_biz_id=merchant_biz_id,
-        )
-
-        # print("face compare success", response, response.body.result.ext_face_info, response.body)
-        # print("ext_face_info",  json.loads(response.body.result.ext_face_info)['faceImg'], )
-
-        faceImg = json.loads(response.body.result.ext_face_info)['faceImg']
-
-        if face_lib.check_face_image(faceImg) == False:
-            return {
-                "passed": False,
-                "message": "Fail"
-            }
-
-        # face_lib.add_face_data(faceImg)
-        face_id = face_lib.search_face(faceImg)
-        print("face_id", face_id)
-
-        user_id = Users.get_user_id_by_face_id(face_id)
-        print("user_id", face_id, user_id)
-        if user_id is None:
-            return {
-                "passed": False,
-                "message": "Fail"
-            }
-
-        # 'Message': 'success',
-        # 'RequestId': 'F7EE6EED-6800-3FD7-B01D-F7F781A08F8D',
-        # 'Result': {
-        #     'ExtFaceInfo': '{"faceAttack":"N","faceOcclusion":"N","faceQuality":67.1241455078125}',
-        #     'Passed': 'Y',
-        #     'SubCode': '200'
-        # }
-        passed = False
-        message = "Fail"
-        if (response.body.result.passed == 'Y'):
-            passed = True
-            message = "Success"
-        return {
-            "passed": passed,
-            "message": message
-        }
-
-    else:
-        raise HTTPException(404, detail=ERROR_MESSAGES.API_KEY_NOT_FOUND)
-
-# 查询人脸图片
-@router.get("/faceliveness_image/{tranid}")
-async def faceliveness_image(tranid: str):
-    # 获取查询参数
-    # print("Query Parameters:", form_data,form_data.merchant_biz_id, form_data.transaction_id )
-    merchant_biz_id = 'c2371516-d114-4872-8de0-b9d2a42f9f7c'
-    transaction_id = tranid
-
-    print("form_data.", merchant_biz_id, transaction_id)
-
-    # print("face compare success", form_data.sourceFacePictureBase64,  form_data.targetFacePictureBase64)
-    # response = face_compare.check_result({
-    #     "transaction_id": form_data.transaction_id,
-    #     "merchant_biz_id":form_data.merchant_biz_id,
-    # })
-    response = face_compare.check_result(
-        transaction_id=transaction_id,
-        merchant_biz_id=merchant_biz_id,
-    )
-
-    # print("face compare success", response, response.body.result.ext_face_info, response.body)
-    # print("ext_face_info",  json.loads(response.body.result.ext_face_info)['faceImg'], )
-
-    faceImg = json.loads(response.body.result.ext_face_info)['faceImg']
-
-    # 校验图片真实性
-    flag = face_lib.check_face_image(faceImg)
-    return {
-        "pass": flag,
-        "base64": faceImg
-    }
-
-
-# 检查人脸是否通过
-async def faceliveness_check_for_ws(id: str):
-
-    print("开始人脸校验-userId", id)
-
-    try:
-        # 获取用户信息
-        user = Users.get_user_by_id((id))
-
-        if (user.verified):
-            return {
-                "passed": True,
-                "message": "Success"
-            }
-
-        # 校验时间是否超时
-        face_time = user.face_time
-        if (face_time is None):
-            return {
-                "passed": False,
-                "message": "Time expired, try again"
-            }
-
-        now_time = datetime.now()
-        # 计算时间差
-        time_difference = now_time - face_time
-        if (time_difference.total_seconds() > 300):
-            return {
-                "passed": False,
-                "message": "Time expired, try again"
-            }
-
-        # 获取查询参数
-        merchant_biz_id = user.merchant_biz_id
-        transaction_id = user.transaction_id
-
-        if merchant_biz_id is not None and transaction_id is not None:
-            # 1. 获取人脸检测返回的信息（包含照片base64信息
-            response = face_compare.check_result(
-                transaction_id=transaction_id,
-                merchant_biz_id=merchant_biz_id,
-            )
-
-            # print("face compare success", response, response.body.result.ext_face_info, response.body)
-            # print("ext_face_info",  json.loads(response.body.result.ext_face_info)['faceImg'], )
-
-            # 2. 获取人脸照片
-            faceImg = json.loads(response.body.result.ext_face_info)['faceImg']
-
-            # 3. 校验图片真实性
-            if face_lib.check_face_image(faceImg) == False:
-                return {
-                    "passed": False,
-                    "message": "Face verification failed",
-                }
-            
-            # 4. 搜索该人脸照片在库中是否存在
-            face_id = face_lib.search_face(faceImg)
-            print("face_id", face_id)
-
-            if face_id is not None:
-                print("user check:", face_id)
-                user_exit = Users.get_user_id_by_face_id(face_id)
-                # 5. 存在就告诉你，该人脸已经被检测过了！
-                if user_exit is not None:
-                    return {
-                        "passed": False,
-                        "message": "You have already bound your face KYC with another wallet. Only one wallet can be bound.",
-                        "address": user_exit.id
-                    }
-            else:
-                # 添加人脸样本
-                id_str = str(uuid.uuid4()).replace("-", "_")
-                face_lib.add_face_sample(id_str)
-                # 在人脸样本添加对应的人脸数据
-                face_id = face_lib.add_face_data(faceImg, id_str)
-            
-            # 更新kyc认证
-            if response.body.result.passed:
-                # 校验用户是否完成所有kyc认证流程
-                kycrestrict = KycRestrictInstance.get_by_userid(user.id)
-                if kycrestrict is None:
-                    return {
-                            "passed": False,
-                            "message": "KYC authentication information is incomplete",
-                        }
-                kycrestricts = KycRestrictInstance.get_by_ip(kycrestrict.ip_address)
-                if  kycrestricts is not None and len(kycrestricts) >= 2:
-                    return {
-                            "passed": False,
-                            "message": "A single IP address can be used for a maximum of two KYC verifications",
-                        }
-                email_check = KycRestrictInstance.check_email(kycrestrict.email)
-                if email_check:
-                    return {
-                            "passed": False,
-                            "message": "One email can only be used for KYC verification once",
-                        }
-                captcha_check = CaptchaApiInstance.checkCaptcha(kycrestrict.captcha_code, kycrestrict.ip_address)
-                if captcha_check == False:
-                    return {
-                            "passed": False,
-                            "message": "Captcha security authentication failed",
-                        }
-                
-                # 更新用户KYC状态
-                user_update_result = Users.update_user_verified(user.id, True, face_id)
-                # 更新KYC流程状态
-                KycRestrictInstance.update_kyc(user.id, True)
-                # 领取注册奖励
-                await rewardSent(user.id)
-                # return user_update_result
-                print("user_update_result", user_update_result)
-                            
-            # 'Message': 'success',
-            # 'RequestId': 'F7EE6EED-6800-3FD7-B01D-F7F781A08F8D',
-            # 'Result': {
-            #     'ExtFaceInfo': '{"faceAttack":"N","faceOcclusion":"N","faceQuality":67.1241455078125}',
-            #     'Passed': 'Y',
-            #     'SubCode': '200'
-            # }
-            # 校验成功返回对应数据
-            passed = False
-            message = "Fail"
-            if (response.body.result.passed == 'Y'):
-                passed = True
-                message = "Success"
-            return {
-                "passed": passed,
-                "message": message
-            }
-
-        else:
-            return {
-                "passed": False,
-                "message": "Your haven't started live testing yet"
-            }
-
-    except Exception as e:
-        print(f"Error in faceliveness_check_for_ws: {e}")
-        # 根据需要执行错误处理，例如记录日志或通知客户端
-        return {
-            "passed": False,
-            "message": "The identity validate fail"
-        }
-
-async def rewardSent(user_id: str):
-    registReward = RewardsTableInstance.get_create_rewards_by_userid(user_id)
-    if registReward is not None:
-        if registReward.status == False:
-            RewardApiInstance.registReward(registReward.id, user_id)
 
 class ConnectionManager:
     def __init__(self):
