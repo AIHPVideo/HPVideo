@@ -402,7 +402,7 @@
               <textarea
                 id="chat-textarea"
                 bind:this={chatTextAreaElement}
-                class="scrollbar-hidden bg-gray-100 dark:bg-gray-850 dark:text-gray-100 outline-none w-full py-3 px-3 {fileUploadEnabled
+                class="scrollbar-hidden text-sm bg-gray-100 dark:bg-gray-850 dark:text-gray-100 outline-none w-full py-3 px-3 {fileUploadEnabled
                   ? ''
                   : ' pl-4'} rounded-xl resize-none h-[48px]"
                 placeholder={ $i18n.t("Send a Message") }
@@ -553,7 +553,7 @@
               />
               <div class="flex justify-between">
                 <div class="flex flex-row">
-                  <!-- 图片上传 -->
+                  <!-- upload image -->
                   {#if fileUploadEnabled}
                     <div class="self-star mb-2 ml-1 mr-1">
                       <button

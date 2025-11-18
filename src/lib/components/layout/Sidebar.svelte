@@ -263,15 +263,14 @@
       <a
         id="sidebar-new-chat-button"
         class="flex flex-1 justify-between rounded-xl px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-850 transition"
-        href="/"
+        href="/creator"
         draggable="false"
         on:click={async () => {
           selectedChatId = null;
-          await goto("/creator/");
+          await goto("/creator");
           const newChatButton = document.getElementById("new-chat-button");
           setTimeout(() => {
             newChatButton?.click();
-
             if ($mobile) {
               showSidebar.set(false);
             }
