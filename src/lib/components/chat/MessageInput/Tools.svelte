@@ -1,5 +1,6 @@
 <script lang="ts">
   import { DropdownMenu } from "bits-ui";
+  import ChevronDown from "$lib/components/icons/ChevronDown.svelte";
   import { models } from "$lib/stores";
   import { onMount, getContext } from "svelte";
 
@@ -82,12 +83,13 @@
     <div class="flex flex-row">
       <button
         bind:this={button}
-        class="flex flex-row items-center primaryButton rounded-full px-4 py-1.5"
+        class="flex flex-row items-center bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-0.5"
         on:click={(e) => {
           e.preventDefault();
         }}
       >
-        <span class="text-xs text-white ml-1 py-0.5">{videosize}</span>
+        <span class="text-xs ml-1 py-0.5">{videosize}</span>
+        <ChevronDown className="self-center ml-1 size-3"/>
       </button>
     </div>
   </DropdownMenu.Trigger>
@@ -95,8 +97,8 @@
     <slot>
       <div
         class="flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-        dark:text-gray-300 text-gray-700 shadow-lg px-3 py-5 rounded-2xl mb-14"
-        style="margin-left:-{Math.trunc(buttonWidth + 65)}px;"
+        dark:text-gray-300 text-gray-700 shadow-lg px-3 py-5 rounded-2xl mb-16"
+        style="margin-left:-{Math.trunc(buttonWidth + 50)}px;"
       >
         {#if modelObj.length > 0}
           {#each modelObj[0].size as item}
@@ -150,23 +152,17 @@
     <div class="flex flex-row">
       <button
         bind:this={button}
-        class="flex flex-row items-center primaryButton rounded-full px-4 py-1.5"
+        class="flex flex-row items-center bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-0.5"
         on:click={(e) => {
           e.preventDefault();
         }}> 
         <div class="flex flex-row items-center">
-          <svg xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1024 1024"
-            class="w-[1rem] h-[1rem]"
-            fill="#ffffff">
-            <path d="M512 0C230.4 0 0 230.4 0 512s230.4 512 512 512 512-230.4 512-512S793.6 0 512 0z m42.666667 934.4V853.333333c0-25.6-17.066667-42.666667-42.666667-42.666666s-42.666667 17.066667-42.666667 42.666666v81.066667c-200.533333-21.333333-362.666667-179.2-379.733333-379.733333H170.666667c25.6 0 42.666667-17.066667 42.666666-42.666667s-17.066667-42.666667-42.666666-42.666667H89.6c17.066667-200.533333 179.2-362.666667 379.733333-379.733333V170.666667c0 25.6 17.066667 42.666667 42.666667 42.666666s42.666667-17.066667 42.666667-42.666666V89.6c200.533333 21.333333 362.666667 179.2 379.733333 379.733333H853.333333c-25.6 0-42.666667 17.066667-42.666666 42.666667s17.066667 42.666667 42.666666 42.666667h81.066667c-17.066667 200.533333-179.2 362.666667-379.733333 379.733333z"/>
-            <path d="M704 580.266667l-153.6-89.6-46.933333-174.933334c-4.266667-21.333333-29.866667-38.4-51.2-29.866666-25.6 8.533333-38.4 34.133333-34.133334 55.466666l51.2 192c0 4.266667 4.266667 8.533333 8.533334 12.8l4.266666 4.266667 8.533334 8.533333 170.666666 98.133334c8.533333 4.266667 12.8 4.266667 21.333334 4.266666 12.8 0 29.866667-8.533333 38.4-21.333333 8.533333-21.333333 4.266667-46.933333-17.066667-59.733333z"/>
-          </svg>
           {#if modelObj.length > 0}
-            <span class="text-xs text-white ml-1 py-0.5">{$i18n.t(seldura[modelObj[0].duration.indexOf(videodura)])}</span>
+            <span class="text-xs ml-1 py-0.5">{$i18n.t(seldura[modelObj[0].duration.indexOf(videodura)])}</span>
           {:else}
-            <span class="text-xs text-white ml-1 py-0.5">{$i18n.t(seldura[1])}</span>
-          {/if} 
+            <span class="text-xs ml-1 py-0.5">{$i18n.t(seldura[1])}</span>
+          {/if}
+          <ChevronDown className="self-center ml-1 size-3"/>
         </div>   
       </button>
     </div>
@@ -175,8 +171,8 @@
     <slot>
       <div
         class="flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-        dark:text-gray-300 text-gray-700 shadow-lg px-3 py-5 rounded-2xl mb-14"
-        style="margin-left:-{Math.trunc(buttonWidth + 35)}px;"
+        dark:text-gray-300 text-gray-700 shadow-lg px-3 py-5 rounded-2xl mb-16"
+        style="margin-left:-{Math.trunc(buttonWidth + 20)}px;"
       >
         {#if modelObj.length > 0}
           {#each modelObj[0].duration as item, index}

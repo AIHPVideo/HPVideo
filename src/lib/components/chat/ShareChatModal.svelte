@@ -11,7 +11,7 @@
 
 	export let chatId;
 
-	let chat = null;
+	let chat: any = null;
 	let shareUrl = null;
 	const i18n = getContext('i18n');
 

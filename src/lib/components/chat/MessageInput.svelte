@@ -354,7 +354,7 @@
           />
           <form
             dir={$settings?.chatDirection ?? "LTR"}
-            class=" flex flex-col relative w-full rounded-3xl px-1.5 bg-gray-100 dark:bg-gray-850 dark:text-gray-100 button-select-none"
+            class=" flex flex-col relative w-full rounded-3xl bg-gray-100 dark:bg-gray-850 dark:text-gray-100 button-select-none p-3 border border-gray-300 dark:border-gray-800 p-1"
             on:submit|preventDefault={() => {
               if (checkWalletConnect()) {
                 submitPrompt(prompt, toolInfo, user);
@@ -398,7 +398,7 @@
                 {/each}
               </div>
             {/if}
-            <div class="flex flex-col">
+            <div class="flex flex-col rounded-3xl border border-gray-300 dark:border-gray-800 p-1">
               <textarea
                 id="chat-textarea"
                 bind:this={chatTextAreaElement}
@@ -557,21 +557,18 @@
                   {#if fileUploadEnabled}
                     <div class="self-star mb-2 ml-1 mr-1">
                       <button
-                        class="bg-gray-50 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 transition rounded-full p-1.5"
+                        class="text-gray-800 dark:text-white transition p-1.5"
                         type="button"
                         on:click={() => {
                           filesInputElement.click();
                         }}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 16 16"
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 1024 1024" 
+                          version="1.1"
                           fill="currentColor"
-                          class="w-[1.2rem] h-[1.2rem]"
-                        >
-                          <path
-                            d="M8.75 3.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5Z"
-                          />
+                          class="w-[1.2rem] h-[1.2rem]">
+                          <path d="M625.925953 518.096372l-168.436093 168.436093a47.651721 47.651721 0 0 1-67.298232-0.047628 47.651721 47.651721 0 0 1-0.047628-67.298232l235.781953-235.805768a47.627907 47.627907 0 1 0-67.34586-67.34586l-235.805767 235.781953a142.907535 142.907535 0 0 0 0.047627 202.013768 142.907535 142.907535 0 0 0 202.013768 0.071442l168.459907-168.459907 218.850232-218.850233c83.706047-83.682233 83.658419-219.564651 0.047628-303.151628-83.682233-83.682233-219.421767-83.658419-303.151628 0.023814l-218.850232 218.874047-235.75814 235.758139c-111.592186 111.592186-111.616 292.530605 0 404.122791 111.616 111.616 292.530605 111.639814 404.122791 0L861.707907 619.162791a47.627907 47.627907 0 1 0-67.369674-67.369675L491.210419 854.873302a190.487814 190.487814 0 0 1-269.407256 0 190.511628 190.511628 0 0 1 0-269.431069l235.758139-235.75814 218.850233-218.850233a119.117395 119.117395 0 0 1 168.436093-0.047627 119.212651 119.212651 0 0 1-0.047628 168.436093l-218.850233 218.850232z"/>
                         </svg>
                       </button>
                     </div>
@@ -588,17 +585,15 @@
                     <Tooltip content={$i18n.t("Send message")}>
                       <button
                         id="send-message-button"
-                        class="{(prompt !== '')
-                          ? 'bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 '
-                          : 'text-white bg-gray-300 dark:text-gray-900 dark:bg-gray-700 disabled'} transition rounded-full p-1.5 self-center"
+                        class="{(prompt !== '') ? '' : 'disabled'} transition rounded-lg px-4 py-1.5 self-center primaryButton"
                         type="submit"
                         disabled={prompt === ""}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 16 16"
-                          fill="currentColor"
-                          class="w-5 h-5"
+                          fill="#ffffff"
+                          class="w-5 h-5 rotate-90"
                         >
                           <path
                             fill-rule="evenodd"
