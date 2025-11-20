@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import {
     chats,
+    chatsearch,
     settings,
     chatId,
     tags,
@@ -38,7 +39,6 @@
   let navElement;
 
   let title: string = "UI";
-  let search = "";
 
   let shareChatId: any = null;
 
@@ -53,11 +53,11 @@
   let filteredChatList = [];
 
   $: filteredChatList = $chats?.filter((chat) => {
-    if (search === "") {
+    if ($chatsearch === "") {
       return true;
     } else {
       let title = chat?.title.toLowerCase();
-      const query = search.toLowerCase();
+      const query = $chatsearch.toLowerCase();
 
       let contentMatches = false;
       // Access the messages within chat.chat.messages
@@ -147,23 +147,6 @@
   const onTouchEnd = (e: any) => {
     touchend = e.changedTouches[0];
     checkDirection();
-  };
-
-  // Helper function to fetch and add chat content to each chat
-  const enrichChatsWithContent = async (chatList: any) => {
-    const enrichedChats: any = await Promise.all(
-      chatList.map(async (chat: any) => {
-        const chatDetails = await getChatById(
-          localStorage.token,
-          chat.id
-        ).catch((error) => null); // Handle error or non-existent chat gracefully
-        if (chatDetails) {
-          chat.chat = chatDetails.chat; // Assuming chatDetails.chat contains the chat content
-        }
-        return chat;
-      })
-    );
-    chats.set(enrichedChats);
   };
 
   const editChatTitle = async (id, _title) => {
@@ -360,34 +343,6 @@
           </div>
         </div>
       {/if}
-
-      <!-- <div class="px-2 mt-0.5 mb-2 flex justify-center space-x-2">
-        <div class="flex w-full rounded-xl" id="chat-search">
-          <div class="self-center pl-3 py-2 rounded-l-xl bg-transparent">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              class="w-4 h-4"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-
-          <input
-            class="w-full rounded-r-xl py-1.5 pl-2.5 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
-            placeholder={$i18n.t("Search")}
-            bind:value={search}
-            on:focus={() => {
-              enrichChatsWithContent($chats);
-            }}
-          />
-        </div>
-      </div> -->
 
       {#if $tags?.length > 0}
         <div class="px-2.5 mb-2 flex gap-1 flex-wrap">

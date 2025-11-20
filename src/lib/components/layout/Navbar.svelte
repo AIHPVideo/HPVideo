@@ -4,6 +4,7 @@
   import {
     mobile,
     chats,
+    chatsearch,
     chatId,
     showSidebar,
     user,
@@ -37,6 +38,9 @@
   let languages = [];
 
   let search = "";
+  $: if (search) {
+    chatsearch.set(search);
+  }
   // Helper function to fetch and add chat content to each chat
   const enrichChatsWithContent = async (chatList: any) => {
     const enrichedChats: any = await Promise.all(
