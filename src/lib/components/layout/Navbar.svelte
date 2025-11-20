@@ -40,6 +40,8 @@
   let search = "";
   $: if (search) {
     chatsearch.set(search);
+  } else {
+    chatsearch.set("");
   }
   // Helper function to fetch and add chat content to each chat
   const enrichChatsWithContent = async (chatList: any) => {
