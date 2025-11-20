@@ -309,7 +309,7 @@
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content
 								class="z-[10000] rounded-md  bg-white dark:bg-gray-850 dark:text-white 
-								shadow-lg border border-gray-300/30 dark:border-gray-700/50  outline-none"
+								shadow-lg border border-gray-300/30 dark:border-gray-700/50  outline-none mt-2"
 								side="bottom-end"
 							>
 								<slot>
@@ -380,8 +380,7 @@
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content
 								class="z-[10000] rounded-md  bg-white dark:bg-gray-850 dark:text-white 
-								shadow-lg border border-gray-300/30 dark:border-gray-700/50  outline-none"
-								style="margin-top:{langmt}px"
+								shadow-lg border border-gray-300/30 dark:border-gray-700/50  outline-none mt-2"
 								avoidCollisions={true}
 								collisionPadding={10}
 								side="bottom-end"
