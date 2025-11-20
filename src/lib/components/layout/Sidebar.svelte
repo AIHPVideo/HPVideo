@@ -248,7 +248,7 @@
   id="sidebar"
   class="h-screen max-h-[100dvh] min-h-screen select-none {$showSidebar
     ? 'md:relative w-[246px]'
-    : '-translate-x-[246px] w-[0px]'} bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-r-2xl
+    : '-translate-x-[246px] w-[0px]'} bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-t-3xl
         "
   data-state={$showSidebar}
 >
@@ -258,7 +258,7 @@
       : 'invisible'}"
   >
     <div
-      class="px-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400"
+      class="p-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 border-b border-gray-300 dark:border-gray-700"
     >
       <a
         id="sidebar-new-chat-button"
@@ -280,29 +280,14 @@
         <div class="self-center mx-1.5">
           <img
             src="/creator/static/favicon2.png"
-            class="h-6"
+            class="h-5"
             alt="logo"
           />
-        </div>
-        <div class="self-center ml-auto">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            class="size-5"
-          >
-            <path
-              d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
-            />
-            <path
-              d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
-            />
-          </svg>
         </div>
       </a>
 
       <button
-        class=" cursor-pointer px-2 py-2 flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+        class=" cursor-pointer px-2 py-2 flex rounded-xl hover:bg-[#9903E6] hover:text-white transition"
         on:click={() => {
           showSidebar.set(!$showSidebar);
         }}
@@ -376,7 +361,7 @@
         </div>
       {/if}
 
-      <div class="px-2 mt-0.5 mb-2 flex justify-center space-x-2">
+      <!-- <div class="px-2 mt-0.5 mb-2 flex justify-center space-x-2">
         <div class="flex w-full rounded-xl" id="chat-search">
           <div class="self-center pl-3 py-2 rounded-l-xl bg-transparent">
             <svg
@@ -402,7 +387,7 @@
             }}
           />
         </div>
-      </div>
+      </div> -->
 
       {#if $tags?.length > 0}
         <div class="px-2.5 mb-2 flex gap-1 flex-wrap">
@@ -474,10 +459,10 @@
                     $chatId ||
                   chat.id === chatTitleEditId ||
                   chat.id === chatDeleteId
-                    ? 'bg-gray-200 dark:bg-gray-900'
+                    ? 'bg-[#9903E6]'
                     : chat.id === selectedChatId
                     ? 'bg-gray-100 dark:bg-gray-950'
-                    : ' group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
+                    : ' group-hover:bg-[#9903E6CC] dark:group-hover:bg-[#9903E6CC]'}  whitespace-nowrap text-ellipsis"
                   href="/creator/c/{chat.id}"
                   on:click={() => {
                     selectedChatId = chat.id;
@@ -499,22 +484,17 @@
 
               <div
                 class="
-
-          {chat.id === $chatId ||
-                chat.id === chatTitleEditId ||
-                chat.id === chatDeleteId
-                  ? 'from-gray-200 dark:from-gray-900'
+                {chat.id === $chatId || chat.id === chatTitleEditId || chat.id === chatDeleteId
+                  ? ''
                   : chat.id === selectedChatId
                   ? 'from-gray-100 dark:from-gray-950'
                   : 'invisible group-hover:visible from-gray-100 dark:from-gray-950'}
-            absolute right-[10px] top-[10px] pr-2 pl-5 bg-gradient-to-l from-80%
-
-              to-transparent"
-              >
+                  absolute right-[10px] top-[10px] pr-2 pl-5"
+                >
                 {#if chatTitleEditId === chat.id}
                   <div class="flex self-center space-x-1.5 z-10">
                     <button
-                      class=" self-center dark:hover:text-white transition"
+                      class=" self-center hover:text-white transition"
                       on:click={() => {
                         editChatTitle(chat.id, chatTitle);
                         chatTitleEditId = null;
@@ -616,7 +596,7 @@
                     >
                       <button
                         aria-label="Chat Menu"
-                        class=" self-center dark:hover:text-white transition"
+                        class="self-center hover:text-white transition"
                         on:click={() => {
                           selectedChatId = chat.id;
                         }}
