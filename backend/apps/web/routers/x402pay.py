@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 from cdp.x402 import create_facilitator_config
 from x402.fastapi.middleware import require_payment
 from apps.web.models.pay import PayTableInstall
+from apps.web.ai.wave import WaveApiInstance
 import uuid
 import os
 
@@ -11,6 +12,7 @@ router = APIRouter()
 COINBASE_KEY = os.getenv("COINBASE_KEY")
 COINBASE_SECRET = os.getenv("COINBASE_SECRET")
 COINBASE_ADDRESS = os.getenv("COINBASE_ADDRESS")
+BASE_URL = os.getenv("BASE_URL")
 
 facilitator_config = create_facilitator_config(
     api_key_id= COINBASE_KEY,
@@ -180,6 +182,68 @@ async def payment_middleware(request: Request, call_next):
         response.headers["Expires"] = "0"
         return response
     
+    # Only effective for the target path
+    if request.url.path == "/creator/api/v1/x402/creator/sora-2_720_4":
+        # Calculate the price
+        price = calTotal("sora-2", "720", "4")
+        
+        # Call require_payment middleware
+        inner_middleware = require_payment(
+            path="/creator/api/v1/x402/creator/sora-2_720_4",
+            price=price,
+            pay_to_address=COINBASE_ADDRESS,
+            network="base",
+            facilitator_config=facilitator_config
+        )
+        # Execute the inner middleware
+        response = await inner_middleware(request, call_next)
+        
+        # add cache control headers to disable caching
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+    if request.url.path == "/creator/api/v1/x402/creator/sora-2_720_8":
+        # Calculate the price
+        price = calTotal("sora-2", "720", "8")
+        
+        # Call require_payment middleware
+        inner_middleware = require_payment(
+            path="/creator/api/v1/x402/creator/sora-2_720_8",
+            price=price,
+            pay_to_address=COINBASE_ADDRESS,
+            network="base",
+            facilitator_config=facilitator_config
+        )
+        # Execute the inner middleware
+        response = await inner_middleware(request, call_next)
+        
+        # add cache control headers to disable caching
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+    if request.url.path == "/creator/api/v1/x402/creator/sora-2_720_12":
+        # Calculate the price
+        price = calTotal("sora-2", "720", "12")
+        
+        # Call require_payment middleware
+        inner_middleware = require_payment(
+            path="/creator/api/v1/x402/creator/sora-2_720_12",
+            price=price,
+            pay_to_address=COINBASE_ADDRESS,
+            network="base",
+            facilitator_config=facilitator_config
+        )
+        # Execute the inner middleware
+        response = await inner_middleware(request, call_next)
+        
+        # add cache control headers to disable caching
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+    
     # Non-target paths are directly allowed through
     return await call_next(request)
 
@@ -197,14 +261,19 @@ def calTotal(model: str, key: str, duration, size: str):
             PayTableInstall.insert_pay(address, model, size, duration, amount, messageid) 
     return amount
 
-@router.get("/creator/wan2.5_480_5")
+@router.get("/test/creator/wan2.5_480_5")
 async def get_param(model: str, messageid: str) -> Dict[str, Any]:
     pay = PayTableInstall.get_by_messageid(messageid)
     if pay is not None:
         PayTableInstall.update_status(pay.id, True)
+    result = WaveApiInstance.x402create("alibaba", "wan-2.5/text-to-video", "美食分享", 5, "832*480")
+    if result is not None and result.get('code') == 200:
+        requestId = result['data']['id']
+
     return {
+        "success": True,
         "model": model,
-        "messageid": messageid
+        "path": f"{BASE_URL}?createid={requestId}"
     }
 
 @router.get("/creator/wan2.5_480_10")
@@ -248,6 +317,34 @@ async def get_param(model: str, messageid: str) -> Dict[str, Any]:
     }
 
 @router.get("/creator/wan2.5_1080_10")
+async def get_param(model: str, messageid: str) -> Dict[str, Any]:
+    pay = PayTableInstall.get_by_messageid(messageid)
+    if pay is not None:
+        PayTableInstall.update_status(pay.id, True)
+    return {
+        "model": model,
+        "messageid": messageid
+    }
+
+@router.get("/creator/sora-2_720_4")
+async def get_param(model: str, messageid: str) -> Dict[str, Any]:
+    pay = PayTableInstall.get_by_messageid(messageid)
+    if pay is not None:
+        PayTableInstall.update_status(pay.id, True)
+    return {
+        "model": model,
+        "messageid": messageid
+    }
+@router.get("/creator/sora-2_720_8")
+async def get_param(model: str, messageid: str) -> Dict[str, Any]:
+    pay = PayTableInstall.get_by_messageid(messageid)
+    if pay is not None:
+        PayTableInstall.update_status(pay.id, True)
+    return {
+        "model": model,
+        "messageid": messageid
+    }
+@router.get("/creator/sora-2_720_12")
 async def get_param(model: str, messageid: str) -> Dict[str, Any]:
     pay = PayTableInstall.get_by_messageid(messageid)
     if pay is not None:

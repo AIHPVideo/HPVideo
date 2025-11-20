@@ -44,6 +44,35 @@ class WaveApi:
 		except Exception as e:
 			print(f"Request Err: {e}")
 			return None
+		
+	# Create X402 Video ID      
+	def x402create(self, source: str, model: str, prompt: str, duration: int, size: str):
+		headers = {
+			"Authorization": f'Bearer {wave_key}',
+			"Content-Type": "application/json"
+		}
+		if source == 'pixverse':
+			data = {
+				"duration": duration,
+				"prompt": prompt,
+				"aspect_ratio": size,
+				"resolution": "720p"
+			}
+		else:
+			data = {
+				"duration": duration,
+				"prompt": prompt,
+				"size": size
+			}
+
+		try:
+			url = f'{wave_url}/{source}/{model}'
+			response = requests.post(url, json=data, headers=headers)
+			response.raise_for_status()
+			return response.json()
+		except Exception as e:
+			print(f"Request Err: {e}")
+			return None
 
 	# Get Video By Video ID	
 	def get_prediction_result(self, requestId: str):
