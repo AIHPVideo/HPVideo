@@ -82,8 +82,7 @@ export async function tranUsdt(amount: string) {
     await eprovider.send('eth_requestAccounts', []);
     let signer = await eprovider.getSigner();
     const usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, USDT_ABI, signer);
-    const decimal = 6;
-    const amountWei = ethers.parseUnits(amount, decimal);
+    const amountWei = ethers.parseUnits(amount, 18);
     const txResponse = await usdtContract.transfer(USDT_TRAN_ADDRESS, amountWei);
     return txResponse;
   } catch (error) {
