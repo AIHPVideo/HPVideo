@@ -16,7 +16,7 @@
   import { Toaster } from "svelte-sonner";
 
   import { defaultBackendConfig } from "$lib/apis";
-  import { config as wconfig } from "$lib/utils/wallet/index";
+  import { config as wconfig } from "$lib/utils/wallet/bnb/index";
   import { watchAccount, getAccount } from "@wagmi/core";
 
   import "../tailwind.css";

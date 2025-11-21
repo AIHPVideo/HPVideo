@@ -32,8 +32,9 @@
 	import VideoError from './VideoError.svelte';
   import VideoPlay from './VideoPlay.svelte';
 
-	import { config as wconfig, modal } from "$lib/utils/wallet/index";
+	import { config as wconfig, modal, getUSDTBalance, tranUsdt } from "$lib/utils/wallet/bnb/index";
 	import { getAccount } from "@wagmi/core";
+    import { bnbpaycheck } from '$lib/apis/pay';
 
 	export let modelfiles = [];
 	export let message;
@@ -254,6 +255,31 @@
 		const suffix = address.slice(-suffixLength);
 		return `${prefix}...${suffix}`;
 	}
+	const handlePay = async (messageinfo: any) => {
+		const account = getAccount(wconfig);
+		if (!account?.address) {
+			connect();
+			return;
+		}
+		const balance = await getUSDTBalance(account?.address);
+		const paymoney = message?.paymoney.replace(/\$/g, "");
+		if (Number(paymoney) <= balance) {
+			const txResponse = await tranUsdt(paymoney);
+			if (txResponse) {
+				let body = {
+					hash: txResponse?.hash,
+					address: account?.address,
+					messageid: messageinfo?.id
+				};
+				await bnbpaycheck(localStorage.token, body);
+				toast.success($i18n.t("Pay Success"));
+			} else{
+				toast.error($i18n.t("Pay Failed"));
+			}
+		} else {
+			toast.error($i18n.t("Insufficient USDT Balance"));
+		}
+	}
 
 	onMount(async () => {
 		await tick();
@@ -354,11 +380,19 @@
 							{#if message?.error === true}
 								{#if message.paymoney}
 									<div class="max-w-[600px]">
-										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 										{#if message.paystatus}
 											{$i18n.t("Paid")}
 										{:else}
 											{$i18n.t("Paying")}
+										{/if}
+										{#if isLastMessage}
+											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+												on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
+											{#if !message.paystatus}	
+												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+													on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+											{/if}
 										{/if}
 									</div>
 								{/if}
@@ -366,11 +400,19 @@
 							{:else if message.content === '' && !message?.done}
 								{#if message.paymoney}
 									<div class="max-w-[600px]">
-										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 										{#if message.paystatus}
 											{$i18n.t("Paid")}
 										{:else}
 											{$i18n.t("Paying")}
+										{/if}
+										{#if isLastMessage}
+											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+												on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
+											{#if !message.paystatus}	
+												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+													on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+											{/if}
 										{/if}
 									</div>
 								{/if}
@@ -381,41 +423,73 @@
 								{#each tokens as token, tokenIdx}
 									{#if !message?.paystatus}
 										<div class="max-w-[600px]">
-											{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+											{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 											{#if message.paystatus}
 												{$i18n.t("Paid")}
 											{:else}
 												{$i18n.t("Paying")}
 											{/if}
+											{#if isLastMessage}
+												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+													on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
+												{#if !message.paystatus}	
+													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+														on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+												{/if}
+											{/if}
 										</div>
 									{:else}
 										{#if message.status == 'completed'}
 											<div class="max-w-[600px]">
-												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
 													{$i18n.t("Paying")}
+												{/if}
+												{#if isLastMessage}
+													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
+													{#if !message.paystatus}	
+														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+															on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+													{/if}
 												{/if}
 											</div>
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
 										{:else if message.status == 'failed'}
 											<div>
-												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
 													{$i18n.t("Paying")}
 												{/if}
+												{#if isLastMessage}
+													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
+													{#if !message.paystatus}	
+														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+															on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+													{/if}
+												{/if}
 											</div>
 											<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
 										{:else}
 											<div class="max-w-[600px]">
-												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
 													{$i18n.t("Paying")}
+												{/if}
+												{#if isLastMessage}
+													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>										
+													{#if !message.paystatus}	
+														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+															on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+													{/if}
 												{/if}
 											</div>
 											{#if message.paystatus}
@@ -528,20 +602,6 @@
 									{/if}
 									
 									{#if message.done}
-										{#if message.paymoney}
-											<div class="max-w-[600px]">
-												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
-												{#if message.paystatus}
-													{$i18n.t("Paid")}
-												{:else}
-													{$i18n.t("Paying")}
-												{/if}
-												{#if isLastMessage}
-													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
-												{/if}
-											</div>
-										{/if}
 										<div class="flex justify-start min-w-fit mr-4">
 											{#if $config.images && !readOnly}
 												<Tooltip content="Generate Image" placement="bottom">

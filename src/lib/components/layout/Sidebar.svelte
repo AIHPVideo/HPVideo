@@ -425,10 +425,10 @@
                     $chatId ||
                   chat.id === chatTitleEditId ||
                   chat.id === chatDeleteId
-                    ? 'bg-[#9903E6]'
+                    ? 'bg-[#9903E6] text-white'
                     : chat.id === selectedChatId
                     ? 'bg-gray-100 dark:bg-gray-950'
-                    : ' group-hover:bg-[#9903E6CC] dark:group-hover:bg-[#9903E6CC]'}  whitespace-nowrap text-ellipsis"
+                    : ' group-hover:bg-[#9903E6CC] group-hover:text-white'}  whitespace-nowrap text-ellipsis"
                   href="/creator/c/{chat.id}"
                   on:click={() => {
                     selectedChatId = chat.id;
@@ -451,10 +451,10 @@
               <div
                 class="
                 {chat.id === $chatId || chat.id === chatTitleEditId || chat.id === chatDeleteId
-                  ? ''
+                  ? 'text-white'
                   : chat.id === selectedChatId
                   ? 'from-gray-100 dark:from-gray-950'
-                  : 'invisible group-hover:visible from-gray-100 dark:from-gray-950'}
+                  : 'invisible group-hover:visible text-white from-gray-100 dark:from-gray-950'}
                   absolute right-[10px] top-[10px] pr-2 pl-5"
                 >
                 {#if chatTitleEditId === chat.id}

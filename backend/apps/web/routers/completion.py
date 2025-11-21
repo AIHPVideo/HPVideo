@@ -63,8 +63,7 @@ async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
           }
           yield f"data: {json.dumps(data)}\n\n"
       else:
-        result = WaveApiInstance.calc_model_price(param.permodel, param.duration, param.size, param.messageid)
-        PayTableInstall.insert_pay("", param.permodel, param.size, param.duration, result["amount"], param.messageid)
+        WaveApiInstance.calc_model_price(param.permodel, param.duration, param.size, param.messageid)
       time.sleep(1)
     if pay.status:
       result = WaveApiInstance.create(param)
