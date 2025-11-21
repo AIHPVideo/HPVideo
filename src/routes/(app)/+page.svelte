@@ -522,6 +522,9 @@
             responseMessage.createId = createId;
           } 
           messages = messages;
+
+          await tick();
+					scrollToBottom();
         
           if (error) {
             await handleOpenAIError(error, null, model, responseMessage);
@@ -589,6 +592,7 @@
 
       // reset responsemessage
       history.messages[responseMessage?.id] = responseMessage;
+
       await tick();
       scrollToBottom();
 

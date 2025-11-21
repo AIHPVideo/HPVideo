@@ -533,7 +533,6 @@
         const textStream = await createOpenAITextStream(res.body, true);
         for await (const update of textStream) {
           let { value, limit, createId, status, paystatus, paymoney, done, error } = update;
-					console.log(paymoney);
 					if (paymoney) {
 						responseMessage.paystatus = paystatus;
 						responseMessage.paymoney = paymoney;
@@ -546,6 +545,9 @@
 						responseMessage.createId = createId;
           }
           messages = messages;
+					
+					await tick();
+					scrollToBottom();
         
           if (error) {
             await handleOpenAIError(error, null, model, responseMessage);
