@@ -3,14 +3,8 @@ from fastapi import Depends
 from fastapi.responses import StreamingResponse
 from utils.utils import get_current_user
 from apps.web.models.aimodel import AiModelReq, AiResultReq
-from apps.web.models.models import ModelsInstance
-from apps.web.models.vipstatus import VIPStatuses
-from apps.web.util.userutils import UserUtils
-from apps.web.models.conversation import ConversationInstance, ConversationRequest
-from apps.web.util.conversationutils import ConversationUtils
 from apps.web.ai.wave import WaveApiInstance
 from apps.web.models.pay import PayTableInstall
-from datetime import date
 import time
 import json
 

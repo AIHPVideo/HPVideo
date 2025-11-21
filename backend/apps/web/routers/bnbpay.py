@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from web3 import Web3
 import os
 import asyncio
 
 from apps.web.models.pay import PayTableInstall
+from utils.utils import get_current_user
 
 router = APIRouter()
 
@@ -13,7 +14,7 @@ USDT_TRAN_ADDRESS = os.getenv("USDT_TRAN_ADDRESS")
 w3 = Web3(Web3.HTTPProvider(BNB_RPC))
 
 @router.post("/check")
-async def bnbcheck(request: Request):
+async def bnbcheck(request: Request, user=Depends(get_current_user)):
   body = await request.json()
   hash = body["hash"]
   address = body["address"]
