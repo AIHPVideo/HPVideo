@@ -47,11 +47,14 @@
   export let fileUploadEnabled = true;
 
   export let prompt = "";
-  export let videodura = 8;
-  export let videosize = "720*1280";
+  let videodura = 8;
+  let videosize = "720*1280";
+  let videomoney = "$0.01";
   export let messages: any[] = [];
 
-  let toolInfo: any = {duration: videodura, size: videosize};
+  const getVideoInfo = () => {
+    return {duration: videodura, size: videosize, amount: videomoney};
+  }
 
   $: if (prompt) {
     if (chatTextAreaElement) {
@@ -336,7 +339,7 @@
             dir={$settings?.chatDirection ?? "LTR"}
             class=" flex flex-col relative w-full rounded-3xl bg-gray-100 dark:bg-gray-850 dark:text-gray-100 button-select-none p-3 border border-gray-300 dark:border-gray-800 p-1"
             on:submit|preventDefault={() => {
-              submitPrompt(prompt, toolInfo, user);
+              submitPrompt(prompt, getVideoInfo(), user);
             }}
           >
             {#if files.length > 0}
@@ -398,7 +401,7 @@
                       e.preventDefault();
                     }
                     if (prompt !== "" && e.keyCode == 13 && !e.shiftKey) {
-                      submitPrompt(prompt, toolInfo, user);   
+                      submitPrompt(prompt, getVideoInfo(), user);   
                     }
                   }
                 }}
@@ -552,7 +555,7 @@
 
                   <!-- Video Resolution -->
                   <div class="self-star flex gap-x-1 mb-2 ml-1 mr-1">
-                    <Tools bind:videosize={videosize} bind:videodura={videodura} bind:selectedModel={currentModel}/>
+                    <Tools bind:videosize={videosize} bind:videodura={videodura} bind:videomoney={videomoney} bind:selectedModel={currentModel}/>
                   </div>
                 </div>
                 

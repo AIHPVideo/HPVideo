@@ -973,6 +973,7 @@
 	"Accurate physical motion simulation": "精准物理运动模拟",
 	"Fluid motion and lifelike details": "动态流畅, 细节逼真",
   "It seems that you are offline, Please check your network and try generating again": "您似乎已离线，请检查网络后再重新生成",
+  "Unpaid": "待支付",
   "Paying": "支付中",
   "Payment timeout": "支付超时",
   "Paid": "支付完成",

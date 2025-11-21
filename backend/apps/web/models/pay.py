@@ -56,7 +56,8 @@ class PayTable:
         size: str,
         duration: int ,
         amount: str,
-        messageid: str
+        messageid: str,
+        status: bool
     ) -> Optional[PayModel]:
         pay = PayModel(
             **{
@@ -67,7 +68,7 @@ class PayTable:
                 "duration": duration,
                 "amount": amount,
                 "messageid": messageid,
-                "status": False,
+                "status": status,
                 "created_at": int(time.time()),
                 "updated_at": int(time.time())
             }

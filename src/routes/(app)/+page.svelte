@@ -18,7 +18,8 @@
     settings,
     showSidebar,
     user,
-    switchModel
+    switchModel,
+    theme
   } from "$lib/stores";
 
   import {
@@ -39,6 +40,10 @@
   import MessageInput from "$lib/components/chat/MessageInput.svelte";
   import Messages from "$lib/components/chat/Messages.svelte";
   import Navbar from "$lib/components/layout/Navbar.svelte";
+
+  import { config as wconfig, modal, getUSDTBalance, tranUsdt } from "$lib/utils/wallet/bnb/index";
+	import { getAccount } from "@wagmi/core";
+  import { bnbpaycheck } from '$lib/apis/pay';
 
   let inviter: any = "";
   let channelName: any = "";
@@ -88,9 +93,6 @@
     messages: {},
     currentId: null,
   };
-
-  let videodura = 8;
-  let videosize = "1280*720";
 
   let chatInputPlaceholder = "";
 
@@ -197,7 +199,7 @@
   //////////////////////////
   // Ollama functions
   //////////////////////////
-  const submitPrompt = async (userPrompt: string, userToolInfo: any, _user = null) => {
+  const submitPrompt = async (userPrompt: string, videoInfo: any, _user = null) => {
     console.log("submitPrompt", $chatId, userPrompt);
 
     selectedModels = selectedModels.map((modelId) =>
@@ -254,7 +256,7 @@
         imageinfo: "",
         content: userPrompt,
         files: files.length > 0 ? files : undefined,
-        toolInfo: userToolInfo, // video param
+        toolInfo: videoInfo, // video param
         models: selectedModels.filter(
           (m, mIdx) => selectedModels.indexOf(m) === mIdx
         ),
@@ -282,11 +284,15 @@
             id: responseMessageId,
             childrenIds: [],
             role: "assistant",
+            paystatus: false,
+            size: videoInfo?.size,
+            duration: videoInfo?.duration,
+            paymoney: videoInfo?.amount,
             status: "processing",
-            size: videosize,
-            content: "",
+            content: "paying",
             model: model.id,
             userContext: null,
+            done: true,
             timestamp: Math.floor(Date.now() / 1000), // Unix epoch
           };
 
@@ -339,8 +345,20 @@
           await tick();
         }
 
-        // Send prompt
-        await sendPrompt(userPrompt, responseMap);
+        // 加载聊天列表（赋值聊天title)
+        const _chatId = JSON.parse(JSON.stringify($chatId));
+        if (messages.length == 2) { 
+          window.history.replaceState(history.state, "", `/creator/c/${_chatId}`);
+          const _title = await generateDeChatTitle(userPrompt);
+          await setChatTitle(_chatId, _title);
+        }
+
+        // 更新消息到数据库
+        Object.keys(responseMap).map(async (modelId) => {
+          await updateChatMessage(_chatId);
+        })
+
+        stopResponse();
 
       } catch (err) {
         const _chatId = JSON.parse(JSON.stringify($chatId));
@@ -357,12 +375,66 @@
           if (autoScroll) {
             scrollToBottom();
           }
-        })  
+        })
       }  
     }
   };
 
-  const sendPrompt = async (prompt, responseMap = null, modelId = null, reload = false) => {
+  //=======bnb pay function=======
+  const connect = () => {
+    checkModalTheme();
+    modal.open();
+  }
+  const checkModalTheme = () => {
+    if ($theme === "system" || $theme === "light") {
+      modal.setThemeMode("light");
+    } else {
+      modal.setThemeMode("dark");
+    }
+  }
+  const startPay = async (messageinfo: any) => {
+		const account = getAccount(wconfig);
+		if (!account?.address) {
+			connect();
+			return;
+		}
+    
+		const balance = await getUSDTBalance(account?.address);
+		let paymoney = messageinfo?.paymoney.toString();
+		if (Number(paymoney) <= balance) {
+			const txResponse = await tranUsdt(paymoney);
+			if (txResponse) {
+				let body = {
+					hash: txResponse?.hash,
+					address: account?.address,
+					messageid: messageinfo?.id,
+          model: messageinfo?.model,
+          size: messageinfo?.size,
+          duration: messageinfo?.duration,
+          amount: paymoney
+				};
+				const response = await bnbpaycheck(localStorage.token, body);
+        if (response?.ok) {
+          toast.success($i18n.t("Pay Success"));
+
+          // Send prompt
+          let currResponseMap: any = {};
+          currResponseMap[messageinfo?.model] = messageinfo;
+          let currmessage = messages.filter(item => item.id == messageinfo?.parentId);
+          await sendPrompt(currmessage[0].content, currResponseMap);
+
+        } else{
+          toast.error($i18n.t("Pay Failed"));
+        }	
+			} else{
+				toast.error($i18n.t("Pay Failed"));
+			}
+		} else {
+			toast.error($i18n.t("Insufficient USDT Balance"));
+		} 
+	}
+
+  const sendPrompt = async (prompt: string, responseMap = null, modelId = null, reload = false) => {
     const _chatId = JSON.parse(JSON.stringify($chatId));
     await Promise.all(
       (modelId ? [modelId] : atSelectedModel !== '' ? [atSelectedModel.id] : Object.keys(responseMap)).map(
@@ -372,6 +444,11 @@
             // 创建响应消息
             let responseMessage = responseMap[model?.id];
             let responseMessageId = responseMessage?.id;
+
+            responseMessage.content = "";
+            responseMessage.done = false;
+            history.messages[responseMessageId] = responseMessage;
+            history.currentId = responseMessageId;
 
             let userContext = null;
             if ($settings?.memory ?? false) {
@@ -402,6 +479,7 @@
             }
             responseMessage.userContext = userContext;
             // send a video request
+            stopResponseFlag = false;
             await sendPromptDeOpenAI(model, responseMessageId, _chatId, reload);
           } else {
             console.error($i18n.t(`Model {{modelId}} not found`, {}));
@@ -412,20 +490,11 @@
     // 所有模型响应结束后，还原firstResAlready为初始状态false
     firstResAlready = false;
 
-    // 加载聊天列表（赋值聊天title）
-    if (messages.length == 2) {
-      window.history.replaceState(history.state, "", `/creator/c/${_chatId}`);
-      const _title = await generateDeChatTitle(prompt);
-      await setChatTitle(_chatId, _title);
-    } else {
-      await chats.set(await getChatList(localStorage.token));
-    }
-
   };
 
   // AI Video Request
   const sendPromptDeOpenAI = async (model, responseMessageId, _chatId, reload) => {
-    const responseMessage = history.messages[responseMessageId];    
+    const responseMessage = history.messages[responseMessageId];
     scrollToBottom();
     try {
       let send_message = [
@@ -489,10 +558,10 @@
           source: model.source,
           permodel: model.id,
           model: fileFlag ? model.imagemodel : model.textmodel,
-          duration: videodura,
+          duration: responseMessage.duration,
           messageid: responseMessageId,
           messages: send_message,
-          size: videosize
+          size: responseMessage.size
         }
       );
 
@@ -522,9 +591,6 @@
             responseMessage.createId = createId;
           } 
           messages = messages;
-
-          await tick();
-					scrollToBottom();
         
           if (error) {
             await handleOpenAIError(error, null, model, responseMessage);
@@ -809,6 +875,7 @@
           bottomPadding={files.length > 0}
           suggestionPrompts={selectedModelfile?.suggestionPrompts ?? $config?.default_prompt_suggestions}
           {sendPrompt}
+          {startPay}
           {resentVideoResult}
           {continueGeneration}
           {regenerateResponse}
@@ -824,8 +891,6 @@
   bind:autoScroll
   bind:selectedModel={atSelectedModel}
   bind:currentModel = {selectedModels}
-  bind:videodura
-  bind:videosize
   {messages}
   {submitPrompt}
   {stopResponse}

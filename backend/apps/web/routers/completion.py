@@ -13,52 +13,7 @@ router = APIRouter()
 @router.post("/completion/video")
 async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
   def event_generator():
-    timeout = 0
-    while True:
-      timeout += 1
-      if (timeout > 60):
-        data = {
-          "success": True,
-          "message": "paytimeout",
-          "status": "paying",
-          "limit": {"use": 2, "total": 10},
-          "paystatus": False,
-          "paymoney": "",
-          "createId": "",
-          "value": "timeout"
-        }
-        yield f"data: {json.dumps(data)}\n\n"
-        break
-      pay = PayTableInstall.get_by_messageid(param.messageid)
-      if pay is not None:
-        if pay.status:
-          data = {
-            "success": True,
-            "message": "paysuccess",
-            "status": "paying",
-            "limit": {"use": 2, "total": 10},
-            "paystatus": True,
-            "paymoney": pay.amount,
-            "createId": "",
-            "videos": []
-          }
-          yield f"data: {json.dumps(data)}\n\n"
-          break
-        else:
-          data = {
-            "success": True,
-            "message": "paystart",
-            "status": "paying",
-            "limit": {"use": 2, "total": 10},
-            "paystatus": False,
-            "paymoney": pay.amount,
-            "createId": "",
-            "videos": []
-          }
-          yield f"data: {json.dumps(data)}\n\n"
-      else:
-        WaveApiInstance.calc_model_price(param.permodel, param.duration, param.size, param.messageid)
-      time.sleep(1)
+    pay = PayTableInstall.get_by_messageid(param.messageid)
     if pay.status:
       result = WaveApiInstance.create(param)
       if result is not None and result.get('code') == 200:
@@ -122,20 +77,9 @@ async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
                 "videos": "videoloading"
               }
               yield f"data: {json.dumps(data)}\n\n"
-            # stop 1s
-            time.sleep(0.2)
-      else:
-        data = {
-          "success": True,
-          "message": inner_data.get('message', 'success'),
-          "status": status,
-          "limit": {"use": 2, "total": 10},
-          "paystatus": True,
-          "paymoney": pay.amount,
-          "createId": requestId,
-          "videos": "videoloading"
-        }
-      yield f"data: {json.dumps(data)}\n\n"   
+
+          # stop 0.2s
+          time.sleep(0.2)   
     
     yield f"data: [DONE]\n\n"
 

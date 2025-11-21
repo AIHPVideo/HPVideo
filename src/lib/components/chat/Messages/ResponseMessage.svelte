@@ -32,9 +32,7 @@
 	import VideoError from './VideoError.svelte';
   import VideoPlay from './VideoPlay.svelte';
 
-	import { config as wconfig, modal, getUSDTBalance, tranUsdt } from "$lib/utils/wallet/bnb/index";
-	import { getAccount } from "@wagmi/core";
-    import { bnbpaycheck } from '$lib/apis/pay';
+	import { modal } from "$lib/utils/wallet/bnb/index";
 
 	export let modelfiles = [];
 	export let message;
@@ -52,6 +50,7 @@
 	export let showPreviousMessage: Function;
 	export let showNextMessage: Function;
 	export let rateMessage: Function;
+	export let handlePay: Function;
 
 	export let copyToClipboard: Function;
 	export let continueGeneration: Function;
@@ -255,31 +254,6 @@
 		const suffix = address.slice(-suffixLength);
 		return `${prefix}...${suffix}`;
 	}
-	const handlePay = async (messageinfo: any) => {
-		const account = getAccount(wconfig);
-		if (!account?.address) {
-			connect();
-			return;
-		}
-		const balance = await getUSDTBalance(account?.address);
-		const paymoney = message?.paymoney.replace(/\$/g, "");
-		if (Number(paymoney) <= balance) {
-			const txResponse = await tranUsdt(paymoney);
-			if (txResponse) {
-				let body = {
-					hash: txResponse?.hash,
-					address: account?.address,
-					messageid: messageinfo?.id
-				};
-				await bnbpaycheck(localStorage.token, body);
-				toast.success($i18n.t("Pay Success"));
-			} else{
-				toast.error($i18n.t("Pay Failed"));
-			}
-		} else {
-			toast.error($i18n.t("Insufficient USDT Balance"));
-		}
-	}
 
 	onMount(async () => {
 		await tick();
@@ -384,7 +358,7 @@
 										{#if message.paystatus}
 											{$i18n.t("Paid")}
 										{:else}
-											{$i18n.t("Paying")}
+											{$i18n.t("Unpaid")}
 										{/if}
 										{#if isLastMessage}
 											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
@@ -404,7 +378,7 @@
 										{#if message.paystatus}
 											{$i18n.t("Paid")}
 										{:else}
-											{$i18n.t("Paying")}
+											{$i18n.t("Unpaid")}
 										{/if}
 										{#if isLastMessage}
 											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
@@ -427,7 +401,7 @@
 											{#if message.paystatus}
 												{$i18n.t("Paid")}
 											{:else}
-												{$i18n.t("Paying")}
+												{$i18n.t("Unpaid")}
 											{/if}
 											{#if isLastMessage}
 												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
@@ -445,7 +419,7 @@
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
-													{$i18n.t("Paying")}
+													{$i18n.t("Unpaid")}
 												{/if}
 												{#if isLastMessage}
 													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
@@ -463,7 +437,7 @@
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
-													{$i18n.t("Paying")}
+													{$i18n.t("Unpaid")}
 												{/if}
 												{#if isLastMessage}
 													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
@@ -481,7 +455,7 @@
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
-													{$i18n.t("Paying")}
+													{$i18n.t("Unpaid")}
 												{/if}
 												{#if isLastMessage}
 													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 

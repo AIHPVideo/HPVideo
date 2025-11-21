@@ -13,7 +13,8 @@
 		chatId,
 		WEBUI_NAME,
 		tags as _tags,
-		showSidebar
+		showSidebar,
+		theme
 	} from "$lib/stores";
 	import {
 		copyToClipboard,
@@ -34,12 +35,16 @@
 		getTagsById,
 		updateChatById
 	} from "$lib/apis/chats";
+
+	import { createOpenAITextStream } from "$lib/apis/streaming";
+	import { queryMemory } from "$lib/apis/memories";
 	import MessageInput from "$lib/components/chat/MessageInput.svelte";
 	import Messages from "$lib/components/chat/Messages.svelte";
 	import Navbar from "$lib/components/layout/Navbar.svelte";
 
-	import { createOpenAITextStream } from "$lib/apis/streaming";
-	import { queryMemory } from "$lib/apis/memories";
+	import { config as wconfig, modal, getUSDTBalance, tranUsdt } from "$lib/utils/wallet/bnb/index";
+	import { getAccount } from "@wagmi/core";
+  import { bnbpaycheck } from '$lib/apis/pay';
 
 	const i18n = getContext("i18n");
 
@@ -92,9 +97,6 @@
 		currentId: null,
 	};
 	let firstResAlready = false; // 已经有了第一个响应
-
-	let videodura = 8;
-	let videosize = "1280*720";
 
 	let chatInputPlaceholder = "";
 
@@ -191,7 +193,7 @@
 	// Ollama functions
 	//////////////////////////
 	// 2. 点击提交按钮，触发检查
-	const submitPrompt = async (userPrompt, userToolInfo, _user = null) => {
+	const submitPrompt = async (userPrompt: string, videoInfo: any, _user = null) => {
 		console.log("submitPrompt", $chatId);
 
 		selectedModels = selectedModels.map((modelId) =>
@@ -262,7 +264,7 @@
 				user: _user ?? undefined,
 				content: userPrompt,
 				files: files.length > 0 ? files : undefined,
-				toolInfo: userToolInfo,
+				toolInfo: videoInfo,
 				timestamp: Math.floor(Date.now() / 1000), // Unix epoch
 				models: selectedModels,
 			};
@@ -288,11 +290,15 @@
 						id: responseMessageId,
 						childrenIds: [],
 						role: "assistant",
+						paystatus: false,
+            size: videoInfo?.size,
+						duration: videoInfo?.duration,
+						paymoney: videoInfo?.amount,
 						status: "processing",
-            size: videosize,
-            content: "",
+            content: "paying",
 						model: model.id,
 						userContext: null,
+						done: true,
 						timestamp: Math.floor(Date.now() / 1000), // Unix epoch
 					};
 
@@ -343,17 +349,22 @@
 					await tick();
 				}
 
-				// 发送提示
-				await sendPrompt(userPrompt, responseMap);
+				// 更新消息到数据库
+        const _chatId = JSON.parse(JSON.stringify($chatId));
+				await updateChatMessage(_chatId);
+
+        stopResponse();	
+
 			} catch (err) {
 				const _chatId = JSON.parse(JSON.stringify($chatId));
 				Object.keys(responseMap).map(async (modelId) => {
 					const model = $models.filter((m) => m.id === modelId).at(0);
 					let responseMessage = responseMap[model?.id];
 					await handleOpenAIError(err, null, model, responseMessage);
+					history.messages[responseMessageId] = responseMessage;
 
 					// 更新消息到数据库
-					await updateChatMessage(responseMessage, _chatId);
+					await updateChatMessage(_chatId);
 
 					await tick();
 
@@ -364,6 +375,59 @@
 			}
 		}
 	};
+
+	//=======bnb pay function=======
+  const connect = () => {
+    checkModalTheme();
+    modal.open();
+  }
+  const checkModalTheme = () => {
+    if ($theme === "system" || $theme === "light") {
+      modal.setThemeMode("light");
+    } else {
+      modal.setThemeMode("dark");
+    }
+  }
+  const startPay = async (messageinfo: any) => {
+    console.log(messageinfo);
+		const account = getAccount(wconfig);
+		if (!account?.address) {
+			connect();
+			return;
+		}
+		const balance = await getUSDTBalance(account?.address);
+		let paymoney = messageinfo?.paymoney.toString();
+		if (Number(paymoney) <= balance) {
+			const txResponse = await tranUsdt(paymoney);
+			if (txResponse) {
+				let body = {
+					hash: txResponse?.hash,
+					address: account?.address,
+					messageid: messageinfo?.id,
+          model: messageinfo?.model,
+          size: messageinfo?.size,
+          duration: messageinfo?.duration,
+          amount: paymoney
+				};
+				const response = await bnbpaycheck(localStorage.token, body);
+        if (response?.ok) {
+          toast.success($i18n.t("Pay Success"));
+
+          // Send prompt
+					let currResponseMap: any = {};
+					currResponseMap[messageinfo?.model] = messageinfo;
+					let currmessage = messages.filter(item => item.id == messageinfo?.parentId);
+          await sendPrompt(currmessage[0]?.content, currResponseMap);
+        } else{
+          toast.error($i18n.t("Pay Failed"));
+        }	
+			} else{
+				toast.error($i18n.t("Pay Failed"));
+			}
+		} else {
+			toast.error($i18n.t("Insufficient USDT Balance"));
+		} 
+	}
 
 	// 3\2. 继续聊天会话
 	const sendPrompt = async (
@@ -386,6 +450,11 @@
 					// 创建响应消息
 					let responseMessage = responseMap[model?.id];
 					let responseMessageId = responseMessage?.id;
+
+					responseMessage.content = "";
+          responseMessage.done = false;
+          history.messages[responseMessageId] = responseMessage;
+          history.currentId = responseMessageId;
 
 					let userContext = null;
 					if ($settings?.memory ?? false) {
@@ -417,7 +486,9 @@
 					responseMessage.userContext = userContext;
 
 					// send a video request
+          stopResponseFlag = false;
 					await sendPromptDeOpenAI(model, responseMessageId, _chatId, reload);
+
 				} else {
 					console.error($i18n.t(`Model {{modelId}} not found`, {}));
 				}
@@ -512,10 +583,10 @@
 					source: model.source,
 					permodel: model.id,
           model: fileFlag ? model.imagemodel : model.textmodel,
-          duration: videodura,
+          duration: responseMessage.duration,
 					messageid: responseMessageId,
           messages: send_message,
-          size: videosize
+          size: responseMessage.size
 				}
 			);
 
@@ -545,9 +616,6 @@
 						responseMessage.createId = createId;
           }
           messages = messages;
-					
-					await tick();
-					scrollToBottom();
         
           if (error) {
             await handleOpenAIError(error, null, model, responseMessage);
@@ -674,7 +742,6 @@
   }
 
   const resentVideoResult = async (model: string, prompt: string, responseMessage: any, _chatId: string) => {
-		console.log("==================================", model, prompt, responseMessage, _chatId);
     if (responseMessage.createId) {
       await getVideoResult(responseMessage, _chatId);
     } else {
@@ -863,6 +930,7 @@
 						bind:chatInputPlaceholder
 						bottomPadding={files.length > 0}
 						{sendPrompt}
+						{startPay}
 						{resentVideoResult}
 						{continueGeneration}
 						{regenerateResponse}
@@ -879,8 +947,6 @@
 		bind:chatInputPlaceholder
 		bind:selectedModel={atSelectedModel}
 		bind:currentModel = {selectedModels}
-		bind:videodura
-  	bind:videosize
 		{messages}
 		{submitPrompt}
 		{stopResponse}

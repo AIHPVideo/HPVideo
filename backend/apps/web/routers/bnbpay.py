@@ -19,6 +19,10 @@ async def bnbcheck(request: Request, user=Depends(get_current_user)):
   hash = body["hash"]
   address = body["address"]
   messageid = body["messageid"]
+  model = body["model"]
+  size = body["size"]
+  duration = body["duration"]
+  amount = body["amount"]
 
   tx_receipt = await asyncio.to_thread(w3.eth.wait_for_transaction_receipt, hash)
   if tx_receipt.status == 1:
@@ -33,7 +37,10 @@ async def bnbcheck(request: Request, user=Depends(get_current_user)):
         from_address = w3.to_checksum_address('0x' + from_address_hex)
         to_address = w3.to_checksum_address('0x' + to_address_hex)
         if address.lower() == from_address.lower() and USDT_TRAN_ADDRESS.lower() == to_address.lower():
-          pay = PayTableInstall.get_by_messageid(messageid)
-          if pay is not None:
-            PayTableInstall.update_addr_status(pay.id, address, True)
-  return True
+          try:
+            PayTableInstall.insert_pay(address, model, size, duration, amount, messageid, True)
+            return {"ok": True, "message": "check success"}
+          except Exception as e:
+            print("========================", e)
+            return {"ok": False, "message": "check Failed"}
+  return {"ok": False, "message": "check Failed"}

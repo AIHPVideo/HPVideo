@@ -973,6 +973,7 @@
   "Accurate physical motion simulation": "การจำลองการเคลื่อนไหวทางกายภาพที่แม่นยำ",
   "Fluid motion and lifelike details": "การเคลื่อนไหวลื่นไหลและรายละเอียดสมจริง",
   "It seems that you are offline, Please check your network and try generating again": "ดูเหมือนว่าคุณออฟไลน์อยู่ กรุณาตรวจสอบเครือข่ายและลองสร้างอีกครั้ง",
+  "Unpaid": "ไม่ได้ชำระเงิน",
   "Paying": "กำลังชำระเงิน",
   "Payment timeout": "หมดเวลาชำระเงิน",
   "Paid": "ชำระเงินแล้ว",

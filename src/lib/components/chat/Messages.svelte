@@ -20,6 +20,7 @@
 	export let resentVideoResult: Function
 	export let continueGeneration: Function;
 	export let regenerateResponse: Function;
+	export let startPay: Function;
 
 	export let user = $_user;
 	export let prompt;
@@ -317,6 +318,10 @@
 			history: history
 		});
 	};
+
+	const handlePay = async (message: any) => {
+		await startPay(message);
+	}
 </script>
 
 <div class="h-full flex mb-16">
@@ -369,6 +374,7 @@
 										{showPreviousMessage}
 										{showNextMessage}
 										{rateMessage}
+										{handlePay}
 										copyToClipboard={copyToClipboardWithToast}
 										{continueGeneration}
 										{regenerateResponse}
