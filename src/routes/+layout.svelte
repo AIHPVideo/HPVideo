@@ -129,6 +129,7 @@
     try {
       await initData();
       await initUrlParam();
+      clearConnector();
       loaded = true;
     } catch (error) {
       console.log("==============", error);
