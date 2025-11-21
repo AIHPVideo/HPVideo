@@ -20,6 +20,7 @@
   import Setting from "$lib/components/layout/Navbar/Setting.svelte"
 
   import { getLanguages } from "$lib/i18n";
+    import Tooltip from "../common/Tooltip.svelte";
 
   const i18n = getContext("i18n");
 
@@ -138,12 +139,10 @@
           </Menu>
         {/if}
 
-        <!-- <Tooltip content={$i18n.t("New Chat")}>
+        <Tooltip content={$i18n.t("New Chat")}>
           <button
             id="new-chat-button"
-            class=" flex {$showSidebar
-              ? 'md:hidden'
-              : ''} cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+            class=" flex cursor-pointer p-2 rounded-xl hover:bg-[#9903E6] hover:text-white transition mr-1"
             on:click={() => {
               initNewChat();
             }}
@@ -153,7 +152,7 @@
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                class="w-5 h-5"
+                class="size-6"
               >
                 <path
                   d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
@@ -164,7 +163,7 @@
               </svg>
             </div>
           </button>
-        </Tooltip> -->
+        </Tooltip>
         
         {#if $initPageFlag}
           <div class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1">

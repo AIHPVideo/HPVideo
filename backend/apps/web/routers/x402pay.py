@@ -19,38 +19,6 @@ facilitator_config = create_facilitator_config(
     api_key_secret= COINBASE_SECRET
 )
 
-amounts = {
-  "wan-2.5": {
-    "480": {"5": 0.375, "10": 0.75},
-    "720": {"5": 0.75, "10": 1.5}, 
-    "1080": {"5": 1.125, "10": 2.25}
-  },
-  "sora-2": {
-    "720": {"4": 0.45, "8": 1.35, "12": 2.7}
-  },
-  "ovi": {
-    "540": {"10": 0.45, "30": 1.35, "60": 2.7}
-  },
-  "veo3.1": {
-    "*": {"4": 2.4, "6": 3.6, "8": 4.8}
-  },
-  "ltx-2-pro": {
-    "*": {"6": 0.54, "8": 0.72, "10": 0.9}
-  },
-  "hailuo-02": {
-    "*": {"6": 0.345, "10": 0.84}
-  },
-  "seedance": {
-    "*": {"6": 0.27, "9": 0.405, "12": 0.54}
-  },
-  "kling": {
-    "*": {"5": 1.95, "10": 3.9}
-  },
-  "pixverse": {
-    "*": {"5": 0.525, "8": 1.05}
-  }
-}
-
 # Define an outer middleware
 async def payment_middleware(request: Request, call_next):
     # Only effective for the target path
@@ -268,19 +236,8 @@ def calTotal(request: Request, model: str):
     messageid = str(uuid.uuid4())
     size = request.query_params.get("size")
     duration = request.query_params.get("duration")
-    amount_dict = amounts.get(model)
-    amount = "$0.02"
-    if model is not None:
-        for key in amount_dict:
-          if size.find(key) != -1:
-              amount = f"${amount_dict.get(key).get(str(duration))}"
-        pay = PayTableInstall.get_by_messageid(messageid)
-        if pay is None:
-            PayTableInstall.insert_pay(address, model, size, duration, amount, messageid) 
-    return {
-        "amount": amount,
-        "messageid": messageid
-    }
+    return WaveApiInstance.calc_model_price(model, duration, size, messageid)
+    
 
 @router.get("/creator/wan-2.5")
 async def get_param(messageid: str, prompt: str, size: str, duration: int) -> Dict[str, Any]:

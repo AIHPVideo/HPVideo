@@ -19,8 +19,6 @@
   import Tools from "./MessageInput/Tools.svelte";
   import Tooltip from "../common/Tooltip.svelte";
   import XMark from "$lib/components/icons/XMark.svelte";
-  import { config as wconfig, modal } from "$lib/utils/wallet/index";
-  import { getAccount } from "@wagmi/core";
 
   import { fade } from 'svelte/transition';
   import Suggestions from "./MessageInput/Suggestions.svelte";
@@ -170,28 +168,6 @@
     };
   });
   const know_ext = "image/*"
-
-  // check wallet connect
-  const checkWalletConnect = () => {
-    const account = getAccount(wconfig);
-    if (account?.address) {
-      return true;
-    } else {
-      connect();
-      return false;
-    }
-  }
-  const connect = () => {
-    checkModalTheme();
-    modal.open();
-  }
-  const checkModalTheme = () => {
-    if ($theme === "system" || $theme === "light") {
-      modal.setThemeMode("light");
-    } else {
-      modal.setThemeMode("dark");
-    }
-  }
 </script>
 
 {#if dragged}
@@ -360,9 +336,7 @@
             dir={$settings?.chatDirection ?? "LTR"}
             class=" flex flex-col relative w-full rounded-3xl bg-gray-100 dark:bg-gray-850 dark:text-gray-100 button-select-none p-3 border border-gray-300 dark:border-gray-800 p-1"
             on:submit|preventDefault={() => {
-              if (checkWalletConnect()) {
-                submitPrompt(prompt, toolInfo, user);
-              } 
+              submitPrompt(prompt, toolInfo, user);
             }}
           >
             {#if files.length > 0}
@@ -424,9 +398,7 @@
                       e.preventDefault();
                     }
                     if (prompt !== "" && e.keyCode == 13 && !e.shiftKey) {
-                      if (checkWalletConnect()) {
-                        submitPrompt(prompt, toolInfo, user);
-                      }   
+                      submitPrompt(prompt, toolInfo, user);   
                     }
                   }
                 }}

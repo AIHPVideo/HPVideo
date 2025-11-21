@@ -13,7 +13,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { config, settings, models, theme, user, showSidebar, showWalletView } from '$lib/stores';
+	import { config, settings, models, theme, threesideAccount } from '$lib/stores';
 	import { imageGenerations } from '$lib/apis/images';
 	import {
 		approximateToHumanReadable,
@@ -31,6 +31,9 @@
   import VideoLoading from './VideoLoading.svelte';
 	import VideoError from './VideoError.svelte';
   import VideoPlay from './VideoPlay.svelte';
+
+	import { config as wconfig, modal } from "$lib/utils/wallet/index";
+	import { getAccount } from "@wagmi/core";
 
 	export let modelfiles = [];
 	export let message;
@@ -201,11 +204,6 @@
 		generatingImage = false;
 	};
 
-	onMount(async () => {
-		await tick();
-		renderStyling();
-	});
-
 	// 格式化模型名字
 	const formatModelName = (model) => {
 		// console.log("models", $models);
@@ -234,6 +232,33 @@
 	let reqeuestErr = "Video Generation Failed";
 	let internetErr = "It seems that you are offline, Please check your network and try generating again";
 
+	// check wallet connect
+  const connect = () => {
+    checkModalTheme();
+    modal.open();
+  }
+  const checkModalTheme = () => {
+    if ($theme === "system" || $theme === "light") {
+      modal.setThemeMode("light");
+    } else {
+      modal.setThemeMode("dark");
+    }
+  }
+
+	function formatWalletAddress(address: string, prefixLength = 6, suffixLength = 4) {
+		if (!address) return '';
+		if (typeof address !== 'string' || address.length < prefixLength + suffixLength) {
+			return address; 
+		}
+		const prefix = address.slice(0, prefixLength);
+		const suffix = address.slice(-suffixLength);
+		return `${prefix}...${suffix}`;
+	}
+
+	onMount(async () => {
+		await tick();
+		renderStyling();
+	});
 </script>
 
 <CitationsModal bind:show={showCitationModal} citation={selectedCitation} />
@@ -501,8 +526,22 @@
 											{/if}
 										</div>
 									{/if}
-
+									
 									{#if message.done}
+										{#if message.paymoney}
+											<div class="max-w-[600px]">
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDC, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{#if message.paystatus}
+													{$i18n.t("Paid")}
+												{:else}
+													{$i18n.t("Paying")}
+												{/if}
+												{#if isLastMessage}
+													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
+														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
+												{/if}
+											</div>
+										{/if}
 										<div class="flex justify-start min-w-fit mr-4">
 											{#if $config.images && !readOnly}
 												<Tooltip content="Generate Image" placement="bottom">

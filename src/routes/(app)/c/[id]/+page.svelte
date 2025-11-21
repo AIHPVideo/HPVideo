@@ -511,8 +511,6 @@
 					  }),
 			}));
 
-			startPayment(model.id, videosize, videodura, responseMessageId);
-
 			const [res, controller] = await getDeOpenAIChatCompletion(
 				localStorage.token,
 				{

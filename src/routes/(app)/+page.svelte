@@ -488,9 +488,6 @@
           }),
       }));
 
-      // start pay
-      startPayment(model.id, videosize, videodura, responseMessageId);
-
       const [res, controller] = await getDeOpenAIChatCompletion(
         localStorage.token,
         {
@@ -517,10 +514,6 @@
 
         // let errornum = 0;
         for await (const update of textStream) {
-          // errornum++;
-          // if (errornum > 20) {
-          //   throw new Error("error");
-          // }
           let { value, limit, createId, status, paystatus, paymoney, done, error } = update;
 					if (paymoney) {
 						responseMessage.paystatus = paystatus;
