@@ -33,7 +33,7 @@ async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
         timeout = 0
         while True:
           timeout += 1
-          if timeout > 600:
+          if timeout > 180:
             data = {
               "success": True,
               "message": "timeout",
@@ -90,8 +90,8 @@ async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
               }
               yield f"data: {json.dumps(data)}\n\n"
 
-          # stop 0.2s
-          time.sleep(0.2)  
+          # stop 1s
+          time.sleep(1)  
       else:
         data = {
           "success": True,
