@@ -137,7 +137,6 @@
 	};
 
 	const resentMessage = async (message: any) => {
-		message.createId = "fa1c416af8944afea3df07340e03d565";
 		await refreshVideoResult(message, chatId);
 	};
 
