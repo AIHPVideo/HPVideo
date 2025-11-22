@@ -161,7 +161,7 @@
 	};
 
 	const resentMessageHandler = async () => {
-		await resentMessage(message?.parentId);
+		await resentMessage(message);
 	}
 
 	const editMessageConfirmHandler = async () => {

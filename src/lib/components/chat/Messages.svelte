@@ -17,7 +17,7 @@
 	export let chatId = '';
 	export let readOnly = false;
 	export let sendPrompt: Function;
-	export let resentVideoResult: Function
+	export let refreshVideoResult: Function
 	export let continueGeneration: Function;
 	export let regenerateResponse: Function;
 	export let startPay: Function;
@@ -136,29 +136,9 @@
 		await sendPrompt(userPrompt, responseMap, modelLimit);
 	};
 
-	const resentMessage = async (messageId) => {
-		let userMessage = {
-			...history.messages[messageId]
-		};
-
-		let userPrompt = userMessage?.content;
-		
-		// Create Simulate ResopnseMessage
-		let currentMessage: any = {};
-		history.messages[messageId].childrenIds.forEach((responseMessageId: string) => {
-			let responseMessage = history.messages[responseMessageId];
-			currentMessage = {
-				...responseMessage,
-				status: "",
-				content: "",
-				error: false,
-				errmsg: "",
-				done: false
-			}
-		});
-
-		await tick();
-		await resentVideoResult(userMessage?.models[0], userPrompt, currentMessage, chatId);
+	const resentMessage = async (message: any) => {
+		message.createId = "fa1c416af8944afea3df07340e03d565";
+		await refreshVideoResult(message, chatId);
 	};
 
 	const updateChatMessages = async () => {

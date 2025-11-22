@@ -15,6 +15,18 @@ async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
   def event_generator():
     pay = PayTableInstall.get_by_messageid(param.messageid)
     if pay.status:
+      data = {
+        "success": True,
+        "message": "pay success",
+        "status": "creating",
+        "limit": {"use": 2, "total": 10},
+        "paystatus": True,
+        "paymoney": pay.amount,
+        "createId": "",
+        "videos": "paid"
+      }
+      yield f"data: {json.dumps(data)}\n\n"
+
       result = WaveApiInstance.create(param)
       if result is not None and result.get('code') == 200:
         requestId = result['data']['id']
@@ -79,7 +91,19 @@ async def completion_video(param: AiModelReq, user=Depends(get_current_user)):
               yield f"data: {json.dumps(data)}\n\n"
 
           # stop 0.2s
-          time.sleep(0.2)   
+          time.sleep(0.2)  
+      else:
+        data = {
+          "success": True,
+          "message": "create failed",
+          "status": 'failed',
+          "limit": {"use": 2, "total": 10},
+          "paystatus": True,
+          "paymoney": pay.amount,
+          "createId": "",
+          "videos": "createdfailed"
+        }
+        yield f"data: {json.dumps(data)}\n\n"
     
     yield f"data: [DONE]\n\n"
 

@@ -447,6 +447,7 @@
 
             responseMessage.content = "";
             responseMessage.done = false;
+            responseMessage.error = false;
             history.messages[responseMessageId] = responseMessage;
             history.currentId = responseMessageId;
 
@@ -648,73 +649,79 @@
     }
   };
 
-  const getVideoResult = async (responseMessage: any, _chatId: string) => {  
-    scrollToBottom();
-    try {
-      const [res, controller] = await getDeOpenAIChatResult(
-        localStorage.token,
-        { requestId: responseMessage.createId}
-      );
+  // reset responsemessage
+  const refreshVideoResult = async (messageinfo: any) => {
+    if (messageinfo.createId) {
+      scrollToBottom();
 
-      // reset responsemessage
-      history.messages[responseMessage?.id] = responseMessage;
+			let responseMessageId = messageinfo?.id;
+      messageinfo.done = false;
+			messageinfo.error = false;
+      messageinfo.status = "processing"
+      history.messages[responseMessageId] = messageinfo;
+
+			const responseMessage = history.messages[responseMessageId];
+
+      try {
+        const [res, controller] = await getDeOpenAIChatResult(
+          localStorage.token,
+          { requestId: messageinfo.createId}
+        );
+
+        await tick();
+        scrollToBottom();
+
+        if (res && res.ok && res.body) {
+          const textStream = await createOpenAITextStream(res.body, true);
+          for await (const update of textStream) {
+            let { value, status, done, error } = update;
+            if (status) {
+              responseMessage.status = status;
+            }
+            messages = messages;
+
+            if (error) {
+              await handleOpenAIError(error, null, null, responseMessage);
+              break;
+            }
+
+            if (done || stopResponseFlag || _chatId !== $chatId) {
+              responseMessage.done = true;
+              messages = messages;
+              if (stopResponseFlag) {
+                controller.abort("User: Stop Response");
+              }
+              break;
+            }
+
+            if (responseMessage.content == "" && value == "") {
+              continue;
+            } else {
+              responseMessage.content = value;
+            }
+
+            if (autoScroll) {
+              scrollToBottom();
+            }  
+          } 
+        }
+      } catch (error) {
+        await handleOpenAIError(error, null, null, responseMessage);
+      }
+
+      // 更新消息到数据库
+      await updateChatMessage($chatId);
 
       await tick();
-      scrollToBottom();
 
-      if (res && res.ok && res.body) {
-        const textStream = await createOpenAITextStream(res.body, true);
-        for await (const update of textStream) {
-          let { value, status, done, error } = update;
-          if (status) {
-            responseMessage.status = status;
-          }
-          messages = messages;
-
-          if (error) {
-            await handleOpenAIError(error, null, null, responseMessage);
-            break;
-          }
-
-          if (done || stopResponseFlag || _chatId !== $chatId) {
-            responseMessage.done = true;
-            messages = messages;
-            if (stopResponseFlag) {
-              controller.abort("User: Stop Response");
-            }
-            break;
-          }
-
-          if (responseMessage.content == "" && value == "") {
-            continue;
-          } else {
-            responseMessage.content = value;
-          }
-
-          if (autoScroll) {
-            scrollToBottom();
-          }  
-        } 
+      if (autoScroll) {
+        scrollToBottom();
       }
-    } catch (error) {
-      await handleOpenAIError(error, null, null, responseMessage);
-    }
-
-    // 更新消息到数据库
-    await updateChatMessage($chatId);
-
-    await tick();
-
-    if (autoScroll) {
-      scrollToBottom();
-    }
-  }
-
-  const resentVideoResult = async (prompt: string, model: string, responseMessage: any, _chatId: string) => {
-    if (responseMessage.createId) {
-      await getVideoResult(responseMessage, _chatId);
     } else {
-
+      let currResponseMap: any = {};
+      currResponseMap[messageinfo?.model] = messageinfo;
+      let currmessage = messages.filter(item => item.id == messageinfo?.parentId);
+      await sendPrompt(currmessage[0].content, currResponseMap);
     }
   }
 
@@ -876,7 +883,7 @@
           suggestionPrompts={selectedModelfile?.suggestionPrompts ?? $config?.default_prompt_suggestions}
           {sendPrompt}
           {startPay}
-          {resentVideoResult}
+          {refreshVideoResult}
           {continueGeneration}
           {regenerateResponse}
         />
