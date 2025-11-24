@@ -32,8 +32,6 @@
 	import VideoError from './VideoError.svelte';
   import VideoPlay from './VideoPlay.svelte';
 
-	import { modal } from "$lib/utils/wallet/bnb/index";
-
 	export let modelfiles = [];
 	export let message;
 	export let siblings;
@@ -232,29 +230,6 @@
 	let reqeuestErr = "Video Generation Failed";
 	let internetErr = "It seems that you are offline, Please check your network and try generating again";
 
-	// check wallet connect
-  const connect = () => {
-    checkModalTheme();
-    modal.open();
-  }
-  const checkModalTheme = () => {
-    if ($theme === "system" || $theme === "light") {
-      modal.setThemeMode("light");
-    } else {
-      modal.setThemeMode("dark");
-    }
-  }
-
-	function formatWalletAddress(address: string, prefixLength = 6, suffixLength = 4) {
-		if (!address) return '';
-		if (typeof address !== 'string' || address.length < prefixLength + suffixLength) {
-			return address; 
-		}
-		const prefix = address.slice(0, prefixLength);
-		const suffix = address.slice(-suffixLength);
-		return `${prefix}...${suffix}`;
-	}
-
 	onMount(async () => {
 		await tick();
 		renderStyling();
@@ -360,13 +335,9 @@
 										{:else}
 											{$i18n.t("Unpaid")}
 										{/if}
-										{#if isLastMessage}
+										{#if isLastMessage && !message.paystatus}
 											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-												on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
-											{#if !message.paystatus}	
-												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-													on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
-											{/if}
+												on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
 										{/if}
 									</div>
 								{/if}
@@ -380,13 +351,9 @@
 										{:else}
 											{$i18n.t("Unpaid")}
 										{/if}
-										{#if isLastMessage}
+										{#if isLastMessage && !message.paystatus}
 											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-												on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
-											{#if !message.paystatus}	
-												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-													on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
-											{/if}
+												on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
 										{/if}
 									</div>
 								{/if}
@@ -403,13 +370,9 @@
 											{:else}
 												{$i18n.t("Unpaid")}
 											{/if}
-											{#if isLastMessage}
+											{#if isLastMessage && !message.paystatus}
 												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-													on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
-												{#if !message.paystatus}	
-													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-														on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
-												{/if}
+													on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
 											{/if}
 										</div>
 									{:else}
@@ -421,13 +384,9 @@
 												{:else}
 													{$i18n.t("Unpaid")}
 												{/if}
-												{#if isLastMessage}
+												{#if isLastMessage && !message.paystatus}
 													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
-													{#if !message.paystatus}	
-														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-															on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
-													{/if}
+														on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
 												{/if}
 											</div>
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
@@ -439,13 +398,9 @@
 												{:else}
 													{$i18n.t("Unpaid")}
 												{/if}
-												{#if isLastMessage}
-													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>
-													{#if !message.paystatus}	
+												{#if isLastMessage && !message.paystatus}
 														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
 															on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
-													{/if}
 												{/if}
 											</div>
 											<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
@@ -457,13 +412,9 @@
 												{:else}
 													{$i18n.t("Unpaid")}
 												{/if}
-												{#if isLastMessage}
+												{#if isLastMessage && !message.paystatus}
 													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-														on:click={async () => {connect() }}>{ $threesideAccount?.address ? formatWalletAddress($threesideAccount?.address) : $i18n.t("Connect Wallet")}</button>										
-													{#if !message.paystatus}	
-														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-															on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
-													{/if}
+														on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
 												{/if}
 											</div>
 											{#if message.paystatus}

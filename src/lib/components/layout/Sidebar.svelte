@@ -69,7 +69,7 @@
         contentMatches = chat.chat.messages.some((message) => {
           // Check if message.content exists and includes the search query
           return (
-            message.content && message.content.toLowerCase().includes(query)
+            message.content && message.content.toString().toLowerCase().includes(query)
           );
         });
       }

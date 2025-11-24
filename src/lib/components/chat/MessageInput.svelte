@@ -6,8 +6,8 @@
     modelfiles,
     settings,
     showSidebar,
-    theme,
-    config
+    config,
+    threesideAccount
   } from "$lib/stores";
   import { findWordIndices } from "$lib/utils";
 
@@ -339,7 +339,11 @@
             dir={$settings?.chatDirection ?? "LTR"}
             class=" flex flex-col relative w-full rounded-3xl bg-gray-100 dark:bg-gray-850 dark:text-gray-100 button-select-none p-3 border border-gray-300 dark:border-gray-800 p-1"
             on:submit|preventDefault={() => {
-              submitPrompt(prompt, getVideoInfo(), user);
+              if ($threesideAccount?.address) {
+                submitPrompt(prompt, getVideoInfo(), user);
+              } else{
+                document.getElementById("connect-wallet-btn")?.click();
+              }           
             }}
           >
             {#if files.length > 0}

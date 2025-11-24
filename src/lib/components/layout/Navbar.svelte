@@ -8,19 +8,29 @@
     chatId,
     showSidebar,
     user,
-    initPageFlag
+    initPageFlag,
+    theme,
+    threesideAccount
   } from "$lib/stores";
 
   import ShareChatModal from "../chat/ShareChatModal.svelte";
   import ModelSelector from "../chat/ModelSelector.svelte";
   import Menu from "./Navbar/Menu.svelte";
   import MenuLines from "../icons/MenuLines.svelte";
-  import { generateInitialsImage } from "$lib/utils";
   import { getChatById } from "$lib/apis/chats";
   import Setting from "$lib/components/layout/Navbar/Setting.svelte"
 
   import { getLanguages } from "$lib/i18n";
-    import Tooltip from "../common/Tooltip.svelte";
+  import Tooltip from "../common/Tooltip.svelte";
+
+  import { watchAccount, getAccount } from "@wagmi/core";
+  import { config as wconfig, clearConnector } from "$lib/utils/wallet/bnb/index";
+  import { modal } from "$lib/utils/wallet/bnb/index";
+  import { printSignIn, walletSignIn } from "$lib/apis/auths/index";
+  import { Base64 } from 'js-base64';
+  import { ethers } from "ethers";
+
+  import { getChatList } from "$lib/apis/chats";
 
   const i18n = getContext("i18n");
 
@@ -67,6 +77,82 @@
     isMobile = /android|iPad|iPhone|iPod|IEMobile|Opera Mini/i.test(userAgent);
     languages = await getLanguages();
   });
+
+  watchAccount(wconfig, {
+    async onChange() {
+      try {
+        if ($threesideAccount?.address) {
+          clearConnector();
+          $threesideAccount = {};
+          await signIn();
+        } else {
+          let account = getAccount(wconfig);
+          await walletLogin(account?.address);
+          $threesideAccount = account;
+        }   
+      } catch (error) {
+        console.log("wallet login error:", error);
+      }
+    },
+  });
+  const connect = () => {
+    checkModalTheme();
+    modal.open();
+  }
+  const checkModalTheme = () => {
+    if ($theme === "system" || $theme === "light") {
+      modal.setThemeMode("light");
+    } else {
+      modal.setThemeMode("dark");
+    }
+  }
+
+  // Generate a random message
+  function generateRandomMessage(length: number) {
+    const randomBytes = new Uint8Array(length);
+    crypto.getRandomValues(randomBytes);
+    return ethers.hexlify(randomBytes);
+  }
+  const walletLogin = async (address: string) => {
+    const randomMessage = generateRandomMessage(32);
+    let combinedText = '';
+    for (let i = 0; i < randomMessage.length; i++) {
+      let charCode = randomMessage.charCodeAt(i);
+      let vectorCharCode = address.charCodeAt(i % address.length);
+      combinedText += String.fromCharCode((charCode + vectorCharCode) % 256);
+    }
+    const signature = Base64.encode(combinedText);
+    const walletSignInResult = await walletSignIn({
+      address, 
+      nonce: randomMessage, 
+      address_type: "threeSide", 
+      device_id: localStorage.visitor_id || "", 
+      signature, 
+      id: localStorage.visitor_id || ""
+    });
+    if (walletSignInResult?.token) {
+      localStorage.removeItem("token");
+      localStorage.token = walletSignInResult.token;
+      user.set(walletSignInResult);
+      await chats.set([]); 
+      await chats.set(await getChatList(localStorage.token));
+    }
+  }
+
+  // visit login
+  async function signIn() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("walletImported");
+    localStorage.removeItem("walletKey");
+    const res = await printSignIn("");
+    localStorage.token = res.token;
+    user.set(res);
+    getChatList(localStorage.token).then(chatList => {
+			chats.set(chatList);
+		});
+  }
+
 </script>
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
@@ -91,13 +177,15 @@
         </button>
       </div>
 
-      <div class="overflow-hidden bg-gray-100 dark:bg-gray-850 rounded-full p-2">
+      <div
+        class="overflow-hidden bg-gray-100 dark:bg-gray-850 rounded-full p-2"
+      >
         {#if showModelSelector}
           <ModelSelector bind:selectedModels />
         {/if}
       </div>
 
-      <div class="flex-1"></div>
+      <div class="flex-1" />
 
       <div
         class="self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
@@ -164,13 +252,19 @@
             </div>
           </button>
         </Tooltip>
-        
+
         {#if $initPageFlag}
-          <div class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1">
+          <div
+            class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1"
+          >
             {#if !$mobile}
-              <div class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800">
+              <div
+                class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800"
+              >
                 <div class="flex w-full rounded-xl" id="chat-search">
-                  <div class="self-center pl-1 py-2.5 rounded-l-xl bg-transparent">
+                  <div
+                    class="self-center pl-1 py-2.5 rounded-l-xl bg-transparent"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
@@ -197,19 +291,41 @@
               </div>
             {/if}
 
-            <Setting/>
+            {#if $threesideAccount?.address}
+              <Setting />
+            {:else}
+              <button
+                id="connect-wallet-btn"
+                class="relative flex rounded-xl transition pl-3 pr-2 py-2"
+                aria-label="User Menu"
+                on:click={(e) => {
+                  connect();
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="size-5"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M7.954 1.372a1 1 0 0 1 1.414-.15l3.262 2.664a1 1 0 0 1 .25 1.245A3 3 0 0 0 12 5h-.3l.298-.34l-1.718-1.403l-1.417 1.744H7.574l1.931-2.376l-.77-.629L6.337 5h-1.28zM10.5 10a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zM3 5.5a.5.5 0 0 1 .5-.5h.558l.795-1H3.5A1.5 1.5 0 0 0 2 5.5v6A2.5 2.5 0 0 0 4.5 14H12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H3.5a.5.5 0 0 1-.5-.5m0 6V6.915q.236.084.5.085H12a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4.5A1.5 1.5 0 0 1 3 11.5"
+                  />
+                </svg>
+              </button>
+            {/if}
 
-            <div class=" self-center">
-              <div class="size-9 object-cover rounded-full bg-primary">
+            <div class=" self-center size-1">
+              <!-- <div class="size-9 object-cover rounded-full bg-primary">
                 <img
                   src={$user.profile_image_url == ""
                     ? generateInitialsImage($user.name)
                     : $user.profile_image_url}
                   alt="profile"
                   class=" rounded-full size-9 object-cover"/>
-              </div>
+              </div> -->
             </div>
-          </div>   
+          </div>
         {/if}
       </div>
     </div>

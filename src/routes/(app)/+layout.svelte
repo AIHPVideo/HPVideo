@@ -146,7 +146,6 @@
 		}
 
 		if ($user === undefined) {
-			await signOut($channel);
 			await models.set(await getModels());
 		} else if (
 			["user", "admin", "walletUser", "visitor"].includes($user?.role)

@@ -10,36 +10,24 @@
   const i18n = getContext("i18n");
 
   let show = false;
+
 </script>
 
 <DropdownMenu.Root bind:open={show}>
   <DropdownMenu.Trigger>
     <button
-      class="flex rounded-xl hover:bg-gray-100 dark:hover:bg-gray-850 transition mx-3"
+      class="relative flex rounded-xl transition pl-3 pr-2 py-2"
       aria-label="User Menu"
       on:click={(e) => {
-        e.preventDefault();
+        e.preventDefault(); 
       }}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="w-5 h-5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"
-        />
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-        />
+      <svg xmlns="http://www.w3.org/2000/svg" 
+        class="size-5"
+        viewBox="0 0 16 16">
+        <path fill="currentColor" d="M7.954 1.372a1 1 0 0 1 1.414-.15l3.262 2.664a1 1 0 0 1 .25 1.245A3 3 0 0 0 12 5h-.3l.298-.34l-1.718-1.403l-1.417 1.744H7.574l1.931-2.376l-.77-.629L6.337 5h-1.28zM10.5 10a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zM3 5.5a.5.5 0 0 1 .5-.5h.558l.795-1H3.5A1.5 1.5 0 0 0 2 5.5v6A2.5 2.5 0 0 0 4.5 14H12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H3.5a.5.5 0 0 1-.5-.5m0 6V6.915q.236.084.5.085H12a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4.5A1.5 1.5 0 0 1 3 11.5"></path>
       </svg>
+      <div class="absolute top-0 right-1 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 bg-[#C213F2] shadow-lg" title="Wallet connected"></div>
     </button>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content
@@ -49,9 +37,9 @@
       border border-gray-300/30 dark:border-gray-700/50  outline-none"
     transition={flyAndScale}
     side="bottom"
+    sideOffset={12}
     align="end"
-    alignOffset={40}
-    sideOffset={20}
+    alignOffset={10}
   >
     <slot>
       <div class="text-gray-700 dark:text-gray-100">

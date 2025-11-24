@@ -16,8 +16,8 @@
   import { Toaster } from "svelte-sonner";
 
   import { defaultBackendConfig } from "$lib/apis";
-  import { config as wconfig } from "$lib/utils/wallet/bnb/index";
-  import { watchAccount, getAccount } from "@wagmi/core";
+  import { config as wconfig, clearConnector } from "$lib/utils/wallet/bnb/index";
+  import { getAccount } from "@wagmi/core";
 
   import "../tailwind.css";
   import "../app.css";
@@ -129,31 +129,22 @@
     try {
       await initData();
       await initUrlParam();
-      clearConnector();
+      checkWallectConnect();
       loaded = true;
     } catch (error) {
       console.log("==============", error);
     }
   });
-  watchAccount(wconfig, {
-    async onChange() {
-      try {
-        if ($threesideAccount?.address) {
-          clearConnector();
-          $threesideAccount = {};
-        } else {
-          let account = getAccount(wconfig);
-          $threesideAccount = account;
-        }   
-      } catch (error) {
-        console.log("wallet login error:", error);
-      }
-    },
-  });
-  function clearConnector() {
-    wconfig.state.connections.forEach((item) => {
-      wconfig.state.connections.delete(item.connector.uid);
-    });
+
+  // connect wallet function
+  function checkWallectConnect() {
+    let account = getAccount(wconfig);
+    if (account?.address) {
+      $threesideAccount = account;
+    } else {
+      clearConnector();
+      localStorage.removeItem("token");
+    }
   }
 </script>
 
