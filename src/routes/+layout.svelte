@@ -129,7 +129,7 @@
     try {
       await initData();
       await initUrlParam();
-      checkWallectConnect();
+      await checkWallectConnect();
       loaded = true;
     } catch (error) {
       console.log("==============", error);
@@ -137,10 +137,10 @@
   });
 
   // connect wallet function
-  function checkWallectConnect() {
+  const checkWallectConnect = async () => {
     let account = getAccount(wconfig);
     if (account?.address) {
-      $threesideAccount = account;
+      await threesideAccount.set(account);
     } else {
       clearConnector();
       localStorage.removeItem("token");
