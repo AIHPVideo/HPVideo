@@ -17,7 +17,7 @@
 
   import { defaultBackendConfig } from "$lib/apis";
   import { config as wconfig, clearConnector } from "$lib/utils/wallet/bnb/index";
-  import { getAccount } from "@wagmi/core";
+  import { getAccount, disconnect } from "@wagmi/core";
 
   import "../tailwind.css";
   import "../app.css";
@@ -142,6 +142,7 @@
     if (account?.address) {
       await threesideAccount.set(account);
     } else {
+      disconnect(wconfig);
       clearConnector();
       localStorage.removeItem("token");
     }
