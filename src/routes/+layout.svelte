@@ -142,9 +142,9 @@
     if (account?.address) {
       await threesideAccount.set(account);
     } else {
-      disconnect(wconfig);
       clearConnector();
       localStorage.removeItem("token");
+      disconnect(wconfig);
     }
   }
 </script>
