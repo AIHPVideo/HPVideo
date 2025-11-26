@@ -346,7 +346,7 @@
 					</div>
 				</div>
 			{/if}
-			<Sidebar />
+			<Sidebar/>
 			<slot />
 		{/if}
 	</div>

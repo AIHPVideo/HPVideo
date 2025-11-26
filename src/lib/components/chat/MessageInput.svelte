@@ -176,7 +176,7 @@
 {#if dragged}
   <div
     class="fixed {$showSidebar
-      ? 'left-0 md:left-[246px] md:w-[calc(100%-246px)]'
+      ? 'left-0 md:left-[310px] md:w-[calc(100%-310px)]'
       : 'left-0'}  w-full h-full flex z-50 touch-none pointer-events-none"
     id="dropzone"
     role="region"
@@ -196,7 +196,7 @@
 
 <div
   class="fixed bottom-0 {$showSidebar
-    ? 'left-0 md:left-[246px]'
+    ? 'left-0 md:left-[310px]'
     : 'left-0'} right-0"
 >
   <div class="w-full">
@@ -274,7 +274,7 @@
 
     <div class="bg-white dark:bg-gray-900">
       <div class="px-5 md:px-20 mx-auto inset-x-0">
-        <div class=" pb-4">
+        <div class="pb-[30px]">
           <input
             bind:this={filesInputElement}
             bind:files={inputFiles}
@@ -613,7 +613,7 @@
       </div>
       
       {#if messages.length == 0}
-        <div class="m-auto w-full px-5 md:px-20 pb-[40px]">
+        <div class="m-auto w-full px-5 md:px-20 pb-[30px]">
           <div class="flex justify-start">
             <div class="flex space-x-4 mb-1" in:fade={{ duration: 200 }}></div>
           </div>

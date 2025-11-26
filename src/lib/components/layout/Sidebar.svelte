@@ -229,14 +229,14 @@
 <div
   bind:this={navElement}
   id="sidebar"
-  class="h-screen max-h-[100dvh] min-h-screen select-none {$showSidebar
-    ? 'md:relative w-[246px]'
-    : '-translate-x-[246px] w-[0px]'} bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-t-3xl
+  class="h-screen max-h-[100dvh] min-h-[100dvh] md:h-[calc(100dvh-60px)] md:max-h-[calc(100dvh-60px)] md:min-h-[calc(100dvh-60px)] select-none md:m-[30px] {$showSidebar
+    ? 'md:relative w-[280px]'
+    : '-translate-x-[280px] w-[0px]'} bg-gray-100 text-gray-900 dark:bg-gray-850 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-3xl
         "
   data-state={$showSidebar}
 >
   <div
-    class="py-2.5 my-auto flex flex-col justify-between h-screen max-h-[100dvh] w-[246px] z-50 {$showSidebar
+    class="p-2.5 my-auto flex flex-col justify-between h-[calc(100dvh-60px)] max-h-[calc(100dvh-60px)] w-[280px] z-50 {$showSidebar
       ? ''
       : 'invisible'}"
   >
@@ -411,8 +411,8 @@
                   chat.id === chatDeleteId
                     ? 'bg-gray-200 dark:bg-gray-900'
                     : chat.id === selectedChatId
-                    ? 'bg-gray-100 dark:bg-gray-950'
-                    : 'group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
+                    ? 'bg-gray-100 dark:bg-gray-850'
+                    : 'group-hover:bg-[#9903E6CC] dark:group-hover:bg-[#9903E6CC]'}  whitespace-nowrap text-ellipsis"
                 >
                   <input
                     bind:value={chatTitle}
@@ -427,7 +427,7 @@
                   chat.id === chatDeleteId
                     ? 'bg-[#9903E6] text-white'
                     : chat.id === selectedChatId
-                    ? 'bg-gray-100 dark:bg-gray-950'
+                    ? 'bg-gray-100 dark:bg-gray-850'
                     : ' group-hover:bg-[#9903E6CC] group-hover:text-white'}  whitespace-nowrap text-ellipsis"
                   href="/creator/c/{chat.id}"
                   on:click={() => {

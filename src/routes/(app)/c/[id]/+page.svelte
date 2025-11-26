@@ -894,7 +894,7 @@
 {#if loaded}
 	<div
 		class="min-h-screen max-h-screen {$showSidebar
-			? 'md:max-w-[calc(100%-246px)]'
+			? 'md:max-w-[calc(100%-310px)]'
 			: ''} w-full max-w-full flex flex-col"
 	>
 		<Navbar

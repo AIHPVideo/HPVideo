@@ -2,7 +2,7 @@
   import { getContext } from "svelte";
   import { DropdownMenu } from "bits-ui";
   import { flyAndScale } from "$lib/utils/transitions";
-  import { mobile } from "$lib/stores";
+  import { mobile, threesideAccount } from "$lib/stores";
 
   import UserEdit from "$lib/components/chat/Settings/UserEdit.svelte";
   import { toast } from 'svelte-sonner';
@@ -11,23 +11,35 @@
 
   let show = false;
 
+  function formatWalletAddress(address: any, { prefixLen, suffixLen } = {}) {
+    if (!address || typeof address !== 'string' || address.length < 10) return address;
+
+    // 自动适配 EVM 链（0x开头，42位）和 Solana 链（44位）
+    const defaultPrefixLen = address.startsWith('0x') ? 6 : 4;
+    const finalPrefixLen = prefixLen ?? defaultPrefixLen;
+    const finalSuffixLen = suffixLen ?? 4;
+
+    // 校验长度（避免越界）
+    if (finalPrefixLen + finalSuffixLen >= address.length) return address;
+
+    // 截取前缀和后缀，中间用...连接
+    const prefix = address.slice(0, finalPrefixLen);
+    const suffix = address.slice(-finalSuffixLen);
+    return `${prefix}...${suffix}`;
+  }
+
 </script>
 
 <DropdownMenu.Root bind:open={show}>
   <DropdownMenu.Trigger>
     <button
-      class="relative flex rounded-xl transition pl-3 pr-2 py-2"
+      class="relative primaryButton flex rounded-lg transition pl-3 pr-2 py-1 text-sm text-white ml-2"
       aria-label="User Menu"
       on:click={(e) => {
         e.preventDefault(); 
       }}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" 
-        class="size-5"
-        viewBox="0 0 16 16">
-        <path fill="currentColor" d="M7.954 1.372a1 1 0 0 1 1.414-.15l3.262 2.664a1 1 0 0 1 .25 1.245A3 3 0 0 0 12 5h-.3l.298-.34l-1.718-1.403l-1.417 1.744H7.574l1.931-2.376l-.77-.629L6.337 5h-1.28zM10.5 10a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zM3 5.5a.5.5 0 0 1 .5-.5h.558l.795-1H3.5A1.5 1.5 0 0 0 2 5.5v6A2.5 2.5 0 0 0 4.5 14H12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H3.5a.5.5 0 0 1-.5-.5m0 6V6.915q.236.084.5.085H12a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4.5A1.5 1.5 0 0 1 3 11.5"></path>
-      </svg>
-      <div class="absolute top-0 right-1 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 bg-[#C213F2] shadow-lg" title="Wallet connected"></div>
+      {formatWalletAddress($threesideAccount?.address, {prefixLen: 4, suffixLen: 4})}
     </button>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content

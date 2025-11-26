@@ -156,7 +156,7 @@
 </script>
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
-<nav id="nav" class=" sticky py-2.5 top-0 flex flex-row justify-center z-30">
+<nav id="nav" class=" sticky md:pt-[30px] pt-2.5 pb-2.5 top-0 flex flex-row justify-center z-30">
   <div class=" flex max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
     <div class="flex items-center w-full max-w-full">
       <div
@@ -255,7 +255,7 @@
 
         {#if $initPageFlag}
           <div
-            class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1"
+            class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1 md:mr-[30px]"
           >
             {#if !$mobile}
               <div
@@ -296,26 +296,17 @@
             {:else}
               <button
                 id="connect-wallet-btn"
-                class="relative flex rounded-xl transition pl-3 pr-2 py-2"
+                class="relative primaryButton flex rounded-lg transition text-white text-sm pl-3 pr-2 py-1 ml-2"
                 aria-label="User Menu"
                 on:click={(e) => {
                   connect();
                 }}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-5"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M7.954 1.372a1 1 0 0 1 1.414-.15l3.262 2.664a1 1 0 0 1 .25 1.245A3 3 0 0 0 12 5h-.3l.298-.34l-1.718-1.403l-1.417 1.744H7.574l1.931-2.376l-.77-.629L6.337 5h-1.28zM10.5 10a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zM3 5.5a.5.5 0 0 1 .5-.5h.558l.795-1H3.5A1.5 1.5 0 0 0 2 5.5v6A2.5 2.5 0 0 0 4.5 14H12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H3.5a.5.5 0 0 1-.5-.5m0 6V6.915q.236.084.5.085H12a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4.5A1.5 1.5 0 0 1 3 11.5"
-                  />
-                </svg>
+                {$i18n.t("Connect Wallet")}
               </button>
             {/if}
 
-            <div class=" self-center size-1">
+            <div class=" self-center size-2">
               <!-- <div class="size-9 object-cover rounded-full bg-primary">
                 <img
                   src={$user.profile_image_url == ""
