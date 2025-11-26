@@ -259,9 +259,9 @@
 				{#if message.content == '' && !message?.done}
 					<VideoGen/>
 				{:else}
-					{#if message?.replytime && checkModelImage(message.model)}
+					<!-- {#if message?.replytime && checkModelImage(message.model)}
 						<span class="text-xs">{ $i18n.t("Last for {{ time }} seconds", {time:(message?.replytime - message?.timestamp) % 60}) }</span>
-					{/if}	
+					{/if}	 -->
 				{/if}
 				{#if message.timestamp}
 					<span

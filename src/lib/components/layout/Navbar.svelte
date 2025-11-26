@@ -158,7 +158,7 @@
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
 <nav id="nav" class=" sticky md:pt-[30px] pt-2.5 pb-2.5 top-0 flex flex-row justify-center z-30">
-  <div class="flex flex-col max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
+  <div class="flex {$mobile ? 'flex-col' : 'flex-row'} max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
     {#if $mobile}
       <div class="flex pt-1 pb-3">
         <a
@@ -239,6 +239,24 @@
             </div> -->
           </div>
         </div>
+      </div>
+    {/if}
+    {#if !$mobile}
+      <div
+        class="{$showSidebar
+          ? 'md:hidden'
+          : ''} self-start flex flex-none items-center text-gray-600 dark:text-gray-400 mr-2"
+        >
+        <button
+          id="sidebar-toggle-button"
+          class="cursor-pointer p-2.5 flex rounded-xl hover:bg-[#9903E6] hover:text-white transition"
+          on:click={() => {
+            showSidebar.set(!$showSidebar);
+          }}>
+          <div class=" m-auto self-center">
+            <MenuLines />
+          </div>
+        </button>
       </div>
     {/if}
     <div class="flex items-center w-full max-w-full">
