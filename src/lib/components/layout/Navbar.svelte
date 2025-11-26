@@ -160,7 +160,7 @@
 <nav id="nav" class=" sticky md:pt-[30px] pt-2.5 pb-2.5 top-0 flex flex-row justify-center z-30">
   <div class="flex flex-col max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
     {#if $mobile}
-      <div class="flex pt-1 pb-2">
+      <div class="flex pt-1 pb-3">
         <a
           id="sidebar-new-chat-button"
           class="flex justify-between rounded-xl py-2 transition"
