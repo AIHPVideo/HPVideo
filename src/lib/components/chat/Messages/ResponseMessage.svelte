@@ -402,7 +402,7 @@
 												{/if}
 											</div>
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
-										{:else if message.status == 'failed'}
+										{:else if message.status == 'failed' || message.status == 'timeout'}
 											<div>
 												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 												{#if message.paystatus}
