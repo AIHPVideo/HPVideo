@@ -163,7 +163,7 @@
       <div class="flex pt-1 pb-3">
         <a
           id="sidebar-new-chat-button"
-          class="flex justify-between rounded-xl py-2 transition min-w-[100px]"
+          class="flex justify-between rounded-xl py-2 transition min-w-[133px]"
           href="/creator"
           draggable="false"
           on:click={async () => {
@@ -180,12 +180,12 @@
           <div class="self-center mx-1.5">
             <img
               src="/creator/static/favicon2.png"
-              class="w-[100px]"
+              class="h-[20px]"
               alt="logo"
             />
           </div>
         </a>
-        <div class="flex-1"></div>
+        <div class="flex-1 min-w-[20px]"></div>
         <div class="flex items-center {$threesideAccount?.address ? 'bg-gray-100 dark:bg-gray-850 rounded-full p-1' : ''}">
           {#if $threesideAccount?.address}
             <div class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800">
@@ -206,7 +206,7 @@
                 </div>
 
                 <input
-                  class="w-full min-w-0 w-[60px] rounded-r-xl py-1 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
+                  class="w-full min-w-0 rounded-r-xl py-1 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
                   placeholder={$i18n.t("Search")}
                   bind:value={search}
                   on:focus={() => {
