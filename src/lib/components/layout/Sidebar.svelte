@@ -21,7 +21,6 @@
   import {
     deleteChatById,
     getChatList,
-    getChatById,
     getChatListByTagName,
     updateChatById,
     getAllChatTags,
@@ -229,10 +228,10 @@
 <div
   bind:this={navElement}
   id="sidebar"
-  class="h-screen max-h-[100dvh] min-h-[100dvh] md:h-[calc(100dvh-60px)] md:max-h-[calc(100dvh-60px)] md:min-h-[calc(100dvh-60px)] select-none md:m-[30px] {$showSidebar
+  class="h-[calc(100dvh-60px)] max-h-[calc(100dvh-60px)] min-h-[calc(100dvh-60px)] select-none md:m-[30px] {$showSidebar
     ? 'md:relative w-[280px]'
-    : '-translate-x-[280px] w-[0px]'} bg-gray-100 text-gray-900 dark:bg-gray-850 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0 rounded-3xl
-        "
+    : '-translate-x-[280px] w-[0px]'} bg-gray-100 text-gray-900 dark:bg-gray-850 dark:text-gray-200 text-sm transition fixed z-50 top-0 left-0
+    {$mobile ? 'mt-[60px]' : 'rounded-3xl'}"
   data-state={$showSidebar}
 >
   <div
@@ -240,59 +239,61 @@
       ? ''
       : 'invisible'}"
   >
-    <div
-      class="p-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 border-b border-gray-300 dark:border-gray-700"
-    >
-      <a
-        id="sidebar-new-chat-button"
-        class="flex flex-1 justify-between rounded-xl px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-850 transition"
-        href="/creator"
-        draggable="false"
-        on:click={async () => {
-          selectedChatId = null;
-          await goto("/creator");
-          const newChatButton = document.getElementById("new-chat-button");
-          setTimeout(() => {
-            newChatButton?.click();
-            if ($mobile) {
-              showSidebar.set(false);
-            }
-          }, 0);
-        }}
+    {#if !$mobile}
+      <div
+        class="p-2.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 border-b border-gray-300 dark:border-gray-700"
       >
-        <div class="self-center mx-1.5">
-          <img
-            src="/creator/static/favicon2.png"
-            class="h-5"
-            alt="logo"
-          />
-        </div>
-      </a>
-
-      <button
-        class=" cursor-pointer px-2 py-2 flex rounded-xl hover:bg-[#9903E6] hover:text-white transition"
-        on:click={() => {
-          showSidebar.set(!$showSidebar);
-        }}
-      >
-        <div class=" m-auto self-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            class="size-5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+        <a
+          id="sidebar-new-chat-button"
+          class="flex flex-1 justify-between rounded-xl px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+          href="/creator"
+          draggable="false"
+          on:click={async () => {
+            selectedChatId = null;
+            await goto("/creator");
+            const newChatButton = document.getElementById("new-chat-button");
+            setTimeout(() => {
+              newChatButton?.click();
+              if ($mobile) {
+                showSidebar.set(false);
+              }
+            }, 0);
+          }}
+        >
+          <div class="self-center mx-1.5">
+            <img
+              src="/creator/static/favicon2.png"
+              class="h-5"
+              alt="logo"
             />
-          </svg>
-        </div>
-      </button>
-    </div>
+          </div>
+        </a>
+
+        <button
+          class=" cursor-pointer px-2 py-2 flex rounded-xl hover:bg-[#9903E6] hover:text-white transition"
+          on:click={() => {
+            showSidebar.set(!$showSidebar);
+          }}
+        >
+          <div class=" m-auto self-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
+    {/if}
 
     <div class="relative flex flex-col flex-1 overflow-y-auto">
       <div class="flex items-center p-4">

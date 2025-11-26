@@ -13,7 +13,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { config, settings, models, theme, threesideAccount } from '$lib/stores';
+	import { config, settings, models, theme, paystatus } from '$lib/stores';
 	import { imageGenerations } from '$lib/apis/images';
 	import {
 		approximateToHumanReadable,
@@ -336,8 +336,11 @@
 											{$i18n.t("Unpaid")}
 										{/if}
 										{#if isLastMessage && !message.paystatus}
-											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-												on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" disabled={$paystatus}
+												on:click={async () => {
+													$paystatus = true;
+													await handlePay(message);
+												}}>{ $i18n.t("Pay")}</button>
 										{/if}
 									</div>
 								{/if}
@@ -352,8 +355,11 @@
 											{$i18n.t("Unpaid")}
 										{/if}
 										{#if isLastMessage && !message.paystatus}
-											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-												on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+											<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" disabled={$paystatus}
+												on:click={async () => {
+													$paystatus = true;
+													await handlePay(message);
+												}}>{ $i18n.t("Pay")}</button>
 										{/if}
 									</div>
 								{/if}
@@ -371,8 +377,11 @@
 												{$i18n.t("Unpaid")}
 											{/if}
 											{#if isLastMessage && !message.paystatus}
-												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-													on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+												<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" disabled={$paystatus}
+													on:click={async () => { 
+														$paystatus = true;
+														await handlePay(message); 
+													}}>{ $i18n.t("Pay")}</button>
 											{/if}
 										</div>
 									{:else}
@@ -385,8 +394,11 @@
 													{$i18n.t("Unpaid")}
 												{/if}
 												{#if isLastMessage && !message.paystatus}
-													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-														on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" disabled={$paystatus}
+														on:click={async () => { 
+															$paystatus = true;
+															await handlePay(message);
+														}}>{ $i18n.t("Pay")}</button>
 												{/if}
 											</div>
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
@@ -399,8 +411,11 @@
 													{$i18n.t("Unpaid")}
 												{/if}
 												{#if isLastMessage && !message.paystatus}
-														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-															on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+														<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" disabled={$paystatus}
+															on:click={async () => { 
+																$paystatus = true;
+																await handlePay(message);
+															}}>{ $i18n.t("Pay")}</button>
 												{/if}
 											</div>
 											<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
@@ -413,8 +428,11 @@
 													{$i18n.t("Unpaid")}
 												{/if}
 												{#if isLastMessage && !message.paystatus}
-													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" 
-														on:click={async () => { await handlePay(message) }}>{ $i18n.t("Pay")}</button>
+													<button class="primaryButton rounded-lg py-1 px-2 text-sm text-white ml-1" disabled={$paystatus}
+														on:click={async () => { 
+															$paystatus = true;
+															await handlePay(message) 
+														}}>{ $i18n.t("Pay")}</button>
 												{/if}
 											</div>
 											{#if message.paystatus}

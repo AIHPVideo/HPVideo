@@ -14,7 +14,10 @@
 		WEBUI_NAME,
 		tags as _tags,
 		showSidebar,
-		theme
+		theme,
+
+        paystatus
+
 	} from "$lib/stores";
 	import {
 		copyToClipboard,
@@ -393,6 +396,7 @@
 		const account = getAccount(wconfig);
 		if (!account?.address) {
 			connect();
+			$paystatus = false;
 			return;
 		}
 		const balance = await getUSDTBalance(account?.address);
@@ -411,6 +415,7 @@
 				};
 				const response = await bnbpaycheck(localStorage.token, body);
         if (response?.ok) {
+					$paystatus = false;
           toast.success($i18n.t("Pay Success"));
 
           // Send prompt
@@ -419,12 +424,15 @@
 					let currmessage = messages.filter(item => item.id == messageinfo?.parentId);
           await sendPrompt(currmessage[0]?.content, currResponseMap);
         } else{
+					$paystatus = false;
           toast.error($i18n.t("Pay Failed"));
         }	
 			} else{
+				$paystatus = false;
 				toast.error($i18n.t("Pay Failed"));
 			}
 		} else {
+			$paystatus = false;
 			toast.error($i18n.t("Insufficient USDT Balance"));
 		} 
 	}

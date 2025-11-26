@@ -19,7 +19,8 @@
     showSidebar,
     user,
     switchModel,
-    theme
+    theme,
+    paystatus
   } from "$lib/stores";
 
   import {
@@ -396,6 +397,7 @@
 		const account = getAccount(wconfig);
 		if (!account?.address) {
 			connect();
+      $paystatus = false;
 			return;
 		}
     
@@ -415,6 +417,7 @@
 				};
 				const response = await bnbpaycheck(localStorage.token, body);
         if (response?.ok) {
+          $paystatus = false;
           toast.success($i18n.t("Pay Success"));
 
           // Send prompt
@@ -424,12 +427,15 @@
           await sendPrompt(currmessage[0].content, currResponseMap);
 
         } else{
+          $paystatus = false;
           toast.error($i18n.t("Pay Failed"));
         }	
 			} else{
+        $paystatus = false;
 				toast.error($i18n.t("Pay Failed"));
 			}
 		} else {
+      $paystatus = false;
 			toast.error($i18n.t("Insufficient USDT Balance"));
 		} 
 	}

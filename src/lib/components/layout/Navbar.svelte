@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte";
+  import { goto } from "$app/navigation";
 
   import {
     mobile,
@@ -157,28 +158,91 @@
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
 <nav id="nav" class=" sticky md:pt-[30px] pt-2.5 pb-2.5 top-0 flex flex-row justify-center z-30">
-  <div class=" flex max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
-    <div class="flex items-center w-full max-w-full">
-      <div
-        class="{$showSidebar
-          ? 'md:hidden'
-          : ''} mr-3 self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
-      >
-        <button
-          id="sidebar-toggle-button"
-          class="cursor-pointer px-2 py-2 flex rounded-xl hover:bg-[#9903E6] hover:text-white transition"
-          on:click={() => {
-            showSidebar.set(!$showSidebar);
+  <div class="flex flex-col max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
+    {#if $mobile}
+      <div class="flex pt-1 pb-2">
+        <a
+          id="sidebar-new-chat-button"
+          class="flex justify-between rounded-xl py-2 transition"
+          href="/creator"
+          draggable="false"
+          on:click={async () => {
+            await goto("/creator");
+            const newChatButton = document.getElementById("new-chat-button");
+            setTimeout(() => {
+              newChatButton?.click();
+              if ($mobile) {
+                showSidebar.set(false);
+              }
+            }, 0);
           }}
         >
-          <div class=" m-auto self-center">
-            <MenuLines />
+          <div class="self-center mx-1.5">
+            <img
+              src="/creator/static/favicon2.png"
+              class="w-[100px]"
+              alt="logo"
+            />
           </div>
-        </button>
-      </div>
+        </a>
+        <div class="flex-1"></div>
+        <div class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1">
+          <div class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800">
+            <div class="flex rounded-xl" id="chat-search">
+              <div class="self-center pl-1 py-1 rounded-l-xl bg-transparent">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="w-4 h-4"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
 
+              <input
+                class="w-full min-w-0 w-[60px] rounded-r-xl py-1 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
+                placeholder={$i18n.t("Search")}
+                bind:value={search}
+                on:focus={() => {
+                enrichChatsWithContent($chats);
+              }}/>
+            </div>
+          </div>
+          {#if $threesideAccount?.address}
+            <Setting />
+          {:else}
+            <button
+              id="connect-wallet-btn"
+              class="relative primaryButton flex rounded-lg transition text-white text-sm pl-3 pr-2 py-1 ml-2"
+              aria-label="User Menu"
+              on:click={(e) => {
+                connect();
+              }}
+            >
+              {$i18n.t("Connect Wallet")}
+            </button>
+          {/if}
+
+          <div class=" self-center size-2">
+            <!-- <div class="size-9 object-cover rounded-full bg-primary">
+              <img
+                src={$user.profile_image_url == ""
+                  ? generateInitialsImage($user.name) : $user.profile_image_url}
+                  alt="profile"
+                  class=" rounded-full size-9 object-cover"/>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    {/if}
+    <div class="flex items-center w-full max-w-full">
       <div
-        class="overflow-hidden bg-gray-100 dark:bg-gray-850 rounded-full p-2"
+        class="overflow-hidden bg-gray-100 dark:bg-gray-850 rounded-full p-2 min-w-[100px]"
       >
         {#if showModelSelector}
           <ModelSelector bind:selectedModels />
@@ -188,11 +252,9 @@
       <div class="flex-1" />
 
       <div
-        class="self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
+        class="self-start flex items-center text-gray-600 dark:text-gray-400"
       >
-        <!-- <div class="md:hidden flex self-center w-[1px] h-5 mx-2 bg-gray-300 dark:bg-stone-700" /> -->
-
-        {#if shareEnabled}
+        <!-- {#if shareEnabled}
           <Menu
             {chat}
             {shareEnabled}
@@ -225,12 +287,12 @@
               </div>
             </button>
           </Menu>
-        {/if}
+        {/if} -->
 
         <Tooltip content={$i18n.t("New Chat")}>
           <button
             id="new-chat-button"
-            class=" flex cursor-pointer p-2 rounded-xl hover:bg-[#9903E6] hover:text-white transition mr-1"
+            class=" flex cursor-pointer p-2 rounded-xl hover:bg-[#9903E6] hover:text-white transition mx-1"
             on:click={() => {
               initNewChat();
             }}
@@ -253,15 +315,35 @@
           </button>
         </Tooltip>
 
-        {#if $initPageFlag}
+        {#if $mobile}
           <div
-            class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1 md:mr-[30px]"
+            class="{$showSidebar
+              ? 'md:hidden'
+              : ''} self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
           >
-            {#if !$mobile}
+            <button
+              id="sidebar-toggle-button"
+              class="cursor-pointer px-2 py-2 flex rounded-xl hover:bg-[#9903E6] hover:text-white transition"
+              on:click={() => {
+                showSidebar.set(!$showSidebar);
+              }}
+            >
+              <div class=" m-auto self-center">
+                <MenuLines />
+              </div>
+            </button>
+          </div>
+        {/if}
+
+        {#if !$mobile}
+          {#if $initPageFlag}
+            <div
+              class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1 md:mr-[30px]"
+            >
               <div
                 class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800"
               >
-                <div class="flex w-full rounded-xl" id="chat-search">
+                <div class="flex rounded-xl" id="chat-search">
                   <div
                     class="self-center pl-1 py-2.5 rounded-l-xl bg-transparent"
                   >
@@ -280,7 +362,7 @@
                   </div>
 
                   <input
-                    class="w-full rounded-r-xl py-1.5 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
+                    class="w-full min-w-0 min-w-[60px] rounded-r-xl py-1.5 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
                     placeholder={$i18n.t("Search")}
                     bind:value={search}
                     on:focus={() => {
@@ -289,34 +371,33 @@
                   />
                 </div>
               </div>
-            {/if}
+              {#if $threesideAccount?.address}
+                <Setting />
+              {:else}
+                <button
+                  id="connect-wallet-btn"
+                  class="relative primaryButton flex rounded-lg transition text-white text-sm pl-3 pr-2 py-1 ml-2"
+                  aria-label="User Menu"
+                  on:click={(e) => {
+                    connect();
+                  }}
+                >
+                  {$i18n.t("Connect Wallet")}
+                </button>
+              {/if}
 
-            {#if $threesideAccount?.address}
-              <Setting />
-            {:else}
-              <button
-                id="connect-wallet-btn"
-                class="relative primaryButton flex rounded-lg transition text-white text-sm pl-3 pr-2 py-1 ml-2"
-                aria-label="User Menu"
-                on:click={(e) => {
-                  connect();
-                }}
-              >
-                {$i18n.t("Connect Wallet")}
-              </button>
-            {/if}
-
-            <div class=" self-center size-2">
-              <!-- <div class="size-9 object-cover rounded-full bg-primary">
-                <img
-                  src={$user.profile_image_url == ""
-                    ? generateInitialsImage($user.name)
-                    : $user.profile_image_url}
-                  alt="profile"
-                  class=" rounded-full size-9 object-cover"/>
-              </div> -->
+              <div class=" self-center size-2">
+                <!-- <div class="size-9 object-cover rounded-full bg-primary">
+                  <img
+                    src={$user.profile_image_url == ""
+                      ? generateInitialsImage($user.name)
+                      : $user.profile_image_url}
+                    alt="profile"
+                    class=" rounded-full size-9 object-cover"/>
+                </div> -->
+              </div>
             </div>
-          </div>
+          {/if}
         {/if}
       </div>
     </div>

@@ -68,6 +68,7 @@ export const showFollowTGGroupModal = writable(false);
 // 钱包数据
 export let currentWalletData = writable(DefaultCurrentWalletData)
 export let threesideAccount = writable({})
+export let paystatus = writable(false)
 
 // 模型访问数量
 export let modelLimits = writable([

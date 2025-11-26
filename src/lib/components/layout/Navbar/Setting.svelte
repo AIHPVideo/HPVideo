@@ -33,13 +33,13 @@
 <DropdownMenu.Root bind:open={show}>
   <DropdownMenu.Trigger>
     <button
-      class="relative primaryButton flex rounded-lg transition pl-3 pr-2 py-1 text-sm text-white ml-2"
+      class="relative primaryButton flex rounded-lg transition pl-3 pr-2 py-1 text-sm text-white ml-2 whitespace-nowrap"
       aria-label="User Menu"
       on:click={(e) => {
         e.preventDefault(); 
       }}
     >
-      {formatWalletAddress($threesideAccount?.address, {prefixLen: 4, suffixLen: 4})}
+      {formatWalletAddress($threesideAccount?.address, {prefixLen: 3, suffixLen: 3})}
     </button>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content
