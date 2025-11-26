@@ -163,7 +163,7 @@
       <div class="flex pt-1 pb-3">
         <a
           id="sidebar-new-chat-button"
-          class="flex justify-between rounded-xl py-2 transition"
+          class="flex justify-between rounded-xl py-2 transition min-w-[100px]"
           href="/creator"
           draggable="false"
           on:click={async () => {
@@ -218,7 +218,7 @@
           {:else}
             <button
               id="connect-wallet-btn"
-              class="relative primaryButton flex rounded-lg transition text-white text-sm pl-3 pr-2 py-1 ml-2"
+              class="relative primaryButton flex rounded-lg transition text-white text-sm whitespace-nowrap pl-3 pr-2 py-1 ml-2"
               aria-label="User Menu"
               on:click={(e) => {
                 connect();
@@ -376,7 +376,7 @@
               {:else}
                 <button
                   id="connect-wallet-btn"
-                  class="relative primaryButton flex rounded-lg transition text-white text-sm pl-3 pr-2 py-1 ml-2"
+                  class="relative primaryButton flex rounded-lg transition text-white text-sm whitespace-nowrap pl-3 pr-2 py-1 ml-2"
                   aria-label="User Menu"
                   on:click={(e) => {
                     connect();
