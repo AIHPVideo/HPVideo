@@ -186,34 +186,35 @@
           </div>
         </a>
         <div class="flex-1"></div>
-        <div class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1">
-          <div class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800">
-            <div class="flex rounded-xl" id="chat-search">
-              <div class="self-center pl-1 py-1 rounded-l-xl bg-transparent">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="w-4 h-4"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-
-              <input
-                class="w-full min-w-0 w-[60px] rounded-r-xl py-1 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
-                placeholder={$i18n.t("Search")}
-                bind:value={search}
-                on:focus={() => {
-                enrichChatsWithContent($chats);
-              }}/>
-            </div>
-          </div>
+        <div class="flex items-center {$threesideAccount?.address ? 'bg-gray-100 dark:bg-gray-850 rounded-full p-1' : ''}">
           {#if $threesideAccount?.address}
+            <div class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800">
+              <div class="flex rounded-xl" id="chat-search">
+                <div class="self-center pl-1 py-1 rounded-l-xl bg-transparent">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="w-4 h-4"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+
+                <input
+                  class="w-full min-w-0 w-[60px] rounded-r-xl py-1 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
+                  placeholder={$i18n.t("Search")}
+                  bind:value={search}
+                  on:focus={() => {
+                  enrichChatsWithContent($chats);
+                }}/>
+              </div>
+            </div>
+          
             <Setting />
           {:else}
             <button
@@ -338,40 +339,40 @@
         {#if !$mobile}
           {#if $initPageFlag}
             <div
-              class="flex items-center bg-gray-100 dark:bg-gray-850 rounded-full p-1 md:mr-[30px]"
+              class="flex items-center {$threesideAccount?.address ? 'bg-gray-100 dark:bg-gray-850 rounded-full p-1 md:mr-[30px]' : ''}"
             >
-              <div
-                class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800"
-              >
-                <div class="flex rounded-xl" id="chat-search">
-                  <div
-                    class="self-center pl-1 py-2.5 rounded-l-xl bg-transparent"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="w-4 h-4"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </div>
-
-                  <input
-                    class="w-full min-w-0 min-w-[60px] rounded-r-xl py-1.5 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
-                    placeholder={$i18n.t("Search")}
-                    bind:value={search}
-                    on:focus={() => {
-                      enrichChatsWithContent($chats);
-                    }}
-                  />
-                </div>
-              </div>
               {#if $threesideAccount?.address}
+                <div
+                  class="px-2 flex justify-center space-x-2 rounded-full bg-gray-50 dark:bg-gray-800"
+                >
+                  <div class="flex rounded-xl" id="chat-search">
+                    <div
+                      class="self-center pl-1 py-2.5 rounded-l-xl bg-transparent"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-4 h-4"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+
+                    <input
+                      class="w-full min-w-0 min-w-[60px] rounded-r-xl py-1.5 pl-2 pr-4 text-sm bg-transparent dark:text-gray-300 outline-none"
+                      placeholder={$i18n.t("Search")}
+                      bind:value={search}
+                      on:focus={() => {
+                        enrichChatsWithContent($chats);
+                      }}
+                    />
+                  </div>
+                </div>
                 <Setting />
               {:else}
                 <button
