@@ -231,6 +231,40 @@ export const getDeOpenAIChatResult = async (
   return [res, controller];
 }
 
+// AI Video X402 Result Request Encapsulation
+export const getX402DeOpenAIChatResult = async (
+  token: string = "",
+  body: Object
+) => {
+  let res: any;
+  let error = null;
+  const controller = new AbortController();
+  try {
+    res = await fetch(`${WEBUI_API_BASE_URL}/chat/video/x402/result`, {
+      signal: controller.signal,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...body
+      }),
+    });
+    if (res.status != 200) {
+      throw new Error("error");
+    }
+  } catch (err) {
+    error = err;
+    res = null;
+  }
+
+  if (error) {
+    throw error;
+  }
+
+  return [res, controller];
+}
+
 // Add a shorthand
 export const generateDeTitle = async (
   token: string = "",

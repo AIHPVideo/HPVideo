@@ -120,8 +120,68 @@ async def completion_video(param: AiResultReq, user=Depends(get_current_user)):
           "success": True,
           "message": "timeout",
           "status": "timeout",
-          "limit": {"use": use_num * 2, "total": total},
-          "createId": requestId,
+          "limit": {"use": 2, "total": 10},
+          "createId": param.requestId,
+          "value": "timeout"
+        }
+        yield f"data: {json.dumps(data)}\n\n"
+        break
+      result = WaveApiInstance.get_prediction_result(param.requestId)
+      if result.get('success'):
+        outer_data = result.get('data', {})
+        inner_data = outer_data.get('data', {})
+        status = inner_data.get('status', 'unknown')
+        if status == 'completed':
+          data = {
+            "success": True,
+            "message": inner_data.get('message', 'success'),
+            "status": status,
+            "createId": param.requestId,
+            "videos": inner_data.get('outputs', [])
+          }
+          yield f"data: {json.dumps(data)}\n\n"
+          break
+        elif status == 'failed':
+          data = {
+            "success": True,
+            "message": inner_data.get('message', 'success'),
+            "status": status,
+            "createId": param.requestId,
+            "videos": "queryfailed"
+          }
+          yield f"data: {json.dumps(data)}\n\n"
+          break
+        else:
+          data = {
+            "success": True,
+            "message": inner_data.get('message', 'success'),
+            "status": status,
+            "createId": param.requestId,
+            "videos": "videoloading"
+          }
+          yield f"data: {json.dumps(data)}\n\n"
+      # stop 1s
+      time.sleep(0.2)
+    
+    # finish send
+    yield f"data: [DONE]\n\n"
+
+  return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
+@router.post("/video/x402/result")
+async def completion_video(param: AiResultReq):
+  def event_generator():
+    timeout = 0
+    while True:
+      timeout += 1
+      if timeout > 600:
+        data = {
+          "success": True,
+          "message": "timeout",
+          "status": "timeout",
+          "limit": {"use": 2, "total": 10},
+          "createId": param.requestId,
           "value": "timeout"
         }
         yield f"data: {json.dumps(data)}\n\n"
