@@ -59,7 +59,7 @@
 <div>
   {#each results as item}
     <div class="p-1">
-      <span class="text-gray-800">{JSON.stringify(item)}</span>
+      <span class="text-gray-800">• {JSON.stringify(item)}</span>
     </div>
   {/each}
 </div>
