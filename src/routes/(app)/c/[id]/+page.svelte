@@ -293,9 +293,10 @@
 						id: responseMessageId,
 						childrenIds: [],
 						role: "assistant",
-						paystatus: false,
             size: videoInfo?.size,
 						duration: videoInfo?.duration,
+						paystatus: false,
+						paytype: "unpaid",
 						paymoney: videoInfo?.amount,
 						status: "processing",
             content: "paying",
@@ -392,50 +393,93 @@
     }
   }
   const startPay = async (messageinfo: any) => {
-    console.log(messageinfo);
 		const account = getAccount(wconfig);
 		if (!account?.address) {
 			connect();
-			$paystatus = false;
+      $paystatus = false;
 			return;
 		}
-		const balance = await getUSDTBalance(account?.address);
-		let paymoney = messageinfo?.paymoney.toString();
-		if (Number(paymoney) <= balance) {
-			const txResponse = await tranUsdt(paymoney);
-			if (txResponse) {
-				let body = {
-					hash: txResponse?.hash,
-					address: account?.address,
-					messageid: messageinfo?.id,
-          model: messageinfo?.model,
-          size: messageinfo?.size,
-          duration: messageinfo?.duration,
-          amount: paymoney
-				};
-				const response = await bnbpaycheck(localStorage.token, body);
-        if (response?.ok) {
-					$paystatus = false;
-          toast.success($i18n.t("Pay Success"));
 
-          // Send prompt
-					let currResponseMap: any = {};
-					currResponseMap[messageinfo?.model] = messageinfo;
-					let currmessage = messages.filter(item => item.id == messageinfo?.parentId);
-          await sendPrompt(currmessage[0]?.content, currResponseMap);
+    let paymoney = messageinfo?.paymoney.toString();
+    let body = {
+			hash: "",
+			address: account?.address,
+			messageid: messageinfo?.id,
+      model: messageinfo?.model,
+      size: messageinfo?.size,
+      duration: messageinfo?.duration,
+      amount: paymoney
+		};
+    const response = await bnbpaycheck(localStorage.token, body);
+    console.log("==============checkpay result=============", response);
+    if (response?.ok) {
+      $paystatus = false;
+      await updatePayStatus(messageinfo, true, "paying");
+
+      // Send prompt
+      let currResponseMap: any = {};
+      currResponseMap[messageinfo?.model] = messageinfo;
+      let currmessage = messages.filter(item => item.id == messageinfo?.parentId);
+      await sendPrompt(currmessage[0].content, currResponseMap);
+
+    } else {
+      const balance = await getUSDTBalance(account?.address);
+		
+      if (Number(paymoney) <= balance) {
+
+        await updatePayStatus(messageinfo, false, "paying");
+
+        const txResponse = await tranUsdt(paymoney, messageinfo.id);
+        if (txResponse) {
+          let body = {
+            hash: txResponse?.hash,
+            address: account?.address,
+            messageid: messageinfo?.id,
+            model: messageinfo?.model,
+            size: messageinfo?.size,
+            duration: messageinfo?.duration,
+            amount: paymoney
+          };
+          const response = await bnbpaycheck(localStorage.token, body);
+          if (response?.ok) {
+            $paystatus = false;
+            await updatePayStatus(messageinfo, true, "paying");
+            toast.success($i18n.t("Pay Success"));
+
+            // Send prompt
+            let currResponseMap: any = {};
+            currResponseMap[messageinfo?.model] = messageinfo;
+            let currmessage = messages.filter(item => item.id == messageinfo?.parentId);
+            await sendPrompt(currmessage[0].content, currResponseMap);
+
+          } else{
+            $paystatus = false;
+            await updatePayStatus(messageinfo, false, "unpaid");
+            toast.error($i18n.t("Pay Failed"));
+          }	
         } else{
-					$paystatus = false;
+          $paystatus = false;
+          await updatePayStatus(messageinfo, false, "unpaid");
           toast.error($i18n.t("Pay Failed"));
-        }	
-			} else{
-				$paystatus = false;
-				toast.error($i18n.t("Pay Failed"));
-			}
-		} else {
-			$paystatus = false;
-			toast.error($i18n.t("Insufficient USDT Balance"));
-		} 
+        }
+
+      } else {
+        $paystatus = false;
+        toast.error($i18n.t("Insufficient USDT Balance"));
+      } 
+    } 
 	}
+
+  // update chat message into db
+  const updatePayStatus = async (messageinfo: any, paystatus: boolean, payval: string) => {
+    let responseMessageId = messageinfo?.id;
+    messageinfo.paystatus = paystatus;
+    messageinfo.paytype = payval;
+    messageinfo.status = payval;
+		messageinfo.content = payval;
+    history.messages[responseMessageId] = messageinfo;
+    await updateChatMessage($chatId);
+  }
 
 	// 3\2. 继续聊天会话
 	const sendPrompt = async (

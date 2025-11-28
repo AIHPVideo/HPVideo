@@ -15,7 +15,7 @@ const metadata = {
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
-const chains: any = [ bsc ];
+const chains: any = [bsc];
 
 export const config = defaultWagmiConfig({
   projectId,
@@ -33,7 +33,7 @@ export let modal = createWeb3Modal({
 
 const USDT_CONTRACT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
 // test tran address
-const USDT_TRAN_ADDRESS='0x8b0b8c7f984dd3f2b580149ade3cdab504d3af1f';
+const USDT_TRAN_ADDRESS = '0x8b0b8c7f984dd3f2b580149ade3cdab504d3af1f';
 // const USDT_TRAN_ADDRESS='0x3011aef25585d026BfA3d3c3Fb4323f4b0eF3Eaa';
 
 // usdt contract
@@ -76,7 +76,7 @@ export async function getUSDTBalance(address: string) {
 }
 
 // tran usdt
-export async function tranUsdt(amount: string) {
+export async function tranUsdt(amount: string, messageid: string) {
   try {
     const account = getAccount(config);
     const provider: any = await account?.connector?.getProvider();
@@ -85,8 +85,7 @@ export async function tranUsdt(amount: string) {
     let signer = await eprovider.getSigner();
     const usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, USDT_ABI, signer);
     const amountWei = ethers.parseUnits(amount, 18);
-    const txResponse = await usdtContract.transfer(USDT_TRAN_ADDRESS, amountWei);
-    console.log("===========================", txResponse);
+    const txResponse = await usdtContract.transfer(USDT_TRAN_ADDRESS, amountWei, {data: uuidToBytes32(messageid)});
     return txResponse;
   } catch (error) {
     console.error("tran error：", error);
@@ -99,4 +98,10 @@ export function clearConnector() {
     config.state.connections.delete(item.connector.uid);
   });
   localStorage.removeItem("token");
+}
+
+// Convert UUID to bytes32
+function uuidToBytes32(uuid: string) {
+  const hexString = uuid.replace(/-/g, '');
+  return '0x' + hexString.substring(0, 64);
 }

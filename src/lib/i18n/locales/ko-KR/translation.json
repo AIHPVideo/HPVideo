@@ -979,6 +979,7 @@
   "Payment timeout": "결제 시간 초과",
   "Paid": "결제 완료",
   "Pay": "지불하다",
+  "Pay Verify": "결제 확인",
   "Pay Success": "결제 성공",
   "Pay Failed": "결제 실패",
   "Insufficient USDT Balance": "USDT 잔액 부족",

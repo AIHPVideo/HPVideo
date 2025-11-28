@@ -94,6 +94,15 @@ class PayTable:
             log.error(f"update_vip_end_date: {e}")
             return False
         
+    def update_hash_status(self, id: str, hash: str, status: bool):
+        try:
+            query = Pay.update(status=status, hash=hash).where(Pay.id == id)
+            res = query.execute()
+            return res > 0
+        except Exception as e:
+            log.error(f"update_vip_end_date: {e}")
+            return False
+        
 	# get payinfo by id
     def get_by_id(self, id: str) -> Optional[PayModel]:
         try:

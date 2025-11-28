@@ -978,6 +978,7 @@
   "Payment timeout": "支付超时",
   "Paid": "支付完成",
   "Pay": "支付",
+  "Pay Verify": "验证支付",
   "Pay Success": "支付成功",
   "Pay Failed": "支付失败",
   "Insufficient USDT Balance": "USDT 余额不足",

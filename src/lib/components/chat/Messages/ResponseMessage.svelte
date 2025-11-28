@@ -340,7 +340,7 @@
 												on:click={async () => {
 													$paystatus = true;
 													await handlePay(message);
-												}}>{ $i18n.t("Pay")}</button>
+												}}>{ $i18n.t(message.paytype == "unpaid" ? "Pay" : $paystatus ? "Paying" : "Pay Verify")}</button>
 										{/if}
 									</div>
 								{/if}
@@ -359,7 +359,7 @@
 												on:click={async () => {
 													$paystatus = true;
 													await handlePay(message);
-												}}>{ $i18n.t("Pay")}</button>
+												}}>{ $i18n.t(message.paytype == "unpaid" ? "Pay" : $paystatus ? "Paying" : "Pay Verify")}</button>
 										{/if}
 									</div>
 								{/if}
@@ -381,7 +381,7 @@
 													on:click={async () => { 
 														$paystatus = true;
 														await handlePay(message); 
-													}}>{ $i18n.t("Pay")}</button>
+													}}>{ $i18n.t(message.paytype == "unpaid" ? "Pay" : $paystatus ? "Paying" : "Pay Verify")}</button>
 											{/if}
 										</div>
 									{:else}
@@ -398,7 +398,7 @@
 														on:click={async () => { 
 															$paystatus = true;
 															await handlePay(message);
-														}}>{ $i18n.t("Pay")}</button>
+														}}>{ $i18n.t(message.paytype == "unpaid" ? "Pay" : $paystatus ? "Paying" : "Pay Verify")}</button>
 												{/if}
 											</div>
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
@@ -415,7 +415,7 @@
 															on:click={async () => { 
 																$paystatus = true;
 																await handlePay(message);
-															}}>{ $i18n.t("Pay")}</button>
+															}}>{ $i18n.t(message.paytype == "unpaid" ? "Pay" : $paystatus ? "Paying" : "Pay Verify")}</button>
 												{/if}
 											</div>
 											<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
@@ -432,7 +432,7 @@
 														on:click={async () => { 
 															$paystatus = true;
 															await handlePay(message) 
-														}}>{ $i18n.t("Pay")}</button>
+														}}>{ $i18n.t(message.paytype == "unpaid" ? "Pay" : $paystatus ? "Paying" : "Pay Verify")}</button>
 												{/if}
 											</div>
 											{#if message.paystatus}
