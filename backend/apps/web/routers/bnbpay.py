@@ -25,15 +25,19 @@ async def bnbcheck(request: Request, user=Depends(get_current_user)):
   amount = body["amount"]
 
   payinfo = PayTableInstall.get_by_messageid(messageid)
+  PayTableInstall.update_currpay_byaddress(address, False)
 
-  if hash is None or hash == "": 
+  if hash is None or hash == "":
     if payinfo is None:
-      PayTableInstall.insert_pay(address, model, size, duration, amount, messageid, False)
+      PayTableInstall.insert_pay(address, model, size, duration, amount, messageid, "", False, True)
       return {"ok": False, "message": "create pay"}
     else:
+      if payinfo.wallet_addr != address:
+        PayTableInstall.update_pay_address(payinfo.id, address)
       if payinfo.status:
         return {"ok": True, "message": "pay success"}
       else:
+        PayTableInstall.update_currpay_byid(payinfo.id, True)
         return {"ok": False, "message": "pay fail"}
   else:
     tx_receipt = await asyncio.to_thread(w3.eth.wait_for_transaction_receipt, hash)
@@ -51,9 +55,9 @@ async def bnbcheck(request: Request, user=Depends(get_current_user)):
           if address.lower() == from_address.lower() and USDT_TRAN_ADDRESS.lower() == to_address.lower():
             try:
               if payinfo is None:
-                PayTableInstall.insert_pay(address, model, size, duration, amount, messageid, True)
+                PayTableInstall.insert_pay(address, model, size, duration, amount, messageid, hash, True, True)
               else:
-                PayTableInstall.update_hash_status(payinfo.id, hash, True)
+                PayTableInstall.update_hash_status(payinfo.id, hash, True, True)
               return {"ok": True, "message": "check success"}
             except Exception as e:
               print("========================", e)

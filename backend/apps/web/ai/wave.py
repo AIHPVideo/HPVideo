@@ -143,7 +143,7 @@ class WaveApi:
 					amount = f"${amount_dict.get(key).get(str(duration))}"
 			pay = PayTableInstall.get_by_messageid(messageid)
 			if pay is None:
-				PayTableInstall.insert_pay("", model, size, duration, amount, messageid, False)
+				PayTableInstall.insert_pay("", model, size, duration, amount, messageid, "", False, True)
 			return {
         "amount": amount,
         "messageid": messageid

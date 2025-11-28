@@ -85,7 +85,7 @@ export async function tranUsdt(amount: string, messageid: string) {
     let signer = await eprovider.getSigner();
     const usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, USDT_ABI, signer);
     const amountWei = ethers.parseUnits(amount, 18);
-    const txResponse = await usdtContract.transfer(USDT_TRAN_ADDRESS, amountWei, {data: uuidToBytes32(messageid)});
+    const txResponse = await usdtContract.transfer(USDT_TRAN_ADDRESS, amountWei);
     return txResponse;
   } catch (error) {
     console.error("tran error：", error);
@@ -98,10 +98,4 @@ export function clearConnector() {
     config.state.connections.delete(item.connector.uid);
   });
   localStorage.removeItem("token");
-}
-
-// Convert UUID to bytes32
-function uuidToBytes32(uuid: string) {
-  const hexString = uuid.replace(/-/g, '');
-  return '0x' + hexString.substring(0, 64);
 }

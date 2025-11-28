@@ -2,6 +2,8 @@ from web3 import Web3
 import os
 import asyncio
 
+from apps.web.models.pay import PayTableInstall
+
 BNB_RPC = os.getenv("BNB_RPC")
 USDT_CONTRACT_ADDRESS = os.getenv("USDT_CONTRACT_ADDRESS")
 USDT_TRAN_ADDRESS = os.getenv("USDT_TRAN_ADDRESS")
@@ -49,7 +51,6 @@ class BNBUSDTPayListener:
 
     async def handle_transfer_event(self, event):
         try:
-            payinfo = event["args"]
             from_address = event["args"]["from"]
             to_address = event["args"]["to"]
             value = event["args"]["value"]
@@ -59,8 +60,12 @@ class BNBUSDTPayListener:
                 amount = w3.from_wei(value, "ether")
                 tx_hash = event["transactionHash"].hex()
 
+                payinfo = PayTableInstall.get_currpay_byaddress(from_address)
+                print("===================Pay Info==============", payinfo)
+                if payinfo is not None:
+                    PayTableInstall.update_hash_status(payinfo.id, tx_hash, True, True)
+
                 print("===================Pay Info==============")
-                print(f"Pay All: {payinfo}")
                 print(f"Pay Amount: {amount} USDT")
                 print(f"From Address: {from_address}")
                 print(f"Tran Hash: {tx_hash}")
