@@ -24,8 +24,8 @@ async def bnbcheck(request: Request, user=Depends(get_current_user)):
   duration = body["duration"]
   amount = body["amount"]
 
-  payinfo = PayTableInstall.get_by_messageid(messageid)
   PayTableInstall.update_currpay_byaddress(address, False)
+  payinfo = PayTableInstall.get_by_messageid(messageid)
 
   if hash is None or hash == "":
     if payinfo is None:

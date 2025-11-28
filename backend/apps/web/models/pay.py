@@ -90,7 +90,7 @@ class PayTable:
             res = query.execute()
             return res > 0
         except Exception as e:
-            log.error(f"update_vip_end_date: {e}")
+            log.error(f"update_pay_address: {e}")
             return False
         
 	# update pay status
@@ -100,7 +100,7 @@ class PayTable:
             res = query.execute()
             return res > 0
         except Exception as e:
-            log.error(f"update_vip_end_date: {e}")
+            log.error(f"update_status: {e}")
             return False
     
     def update_addr_status(self, id: str, address: str, status: bool, currpay: bool):
@@ -109,7 +109,7 @@ class PayTable:
             res = query.execute()
             return res > 0
         except Exception as e:
-            log.error(f"update_vip_end_date: {e}")
+            log.error(f"update_addr_status: {e}")
             return False
         
     def update_hash_status(self, id: str, hash: str, status: bool, currpay: bool):
@@ -118,7 +118,7 @@ class PayTable:
             res = query.execute()
             return res > 0
         except Exception as e:
-            log.error(f"update_vip_end_date: {e}")
+            log.error(f"update_hash_status: {e}")
             return False
         
     # update currpay status by address
@@ -128,7 +128,7 @@ class PayTable:
             res = query.execute()
             return res > 0
         except Exception as e:
-            log.error(f"update_vip_end_date: {e}")
+            log.error(f"update_currpay_byaddress: {e}")
             return False
         
     # update currpay status by id
@@ -138,7 +138,7 @@ class PayTable:
             res = query.execute()
             return res > 0
         except Exception as e:
-            log.error(f"update_vip_end_date: {e}")
+            log.error(f"update_currpay_byid: {e}")
             return False
         
 	# get payinfo by id
@@ -164,7 +164,7 @@ class PayTable:
     # get currpay by address
     def get_currpay_byaddress(self, address: str):
         try:
-            pay = Pay.get(Pay.wallet_addr == address, Pay.currpay == True)
+            pay = Pay.get(Pay.wallet_addr == address, Pay.status == False, Pay.currpay == True)
             pay_dict = model_to_dict(pay)
             pay_model = PayModel(**pay_dict)
             return pay_model
