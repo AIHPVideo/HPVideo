@@ -52,7 +52,8 @@ class WaveApi:
 			"Authorization": f'Bearer {wave_key}',
 			"Content-Type": "application/json"
 		}
-		last_message = param.messages[-1]
+		user_data_list = [item for item in param.messages if item.get("role") == "user"]
+		last_message = user_data_list[-1]
 		if param.source == 'pixverse':
 			data = {
 				"duration": param.duration,
