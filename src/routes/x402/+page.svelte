@@ -7,7 +7,6 @@
   import VideoPlay from "$lib/components/chat/Messages/VideoPlay.svelte";
 
   import { modal } from "$lib/utils/wallet/bnb/index";
-  import { signUSDTPayment } from "$lib/utils/wallet/bnb/index"
 
   let videoLoading = true;
   let videoUrl = "";
