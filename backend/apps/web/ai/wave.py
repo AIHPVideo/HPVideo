@@ -54,21 +54,23 @@ class WaveApi:
 		}
 		user_data_list = [item for item in param.messages if item.get("role") == "user"]
 		last_message = user_data_list[-1]
+		contents = self.judge_content_type(last_message.get("content"))
+
 		if param.source == 'pixverse':
 			data = {
 				"duration": param.duration,
-				"prompt": last_message.get("content"),
+				"prompt": contents.get("text"),
 				"aspect_ratio": param.size,
 				"resolution": "720p"
 			}
 		else:
 			data = {
 				"duration": param.duration,
-				"prompt": last_message.get("content"),
+				"prompt": contents.get("text"),
 				"size": param.size
 			}
-		if param.image is not None and param.image.strip() != "":
-			data["image"] = param.image
+		if contents.get("image") is not None:
+			data["image"] = contents.get("image").get("url")
 
 		try:
 			url = f'{wave_url}/{param.source}/{param.model}'
@@ -149,5 +151,25 @@ class WaveApi:
         "amount": amount,
         "messageid": messageid
     }
+
+	def judge_content_type(self, content: object):
+		if isinstance(content, str):
+			return {"text": content, "image": None}
+		elif isinstance(content, list):
+			text = ""
+			image = ""
+			has_text = any(item.get("type") == "text" for item in content)
+			if has_text:
+				text_list = [item.get("text", "").strip() for item in content if item.get("type") == "text"]
+				text = text_list[0]
+
+			has_image = any(item.get("type") == "image_url" for item in content)
+			if has_image:
+				image_list = [item.get("image_url", "") for item in content if item.get("type") == "image_url"]
+				image = image_list[0]
+			return {"text": text, "image": image}
+		else:
+			return {"text": content, "image": None}
+			
 
 WaveApiInstance = WaveApi()
