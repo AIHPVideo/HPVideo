@@ -115,7 +115,7 @@ async def completion_video(param: AiResultReq, user=Depends(get_current_user)):
     timeout = 0
     while True:
       timeout += 1
-      if timeout > 240:
+      if timeout > 600:
         data = {
           "success": True,
           "message": "timeout",

@@ -329,7 +329,7 @@
 							{#if message?.error === true}
 								{#if message.paymoney}
 									<div class="max-w-[600px]">
-										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 										{#if message.paystatus}
 											{$i18n.t("Paid")}
 										{:else}
@@ -348,7 +348,7 @@
 							{:else if message.content === '' && !message?.done}
 								{#if message.paymoney}
 									<div class="max-w-[600px]">
-										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+										{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 										{#if message.paystatus}
 											{$i18n.t("Paid")}
 										{:else}
@@ -370,7 +370,7 @@
 								{#each tokens as token, tokenIdx}
 									{#if !message?.paystatus}
 										<div class="max-w-[600px]">
-											{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+											{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 											{#if message.paystatus}
 												{$i18n.t("Paid")}
 											{:else}
@@ -387,7 +387,7 @@
 									{:else}
 										{#if message.status == 'completed'}
 											<div class="max-w-[600px]">
-												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
@@ -404,7 +404,7 @@
 											<VideoPlay bind:videourl={token.raw} bind:videosize={message.size}/>
 										{:else if message.status == 'failed' || message.status == 'timeout'}
 											<div>
-												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
@@ -421,7 +421,7 @@
 											<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
 										{:else}
 											<div class="max-w-[600px]">
-												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-3 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
+												{$i18n.t("This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.", {model: formatModelName(message.model), paymoney: message?.paymoney})}
 												{#if message.paystatus}
 													{$i18n.t("Paid")}
 												{:else}
