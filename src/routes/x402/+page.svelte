@@ -5,9 +5,7 @@
   import { createOpenAITextStream } from "$lib/apis/streaming";
   import VideoLoading from "$lib/components/chat/Messages/VideoLoading.svelte";
   import VideoPlay from "$lib/components/chat/Messages/VideoPlay.svelte";
-
-  import { modal } from "$lib/utils/wallet/bnb/index";
-
+  
   let videoLoading = true;
   let videoUrl = "";
   const getVideoResult = async (createid: string) => {
@@ -38,7 +36,7 @@
   onMount(async () => {
     const queryParams = new URLSearchParams($page.url?.search);
     let createid = queryParams.get("createid");
-    // await getVideoResult(createid);
+    await getVideoResult(createid);
   });
 </script>
 
@@ -48,12 +46,4 @@
   {:else}
     <VideoPlay bind:videourl={videoUrl} />
   {/if}
-</div>
-<div class="flex flex-col gap-2">
-  <button class="primaryButton px-2 py-1 text-sm text-white"
-    on:click={ async () => { modal.open()}}>连接钱包</button>
-  <button class="primaryButton px-2 py-1 text-sm text-white"
-    on:click={ async () => { 
-      await signUSDTPayment("123123123123", "0.001");
-    }}>支付签名</button>
 </div>

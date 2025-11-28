@@ -638,8 +638,12 @@
           }
           if (!done) {
             responseMessage.limit = limit;
+          }
+          if (!responseMessage.createId && createId) {
             responseMessage.createId = createId;
-          } 
+            updateChatMessage(_chatId);
+          }
+
           messages = messages;
         
           if (error) {

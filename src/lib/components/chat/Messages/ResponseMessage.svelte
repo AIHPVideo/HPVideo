@@ -436,7 +436,11 @@
 												{/if}
 											</div>
 											{#if message.paystatus}
-												<VideoLoading bind:videosize={message.size}/>
+												{#if message.done}
+													<VideoError bind:videosize={message.size} bind:isLastMessage={isLastMessage} bind:errtip={reqeuestErr}  {resentMessageHandler}/>
+												{:else}
+													<VideoLoading bind:videosize={message.size}/>
+												{/if}
 											{/if}
 										{/if}
 									{/if}
