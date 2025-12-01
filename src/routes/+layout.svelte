@@ -6,10 +6,8 @@
     theme,
     WEBUI_NAME,
     mobile,
-    inviterId,
-    channel,
-    user,
-    threesideAccount
+    threesideAccount,
+    urlprompt
   } from "$lib/stores";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
@@ -111,16 +109,9 @@
   // 获取请求携带参数
   async function initUrlParam() {
     const queryParams = new URLSearchParams($page.url.search);
-
-    // 获取邀请信息
-    let inviterVal = queryParams.get("inviter");
-    if (inviterVal) {
-      await inviterId.set(inviterVal);
-    }
-    // 获取渠道
-    let channelName = queryParams.get("channel");
-    if (channelName) {
-      await channel.set(channelName);
+    const promptVal = queryParams.get("urlprompt");
+    if (promptVal) {
+      await urlprompt.set(promptVal);
     }
   }
 

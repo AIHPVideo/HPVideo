@@ -10,8 +10,6 @@
     chatId,
     chats,
     config,
-    inviterId,
-    channel,
     modelfiles,
     models,
     pageUpdateNumber,
@@ -20,7 +18,8 @@
     user,
     switchModel,
     theme,
-    paystatus
+    paystatus,
+    urlprompt
   } from "$lib/stores";
 
   import {
@@ -45,9 +44,6 @@
   import { config as wconfig, modal, getUSDTBalance, tranUsdt } from "$lib/utils/wallet/bnb/index";
 	import { getAccount } from "@wagmi/core";
   import { bnbpaycheck } from '$lib/apis/pay';
-
-  let inviter: any = "";
-  let channelName: any = "";
 
   const i18n = getContext("i18n");
 
@@ -118,18 +114,19 @@
     messages = [];
   }
 
+  // assign urlprompt
+  const assignUrlPrpmpt = async () => {
+    if ($urlprompt) {
+      prompt = $urlprompt;
+      await urlprompt.set("");
+    }
+  }
+
   onMount(async () => {
-    const queryParams = new URLSearchParams($page.url.search);
-    inviter = queryParams.get("inviter");
-    channelName = queryParams.get("channel");
-    if (inviter) {
-      $inviterId = inviter;
-    }
-    if (channelName) {
-      await channel.set(channelName);
-    }
 
     await initNewChat();
+
+    await assignUrlPrpmpt();
 
     // 触发直接发送消息
     if ($switchModel.status) {

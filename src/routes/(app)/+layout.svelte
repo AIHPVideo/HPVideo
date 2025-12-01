@@ -15,11 +15,9 @@
 		models,
 		showChangelog,
 		config,
-		channel,
 		chats,
 		tags,
-		initPageFlag,
-		walletKey
+		initPageFlag
 	} from "$lib/stores";
 	import { page } from "$app/stores";
 
@@ -135,11 +133,6 @@
   }
 
 	onMount(async () => {
-		const queryParams = new URLSearchParams($page.url.search);
-		let channelName = queryParams.get("channel");
-		if (channelName) {
-			await channel.set(channelName);
-		}
 		if ($config) {
 			// 用户登陆校验
 			await checkLogin();

@@ -81,11 +81,8 @@ export let modelLimits = writable([
 export let pageUpdateNumber = writable(0)
 
 
-// 邀请人id
-export let inviterId = writable("")
-
-// 来源频道
-export let channel = writable("")
+// 网页请求参数
+export let urlprompt = writable("")
 
 // 切换模型相关
 export const switchModel = writable({
