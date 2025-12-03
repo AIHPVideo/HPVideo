@@ -15,9 +15,8 @@
 		tags as _tags,
 		showSidebar,
 		theme,
-
-        paystatus
-
+		paystatus,
+		chatsearch
 	} from "$lib/stores";
 	import {
 		copyToClipboard,
@@ -137,6 +136,29 @@
 			}
 		})();
 	}
+
+	$: if($chatsearch!= "") {
+		const resultIds = Object.values(history.messages) // 提取所有对象组成的数组
+			.filter(item => {
+				// 注意：content 可能是字符串（user 角色）或数组（assistant 角色），需先判断类型
+				const contentStr = typeof item.content === 'string' ? item.content : '';
+				return contentStr.includes($chatsearch); // 包含「产品」关键词则保留
+			})
+			.map(item => item.id);
+		console.log("============resultIds========", resultIds);
+		if (resultIds.length > 0) {
+			scrollContent(resultIds[0]);
+		}
+	}
+	function scrollContent(id: string) {
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
 
 	//////////////////////////
 	// Web functions

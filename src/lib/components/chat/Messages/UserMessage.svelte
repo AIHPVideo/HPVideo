@@ -226,7 +226,7 @@
 			{:else}
 				<div class="w-full">
 					<div class="flex {$settings?.chatBubble ?? true ? 'justify-end' : ''} mb-2">
-						<div
+						<div id={message?.id}
 							class="rounded-3xl {$settings?.chatBubble ?? true
 								? `max-w-[90%] p-6 text-white bg-gradient-to-r from-[#9802E5] to-[#E0A3FF] ${
 										message.files ? 'rounded-tr-lg' : ''
