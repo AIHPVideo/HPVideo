@@ -145,7 +145,6 @@
 				return contentStr.includes($chatsearch); // 包含「产品」关键词则保留
 			})
 			.map(item => item.id);
-		console.log("============resultIds========", resultIds);
 		if (resultIds.length > 0) {
 			scrollContent(resultIds[0]);
 		}

@@ -43,6 +43,7 @@ export const showSidebar = writable(false);
 export const showSettings = writable(false);
 export const showArchivedChats = writable(false);
 export const showChangelog = writable(false);
+export const showPriceView = writable(false);
 
 // 升级VIP标志用于实时更新升级数据
 export const vipupgrade = writable(false);

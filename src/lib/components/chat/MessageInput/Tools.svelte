@@ -117,7 +117,7 @@
               }}
             >
               <div class="flex flex-row items-center gap-2 mr-1">
-                {#if Number(item.split("*")[0]) < Number(item.split("*")[1])}
+                {#if Number(item.split("*")[0]) < Number(item.split("*")[1]) || Number(item.split(":")[0]) < Number(item.split(":")[1])}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 1024 1024"

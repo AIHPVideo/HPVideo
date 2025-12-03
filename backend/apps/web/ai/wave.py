@@ -63,6 +63,12 @@ class WaveApi:
 				"aspect_ratio": param.size,
 				"resolution": "720p"
 			}
+		elif param.source == 'bytedance' or param.source == 'kwaivgi':
+			data = {
+				"duration": param.duration,
+				"prompt": contents.get("text"),
+				"aspect_ratio": param.size
+			}
 		else:
 			data = {
 				"duration": param.duration,

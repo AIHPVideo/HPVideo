@@ -11,12 +11,12 @@
     user,
     initPageFlag,
     theme,
-    threesideAccount
+    threesideAccount,
+    showPriceView
   } from "$lib/stores";
 
   import ShareChatModal from "../chat/ShareChatModal.svelte";
   import ModelSelector from "../chat/ModelSelector.svelte";
-  import Menu from "./Navbar/Menu.svelte";
   import MenuLines from "../icons/MenuLines.svelte";
   import { getChatById } from "$lib/apis/chats";
   import Setting from "$lib/components/layout/Navbar/Setting.svelte"
@@ -32,6 +32,7 @@
   import { ethers } from "ethers";
 
   import { getChatList } from "$lib/apis/chats";
+  import PriceModal from "../price/PriceModal.svelte";
 
   const i18n = getContext("i18n");
 
@@ -157,6 +158,7 @@
 </script>
 
 <ShareChatModal bind:show={showShareChatModal} chatId={$chatId} />
+<PriceModal bind:show={$showPriceView}/>
 <nav id="nav" class=" sticky md:pt-[30px] pt-2.5 pb-2.5 top-0 flex flex-row justify-center z-30">
   <div class="flex {$mobile ? 'flex-col' : 'flex-row'} max-w-full w-full mx-auto px-5 pt-0.5 md:px-[1rem]">
     {#if $mobile}
@@ -260,12 +262,33 @@
       </div>
     {/if}
     <div class="flex items-center w-full max-w-full">
-      <div
-        class="overflow-hidden bg-gray-100 dark:bg-gray-850 rounded-full p-2 min-w-[100px]"
-      >
-        {#if showModelSelector}
-          <ModelSelector bind:selectedModels />
-        {/if}
+      <div class="flex items-center">
+        <div
+          class="overflow-hidden bg-gray-100 dark:bg-gray-850 rounded-full p-2 min-w-[100px]"
+        >
+          {#if showModelSelector}
+            <ModelSelector bind:selectedModels />
+          {/if}
+        </div>
+        <div class="ml-1">
+          <button
+            id="new-chat-button"
+            class=" flex cursor-pointer p-2 rounded-xl hover:bg-[#9903E6] hover:text-white transition"
+            on:click={() => {
+              $showPriceView = true;
+            }}
+          >
+            <div class=" m-auto self-center">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1024 1024" 
+                version="1.1"
+                fill="currentColor"
+                class="size-5">
+                <path d="M512 1024A512 512 0 1 1 512 0a512 512 0 0 1 0 1024z m0-83.2A428.8 428.8 0 1 0 512 83.2a428.8 428.8 0 0 0 0 857.6z m183.424-681.664c18.176 11.84 20.992 37.12 5.888 56.704l-120.32 154.752h51.456c26.88 0 48.448 16.64 48.448 37.248a33.536 33.536 0 0 1-14.08 26.624 56.576 56.576 0 0 1-34.368 10.88H548.48v31.04h83.968c26.88 0 48.448 16.96 48.448 37.568 0 10.24-5.312 19.648-14.08 26.624a57.28 57.28 0 0 1-34.368 10.88H548.48v70.912c0 26.688-18.432 48.32-41.408 48.32a37.952 37.952 0 0 1-29.12-14.08 52.928 52.928 0 0 1-12.224-34.24v-71.04h-77.44c-26.752 0-48.448-16.96-48.448-37.44 0-10.368 5.44-19.776 14.208-26.624a57.472 57.472 0 0 1 34.304-10.944h77.376v-31.104h-77.44c-26.752 0-48.448-16.64-48.448-37.44 0-10.304 5.44-19.52 14.208-26.368a56.32 56.32 0 0 1 34.304-10.88h54.848l-120.32-154.752c-15.168-19.52-12.608-44.864 5.888-56.64a38.72 38.72 0 0 1 21.12-5.952c14.208 0 29.184 6.848 39.04 19.712L512 431.104l123.072-158.208a49.92 49.92 0 0 1 39.04-19.712c7.552 0 15.04 1.92 21.248 5.952z"/>
+              </svg>
+            </div>
+          </button>
+        </div>
       </div>
 
       <div class="flex-1" />
