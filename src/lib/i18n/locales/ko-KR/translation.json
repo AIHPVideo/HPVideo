@@ -999,5 +999,7 @@
   "Model": "모델",
   "Size": "사이즈",
   "Duration": "영상시간",
-  "Price": "가격"
+  "Price": "가격",
+  "With Audio": "오디오 포함",
+  "Without Audio": "오디오 없음"
 }

@@ -998,5 +998,7 @@
   "Model": "模型",
   "Size": "尺寸",
   "Duration": "时长",
-  "Price": "价格"
+  "Price": "价格",
+  "With Audio": "有音频",
+  "Without Audio": "无音频"
 }

@@ -999,5 +999,7 @@
   "Model": "Model",
   "Size": "Ukuran",
   "Duration": "Durasi",
-  "Price": "Harga"
+  "Price": "Harga",
+  "With Audio": "Dengan audio",
+  "Without Audio": "Tanpa audio"
 }

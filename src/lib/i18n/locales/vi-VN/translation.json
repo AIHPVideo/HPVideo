@@ -988,5 +988,7 @@
   "Model": "Mẫu",
   "Size": "Kích thước",
   "Duration": "Thời lượng",
-  "Price": "Giá"
+  "Price": "Giá",
+  "With Audio": "Có âm thanh",
+  "Without Audio": "Không có âm thanh"
 }

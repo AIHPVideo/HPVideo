@@ -55,8 +55,15 @@ class WaveApi:
 		user_data_list = [item for item in param.messages if item.get("role") == "user"]
 		last_message = user_data_list[-1]
 		contents = self.judge_content_type(last_message.get("content"))
-
-		if param.source == 'pixverse':
+		if param.source == 'google':
+			data = {
+				"duration": param.duration,
+				"prompt": contents.get("text"),
+				"aspect_ratio": param.size,
+				"generate_audio": True,
+				"resolution": "720p"
+			}
+		elif param.source == 'pixverse':
 			data = {
 				"duration": param.duration,
 				"prompt": contents.get("text"),

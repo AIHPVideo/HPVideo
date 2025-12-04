@@ -999,5 +999,7 @@
   "Model": "モデル",
   "Size": "サイズ",
   "Duration": "時間",
-  "Price": "価格"
+  "Price": "価格",
+  "With Audio": "オーディオ付き",
+  "Without Audio": "オーディオなし"
 }

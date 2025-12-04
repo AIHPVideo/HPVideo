@@ -998,5 +998,7 @@
   "Model": "รุ่น",
   "Size": "ขนาด",
   "Duration": "ระยะเวลา",
-  "Price": "ราคา"
+  "Price": "ราคา",
+  "With Audio": "พร้อมเสียง",
+  "Without Audio": "ไม่มีเสียง"
 }

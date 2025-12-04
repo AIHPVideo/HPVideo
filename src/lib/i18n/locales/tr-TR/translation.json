@@ -999,5 +999,7 @@
   "Model": "Model",
   "Size": "Boyut",
   "Duration": "Süre",
-  "Price": "Fiyat"
+  "Price": "Fiyat",
+  "With Audio": "Sesli",
+  "Without Audio": "Sessiz"
 }

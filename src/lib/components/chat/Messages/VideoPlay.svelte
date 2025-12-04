@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import { mobile } from "$lib/stores";
 	export let videourl = "";
 	export let videosize = "16:9";
+	
 
 	let videoElement: any;
 	let videoWidth = 0;
@@ -36,6 +38,14 @@
     const originalHeight = videoElement.videoHeight;
 		videoHeight = videoWidth * originalHeight / originalWidth;
 	}
+
+	onMount(() => {
+    window.addEventListener('resize', calculateOnLoadedMetadata);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener('resize', calculateOnLoadedMetadata);
+  });
 
 </script>
 

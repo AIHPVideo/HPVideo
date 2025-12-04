@@ -999,5 +999,7 @@
   "Model": "Modelo",
   "Size": "Tamanho",
   "Duration": "Duração",
-  "Price": "Preço"
+  "Price": "Preço",
+  "With Audio": "Com áudio",
+  "Without Audio": "Sem áudio"
 }
