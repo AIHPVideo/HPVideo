@@ -32,8 +32,14 @@
 		</div>
 
 		<div class="flex flex-col h-1/3 overflow-y-auto pb-6 md:px-8 px-4 mt-4">
+			<div class="flex flex-row justify-center items-center border-t border-l border-r border-gray-600 dark:border-gray-100 rounded-t-lg">
+				<div class="text-center font-bold text-sm py-2 md:w-[150px] w-[100px] px-1 border-r border-gray-600 dark:border-gray-100">{$i18n.t("Model")}</div>
+				<div class="flex-1 text-center font-bold text-sm py-2 border-l border-gray-600 dark:border-gray-100">{$i18n.t("Size")}</div>
+				<div class="flex-1 text-center font-bold text-sm py-2 border-l border-gray-600 dark:border-gray-100">{$i18n.t("Duration")}</div>
+				<div class="flex-1 text-center font-bold text-sm py-2 border-l border-gray-600 dark:border-gray-100">{$i18n.t("Price")}</div>
+			</div>
 			{#each $models as item, index}
-				<div class="flex flex-row justify-center items-center border-t border-l border-r border-gray-100 {index==0 ? 'rounded-t-lg' : ''}
+				<div class="flex flex-row justify-center items-center border-t border-l border-r border-gray-600 dark:border-gray-100
 					{(index == $models.length - 1) ? 'border-b rounded-b-lg' : ''}">
 					<div class="text-center font-bold text-sm py-2 md:w-[150px] w-[100px] px-1">
 						{item.name}
@@ -41,7 +47,7 @@
 					<div class="flex-1 flex flex-col w-full">
 						{#each item?.size as sitem, sindex}
 							<div
-								class="flex flex-row w-full items-center border-b border-l border-gray-100
+								class="flex flex-row w-full items-center border-b border-l border-gray-600 dark:border-gray-100
 								{(sindex == item.size.length - 1) ? 'border-b-0' : ''}"
 							>
 								<div class="flex-1 flex justify-center">{sitem}</div>
@@ -51,7 +57,7 @@
 											class="flex justify-center {dindex ==
 											item?.duration.length - 1
 												? ''
-												: 'border-b'} border-l border-gray-100 py-1"
+												: 'border-b'} border-l border-gray-600 dark:border-gray-100 py-1"
 										>
 											{ditem}s
 										</div>
@@ -64,7 +70,7 @@
 												<div
 													class="flex justify-center {aindex == avals.length - 1
 														? ''
-														: 'border-b'} border-l border-gray-100 py-1"
+														: 'border-b'} border-l border-gray-600 dark:border-gray-100 py-1"
 												>
 													${aitem}
 												</div>

@@ -983,5 +983,21 @@
   "Pay Success": "결제 성공",
   "Pay Failed": "결제 실패",
   "Insufficient USDT Balance": "USDT 잔액 부족",
-  "This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.": "이 생성은 {{model}} 고품질 모델을 사용하며, {{paymoney}} USDT를 소비합니다. 예상 대기 시간은 1-5분입니다."
+  "This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.": "이 생성은 {{model}} 고품질 모델을 사용하며, {{paymoney}} USDT를 소비합니다. 예상 대기 시간은 1-5분입니다.",
+  "Micro Fluids – 《Annihilation》-Style Organic Texture": "미세 유체 - 『Annihilation』식 생명 감촉",
+  "Using AI to replicate fluid dynamics, presenting within 5-10 seconds the filamentous diffusion of ink droplets in water in slow motion, the amber glow of ice spheres melting in whiskey glasses, and the nebula-like vortices formed by milk swirling in coffee. Emphasize the iridescence of fluid refraction and the tremor of surface tension to generate sci-fi short films with biological texture.": "AI로 유체 역학 재현, 5-10초 내 슬로모션 잉크 방울 물속 확산, 위스키 글래스에서 녹는 아이스볼의 호박색 빛무리, 커피에서 소용돌이치는 우유의 성운 고리를 표현. 유체 굴절의 무지개색과 표면 장력의 떨림을 강조, 생물학적 감촉의 SF 단편 생성.",
+  "Life in Bloom – 《Planet Earth》 Time-Lapse Aesthetics": "생명의 개화 - 『Planet Earth』 타임랩스 미학",
+  "Present the overwhelming of time compression through macro cinematic photography: the silk-textured petals of night-blooming cereus unfurling under moonlight, exploring shots of vines climbing ancient walls, mushrooms breaking through soil with spores erupting like smoke. Use low-angle backlighting to highlight life contours, creating nature documentary-level blooming moments.": "마크로 영화 촬영으로 시간 압축의 충격 제시: 달빛 아래 펼쳐지는 선인장의 실크 감촉 꽃잎, 고대 벽을 타고 오르는 덩굴의 탐색 샷, 토양을 뚫고 연기처럼 분출하는 포자의 버섯. 로우앵글 역광으로 생명의 윤곽 강조, 자연 다큐멘터리 급 개화 순간 창조.",
+  "Light & Particles – 《Blade Runner》 Cyber Atmosphere": "빛과 입자 - 『Blade Runner』 사이버 분위기",
+  "Construct flowing reflections of neon lights in rainy night puddles, holographic particles converging into growing digital city models, blue vortices of cigarette smoke swirling in dim light. Employ high-contrast color schemes and particle trail effects to craft futuristic emotional spaces.": "비 오는 밤 물웅덩이에 흐르는 네온 반사, 홀로그램 입자가 모여 성장하는 도시 모델, 어둠 속에서 소용돌이는 담배 연기의 푸른 와류 구축. 고대비 색상 구성과 입자 궤적 효과로 미래적 정서 공간 조성.",
+  "Spatial Navigation – 《Inception》 Geometric Maze": "공간 이동 - 『Inception』 기하학적 미로",
+  "Create infinite rotating Baroque staircases with moving light/shadow, beams of light shifting between shelves in symmetrical libraries, tunnel lights extending with pulsating rhythm. Utilize forced perspective composition and dynamic light tracking to build dizzying illusions of depth.": "무한 회전하는 바로크 계단의 광영 이동, 대칭식 도서관에서 책장 사이를 이동하는 광속, 터널 내 박동처럼 뻗어나는 등광 창조. 강제 원근법 구성과 동적 빛 추적으로 현기증 나는 심도 환상 구축.",
+  "Animated Still Life – 《Harry Potter》 Magical Moments": "정물 활성화 - 『Harry Potter』 마법 순간",
+  "Show feather pens autonomously writing on parchment with ink appearing, precise interlocking operation of antique clock gears, Lego bricks self-assembling into castle stop-motion. Employ close-up dolly shots and magical realist lighting to create mysterious narratives from everyday objects.": "양피지에 자율적으로 쓰는 깃펜의 잉크浮现, 앤틱 시계 내부 기어의 정밀 맞물림 운전, 레고 블록이 성으로 자가 조립하는 스톱모션. 클로즈업 돌리 샷과 마술적 리얼리즘 조명으로 일상품의 신비로운 서사 제조.",
+  "Material Flow – 《Hero》 Color Poetics": "재질 유동 - 『Hero』 색채 시학",
+  "Display Chinese ink spreading on rice paper to outline mountain-water landscapes, colored silk dancing with folds in zero gravity, lava cooling with surface cracks revealing incandescent inner light. Apply color emotion theory and material close-up cinematography to create visual poetry like flowing paintings.": "선지에 번지는 수묵 산수 윤곽, 무중력에서 춤추는 색견 주름, 용암 냉각 시 표면 균열로 비치는 작열 내광 전시. 색채 정서 이론과 재질 접사 촬영 기법으로 그림이 유동하는 시각적 시편 창조.",
+  "Model": "모델",
+  "Size": "크기",
+  "Duration": "지속 시간",
+  "Price": "가격"
 }

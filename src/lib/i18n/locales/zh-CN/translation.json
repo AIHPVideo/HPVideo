@@ -982,5 +982,21 @@
   "Pay Success": "支付成功",
   "Pay Failed": "支付失败",
   "Insufficient USDT Balance": "USDT 余额不足",
-  "This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.": "本次生成使用 {{model}} 高品质模型，将消耗 {{paymoney}} USDT，预计等待时间为 1-5 分钟。"
+  "This generation uses the {{model}} high-quality model, which will consume {{paymoney}} USDT, The expected wait time is 1-5 minutes.": "本次生成使用 {{model}} 高品质模型，将消耗 {{paymoney}} USDT，预计等待时间为 1-5 分钟。",
+  "Micro Fluids – 《Annihilation》-Style Organic Texture": "微观流体 - 《湮灭》式生命质感",
+  "Using AI to replicate fluid dynamics, presenting within 5-10 seconds the filamentous diffusion of ink droplets in water in slow motion, the amber glow of ice spheres melting in whiskey glasses, and the nebula-like vortices formed by milk swirling in coffee. Emphasize the iridescence of fluid refraction and the tremor of surface tension to generate sci-fi short films with biological texture.": "用AI复刻流体动力学，5-10秒内呈现慢镜头下墨滴入水的丝状扩散、威士忌杯中冰球融化的琥珀光晕、牛奶在咖啡中旋转形成的星云漩涡。强调流体折射的虹彩与表面张力的震颤，生成具有生物质感的科幻短片。",
+  "Life in Bloom – 《Planet Earth》 Time-Lapse Aesthetics": "生命绽放 - 《地球脉动》延时美学",
+  "Present the overwhelming of time compression through macro cinematic photography: the silk-textured petals of night-blooming cereus unfurling under moonlight, exploring shots of vines climbing ancient walls, mushrooms breaking through soil with spores erupting like smoke. Use low-angle backlighting to highlight life contours, creating nature documentary-level blooming moments.": "以微距电影摄影呈现时间压缩的震撼：昙花在月光下舒展的丝绸质感花瓣、藤蔓沿古墙攀爬的探索镜头、蘑菇破土时孢子如烟雾喷发。使用低角度逆光凸显生命轮廓，打造自然纪录片级的绽放瞬间。",
+  "Light & Particles – 《Blade Runner》 Cyber Atmosphere": "光影粒子 - 《银翼杀手》赛博氛围",
+  "Construct flowing reflections of neon lights in rainy night puddles, holographic particles converging into growing digital city models, blue vortices of cigarette smoke swirling in dim light. Employ high-contrast color schemes and particle trail effects to craft futuristic emotional spaces.": "构建霓虹光线在雨夜水洼中的流动倒影、全息粒子汇聚成城市模型的数字生长、香烟烟雾在暗光中盘旋的蓝色涡流。用高对比度配色与粒子拖尾效果，营造具有未来感的情绪空间。",
+  "Spatial Navigation – 《Inception》 Geometric Maze": "空间穿梭 - 《盗梦空间》几何迷城",
+  "Create infinite rotating Baroque staircases with moving light/shadow, beams of light shifting between shelves in symmetrical libraries, tunnel lights extending with pulsating rhythm. Utilize forced perspective composition and dynamic light tracking to build dizzying illusions of depth.": "创造无限旋转的巴洛克楼梯光影移动、对称式图书馆中光束在书架间的推移、隧道内灯光如脉搏般律动延伸。运用强迫透视构图与动态光影跟踪，构建令人眩晕的纵深幻觉。",
+  "Animated Still Life – 《Harry Potter》 Magical Moments": "静物活化 - 《哈利波特》魔法时刻",
+  "Show feather pens autonomously writing on parchment with ink appearing, precise interlocking operation of antique clock gears, Lego bricks self-assembling into castle stop-motion. Employ close-up dolly shots and magical realist lighting to create mysterious narratives from everyday objects.": "让羽毛笔在羊皮纸上自主书写墨迹浮现、古董钟内部齿轮的精密咬合运转、乐高积木自动组装成城堡的定格动画。采用特写镜头推移与魔幻现实主义布光，制造日常物品的神秘叙事。",
+  "Material Flow – 《Hero》 Color Poetics": "材质流动 - 《英雄》色彩诗学",
+  "Display Chinese ink spreading on rice paper to outline mountain-water landscapes, colored silk dancing with folds in zero gravity, lava cooling with surface cracks revealing incandescent inner light. Apply color emotion theory and material close-up cinematography to create visual poetry like flowing paintings.": "展现中国水墨在宣纸上晕染出山水轮廓、彩色丝绸在无重力下的舞蹈褶皱、熔岩冷却时表面裂纹透出炽红内光。运用色彩情绪理论与材质特写运镜，创造如绘画流动的视觉乐章。",
+  "Model": "模型",
+  "Size": "尺寸",
+  "Duration": "时长",
+  "Price": "价格"
 }
